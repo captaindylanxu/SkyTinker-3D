@@ -60,7 +60,7 @@ const getPartStats = (type, tier = PART_TIERS.NORMAL) => {
 };
 
 // Flappy Bird 风格载具
-function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP }) {
+function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, obstacles = [] }) {
   const { addScore, setExploded, setGameOver } = useGameStore();
   const { playFlap, playCrash, playScore } = useSound();
   const groupRef = useRef();
@@ -171,26 +171,55 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP }
     
     // VIP 玩家碰撞阈值更高
     if (speed > collisionThreshold) {
-      hasExploded.current = true;
-      isFlapping.current = false;
-      playCrash();
-      
-      const pos = position.current;
-      const explodedParts = parts.map(part => ({
-        ...part,
-        worldPosition: [
-          pos[0] + part.position[0] - centerOffset[0],
-          pos[1] + part.position[1] - centerOffset[1],
-          pos[2] + part.position[2] - centerOffset[2],
-        ]
-      }));
-      
-      setExploded();
-      onExplode(explodedParts, [...pos]);
-      
-      setTimeout(() => setGameOver(), 1500);
+      triggerExplosion();
     }
   }, [parts, centerOffset, collisionThreshold, onExplode, setExploded, setGameOver, playCrash]);
+
+  // 触发爆炸的统一函数
+  const triggerExplosion = useCallback(() => {
+    if (hasExploded.current) return;
+    
+    hasExploded.current = true;
+    isFlapping.current = false;
+    playCrash();
+    
+    const pos = position.current;
+    const explodedParts = parts.map(part => ({
+      ...part,
+      worldPosition: [
+        pos[0] + part.position[0] - centerOffset[0],
+        pos[1] + part.position[1] - centerOffset[1],
+        pos[2] + part.position[2] - centerOffset[2],
+      ]
+    }));
+    
+    setExploded();
+    onExplode(explodedParts, [...pos]);
+    
+    setTimeout(() => setGameOver(), 1500);
+  }, [parts, centerOffset, onExplode, setExploded, setGameOver, playCrash]);
+
+  // 备用碰撞检测（基于位置，用于移动端）
+  const checkManualCollision = useCallback((pos) => {
+    if (hasExploded.current || !obstacles || obstacles.length === 0) return false;
+    
+    const vehicleRadius = isVIP ? 2.5 : 1.5; // VIP 有更大的容错
+    
+    for (const obs of obstacles) {
+      // 检查是否在障碍物的 X 范围内
+      const obstacleHalfWidth = 1.5; // OBSTACLE_WIDTH / 2
+      if (Math.abs(pos[0] - obs.x) < obstacleHalfWidth + vehicleRadius) {
+        // 检查是否在缝隙外
+        const gapTop = obs.gapY + obs.gapSize / 2;
+        const gapBottom = obs.gapY - obs.gapSize / 2;
+        
+        if (pos[1] > gapTop - vehicleRadius || pos[1] < gapBottom + vehicleRadius) {
+          return true; // 碰撞了
+        }
+      }
+    }
+    return false;
+  }, [obstacles, isVIP]);
 
   // 创建复合刚体
   const [, api] = useCompoundBody(() => ({
@@ -222,6 +251,12 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP }
 
     const currentVel = velocity.current;
     const currentPos = position.current;
+
+    // 备用碰撞检测（针对移动端物理引擎可能失效的情况）
+    if (checkManualCollision(currentPos)) {
+      triggerExplosion();
+      return;
+    }
 
     // 高度限制
     let clampedY = currentPos[1];
@@ -288,11 +323,13 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP }
 }
 
 export function FlightSystem() {
-  const { vehicleParts, isExploded, isVIP } = useGameStore();
+  const { vehicleParts, isExploded, isVIP, setExploded, setGameOver } = useGameStore();
   const [vehiclePos, setVehiclePos] = useState({ x: 0, y: 10 });
   const [explodedParts, setExplodedParts] = useState([]);
   const [explosionPos, setExplosionPos] = useState(null);
   const [showExplosion, setShowExplosion] = useState(false);
+  const [obstacles, setObstacles] = useState([]);
+  const hasTriggeredExplosion = useRef(false);
 
   const handlePositionUpdate = useCallback((x, y) => {
     setVehiclePos({ x, y });
@@ -302,6 +339,19 @@ export function FlightSystem() {
     setExplodedParts(parts);
     setExplosionPos(position);
     setShowExplosion(true);
+  }, []);
+
+  // 注册障碍物位置（用于备用碰撞检测）
+  const registerObstacle = useCallback((obs) => {
+    setObstacles(prev => {
+      const exists = prev.find(o => o.id === obs.id);
+      if (exists) return prev;
+      return [...prev, obs];
+    });
+  }, []);
+
+  const unregisterObstacle = useCallback((id) => {
+    setObstacles(prev => prev.filter(o => o.id !== id));
   }, []);
 
   if (vehicleParts.length === 0) return null;
@@ -320,6 +370,7 @@ export function FlightSystem() {
         onExplode={handleExplode}
         isExploded={isExploded}
         isVIP={isVIP}
+        obstacles={obstacles}
       />
       
       {isExploded && explodedParts.length > 0 && explosionPos && (
@@ -336,7 +387,11 @@ export function FlightSystem() {
         />
       )}
       
-      <ObstacleManager vehicleX={vehiclePos.x} />
+      <ObstacleManager 
+        vehicleX={vehiclePos.x}
+        onRegisterObstacle={registerObstacle}
+        onUnregisterObstacle={unregisterObstacle}
+      />
     </>
   );
 }
