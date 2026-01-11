@@ -20,13 +20,14 @@ function PartModel({ type, tier }) {
 }
 
 // 静态零件（建造模式）
-export function StaticVehiclePart({ type, tier = PART_TIERS.NORMAL, position, rotation = [0, 0, 0], onClick, onContextMenu }) {
+export function StaticVehiclePart({ type, tier = PART_TIERS.NORMAL, position, rotation = [0, 0, 0], onClick, onContextMenu, onPointerMove }) {
   return (
     <group
       position={position}
       rotation={rotation}
       onClick={onClick}
       onContextMenu={onContextMenu}
+      onPointerMove={onPointerMove}
     >
       <PartModel type={type} tier={tier} />
     </group>
@@ -34,8 +35,10 @@ export function StaticVehiclePart({ type, tier = PART_TIERS.NORMAL, position, ro
 }
 
 // 预览零件（半透明）
-export function PreviewPart({ type, tier = PART_TIERS.NORMAL, position }) {
-  const color = PART_STATS[type]?.[tier]?.color || '#6b7280';
+export function PreviewPart({ type, tier = PART_TIERS.NORMAL, position, valid = true }) {
+  const baseColor = PART_STATS[type]?.[tier]?.color || '#6b7280';
+  // 有效位置显示绿色，无效位置显示红色
+  const color = valid ? '#22ff22' : '#ff2222';
   
   // 预览使用简单的半透明方块
   const getPreviewSize = () => {
@@ -57,9 +60,9 @@ export function PreviewPart({ type, tier = PART_TIERS.NORMAL, position }) {
       <meshStandardMaterial 
         color={color} 
         transparent 
-        opacity={0.4}
+        opacity={valid ? 0.5 : 0.3}
         emissive={color}
-        emissiveIntensity={0.2}
+        emissiveIntensity={0.3}
       />
     </mesh>
   );

@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import useGameStore from '../../store/useGameStore';
+import { useI18n } from '../../i18n/useI18n';
 import './VIPShop.css';
 
 export function VIPShop() {
   const { isVIP, setVIP } = useGameStore();
+  const { t } = useI18n();
   const [showModal, setShowModal] = useState(false);
   const [purchasing, setPurchasing] = useState(false);
 
   const handlePurchase = () => {
     setPurchasing(true);
-    // 模拟支付过程
     setTimeout(() => {
       setVIP(true);
       setPurchasing(false);
@@ -21,7 +22,7 @@ export function VIPShop() {
     return (
       <div className="vip-badge">
         <span className="vip-icon">👑</span>
-        <span>VIP 已激活</span>
+        <span>{t('vipMember')}</span>
       </div>
     );
   }
@@ -29,29 +30,22 @@ export function VIPShop() {
   return (
     <>
       <button className="vip-button" onClick={() => setShowModal(true)}>
-        💎 成为 VIP
+        💎 {t('buyVip')}
       </button>
 
       {showModal && (
         <div className="shop-overlay" onClick={() => !purchasing && setShowModal(false)}>
           <div className="shop-modal" onClick={e => e.stopPropagation()}>
-            <h2 className="shop-title">💎 VIP 特权商店</h2>
+            <h2 className="shop-title">💎 {t('vipShop')}</h2>
             
             <div className="vip-benefits">
-              <h3>解锁特权：</h3>
+              <h3>{t('vipBenefits')}:</h3>
               <ul>
-                <li>🏆 黄金零件 - 更轻、更强</li>
-                <li>🚀 黄金引擎 - 2.5倍推力</li>
-                <li>✈️ 黄金机翼 - 2倍升力</li>
-                <li>🎯 障碍缝隙增大 2 倍</li>
-                <li>🛡️ 抗撞击能力大幅提升</li>
+                <li>{t('benefit1')}</li>
+                <li>{t('benefit2')}</li>
+                <li>{t('benefit3')}</li>
+                <li>{t('benefit4')}</li>
               </ul>
-            </div>
-
-            <div className="price-tag">
-              <span className="original-price">¥648</span>
-              <span className="current-price">¥0.00</span>
-              <span className="discount">限时免费体验</span>
             </div>
 
             <button 
@@ -59,10 +53,8 @@ export function VIPShop() {
               onClick={handlePurchase}
               disabled={purchasing}
             >
-              {purchasing ? '处理中...' : '🎁 立即开通'}
+              {purchasing ? '...' : `🎁 ${t('buyVip')}`}
             </button>
-
-            <p className="shop-note">* 这是一个演示功能，不会产生真实扣费</p>
             
             <button className="close-button" onClick={() => setShowModal(false)}>
               ✕

@@ -171,7 +171,7 @@ export function CockpitModel({ isVIP = false }) {
   const clothColor = isVIP ? COLORS.gold : COLORS.fuselageBlue;
   
   return (
-    <group>
+    <group rotation={[0, Math.PI, 0]}>
       {/* 头部 */}
       <group position={[0, 0.25, 0]}>
         {/* 脸 */}

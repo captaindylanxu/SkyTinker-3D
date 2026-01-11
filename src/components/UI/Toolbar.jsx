@@ -1,5 +1,6 @@
 import useGameStore from '../../store/useGameStore';
 import { PART_TYPES, PART_TIERS, PART_STATS, GAME_MODES, PART_LIMITS } from '../../constants/gameConstants';
+import { useI18n } from '../../i18n/useI18n';
 import './Toolbar.css';
 
 export function Toolbar() {
@@ -13,6 +14,7 @@ export function Toolbar() {
     vehicleParts,
     getPartCountByType,
   } = useGameStore();
+  const { t } = useI18n();
 
   if (gameMode !== GAME_MODES.BUILD_MODE) return null;
 
@@ -22,12 +24,12 @@ export function Toolbar() {
   return (
     <div className="toolbar">
       <div className="toolbar-title">
-        零件选择 ({totalParts}/{PART_LIMITS.MAX_TOTAL})
+        {t('parts')} ({totalParts}/{PART_LIMITS.MAX_TOTAL})
       </div>
       
       {/* 普通零件 */}
       <div className="toolbar-section">
-        <div className="section-label">普通零件</div>
+        <div className="section-label">{t('partTiers.normal')}</div>
         <div className="toolbar-items">
           {partTypes.map((type) => {
             const stats = PART_STATS[type][PART_TIERS.NORMAL];
@@ -49,7 +51,7 @@ export function Toolbar() {
                   className="part-preview"
                   style={{ backgroundColor: stats.color }}
                 />
-                <span className="part-name">{stats.name}</span>
+                <span className="part-name">{t(`partTypes.${type}`)}</span>
                 <span className="part-count">{count}/{PART_LIMITS.MAX_PER_TYPE}</span>
               </button>
             );
@@ -60,8 +62,8 @@ export function Toolbar() {
       {/* VIP 零件 */}
       <div className={`toolbar-section vip-section ${!isVIP ? 'locked' : ''}`}>
         <div className="section-label vip-label">
-          👑 VIP 零件
-          {!isVIP && <span className="lock-hint">（需要开通VIP）</span>}
+          👑 {t('partTiers.vip')}
+          {!isVIP && <span className="lock-hint">（{t('buyVip')}）</span>}
         </div>
         <div className="toolbar-items">
           {partTypes.map((type) => {
@@ -86,16 +88,12 @@ export function Toolbar() {
                   className="part-preview vip-preview"
                   style={{ backgroundColor: isVIP ? stats.color : '#444' }}
                 />
-                <span className="part-name">{stats.name}</span>
+                <span className="part-name">{t(`partTypes.${type}`)}</span>
                 <span className="part-count">{count}/{PART_LIMITS.MAX_PER_TYPE}</span>
               </button>
             );
           })}
         </div>
-      </div>
-
-      <div className="toolbar-hint">
-        左键放置 | 右键删除
       </div>
     </div>
   );

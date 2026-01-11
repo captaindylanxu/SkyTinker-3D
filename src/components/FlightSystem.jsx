@@ -8,6 +8,7 @@ import ObstacleManager from './ObstacleManager';
 import SideCamera from './SideCamera';
 import ExplodedParts from './ExplodedParts';
 import ExplosionEffect from './ExplosionEffect';
+import { useSound } from '../hooks/useSound';
 
 // 根据零件类型返回对应的 3D 模型
 function PartModel({ type, tier }) {
@@ -61,8 +62,10 @@ const getPartStats = (type, tier = PART_TIERS.NORMAL) => {
 // Flappy Bird 风格载具
 function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP }) {
   const { addScore, setExploded, setGameOver } = useGameStore();
+  const { playFlap, playCrash, playScore } = useSound();
   const groupRef = useRef();
   const isFlapping = useRef(false);
+  const wasFlapping = useRef(false);
   
   const position = useRef([0, 10, 0]);
   const velocity = useRef([0, 0, 0]);
@@ -76,6 +79,9 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP }
     const handleDown = (e) => {
       if (e.code === 'Space' || e.type === 'mousedown' || e.type === 'touchstart') {
         e.preventDefault();
+        if (!isFlapping.current) {
+          playFlap();
+        }
         isFlapping.current = true;
       }
     };
@@ -101,7 +107,7 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP }
       window.removeEventListener('touchstart', handleDown);
       window.removeEventListener('touchend', handleUp);
     };
-  }, []);
+  }, [playFlap]);
 
   // 计算中心偏移
   const centerOffset = useMemo(() => {
@@ -167,6 +173,7 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP }
     if (speed > collisionThreshold) {
       hasExploded.current = true;
       isFlapping.current = false;
+      playCrash();
       
       const pos = position.current;
       const explodedParts = parts.map(part => ({
@@ -183,7 +190,7 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP }
       
       setTimeout(() => setGameOver(), 1500);
     }
-  }, [parts, centerOffset, collisionThreshold, onExplode, setExploded, setGameOver]);
+  }, [parts, centerOffset, collisionThreshold, onExplode, setExploded, setGameOver, playCrash]);
 
   // 创建复合刚体
   const [, api] = useCompoundBody(() => ({
@@ -236,7 +243,9 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP }
     }
 
     if (currentPos[0] - lastScoreX.current >= 1) {
-      addScore(Math.floor(currentPos[0] - lastScoreX.current));
+      const points = Math.floor(currentPos[0] - lastScoreX.current);
+      addScore(points);
+      if (points > 0) playScore();
       lastScoreX.current = currentPos[0];
     }
 

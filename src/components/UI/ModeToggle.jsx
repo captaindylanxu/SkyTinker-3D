@@ -1,15 +1,20 @@
 import useGameStore from '../../store/useGameStore';
 import { GAME_MODES, PART_TYPES } from '../../constants/gameConstants';
+import { useSound } from '../../hooks/useSound';
+import { useI18n } from '../../i18n/useI18n';
 import './ModeToggle.css';
 
 export function ModeToggle() {
   const { gameMode, toggleGameMode, vehicleParts, score } = useGameStore();
+  const { playModeSwitch } = useSound();
+  const { t } = useI18n();
 
   const isBuildMode = gameMode === GAME_MODES.BUILD_MODE;
   const hasNoParts = vehicleParts.length === 0;
   const hasEngine = vehicleParts.some(p => p.type === PART_TYPES.ENGINE);
 
   const handleClick = () => {
+    playModeSwitch();
     toggleGameMode();
     document.activeElement?.blur();
   };
@@ -20,33 +25,29 @@ export function ModeToggle() {
         className={`toggle-button ${!isBuildMode ? 'flight-mode' : ''}`}
         onClick={handleClick}
         disabled={isBuildMode && hasNoParts}
-        title={hasNoParts && isBuildMode ? '请先放置至少一个零件' : ''}
+        title={hasNoParts && isBuildMode ? t('placePartFirst') : ''}
       >
-        {isBuildMode ? '🚀 开始飞行' : '🔧 停止模拟'}
+        {isBuildMode ? t('startFlight') : t('stopSimulation')}
       </button>
       
       <div className="mode-indicator">
-        {isBuildMode ? '建造模式' : '飞行模式'}
+        {isBuildMode ? t('buildMode') : t('flightMode')}
       </div>
 
       {!isBuildMode && (
         <>
           <div className="score-display">
-            距离: {Math.floor(score)} m
+            {t('distance')}: {Math.floor(score)} {t('meter')}
           </div>
           <div className="controls-hint">
-            {hasEngine ? (
-              <>按住 空格键 或 鼠标 上升</>
-            ) : (
-              <>⚠️ 未安装引擎</>
-            )}
+            {hasEngine ? t('holdToRise') : t('noEngine')}
           </div>
         </>
       )}
       
       {isBuildMode && (
         <div className="parts-count">
-          零件: {vehicleParts.length} | 引擎: {vehicleParts.filter(p => p.type === PART_TYPES.ENGINE).length}
+          {t('parts')}: {vehicleParts.length} | {t('engine')}: {vehicleParts.filter(p => p.type === PART_TYPES.ENGINE).length}
         </div>
       )}
     </div>
