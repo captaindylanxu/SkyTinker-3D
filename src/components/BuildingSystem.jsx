@@ -71,6 +71,7 @@ export function BuildingSystem() {
     removePartAtPosition,
     hasPartAtPosition,
     canAddPart,
+    isDeleteMode,
   } = useGameStore();
 
   const isBuildMode = gameMode === GAME_MODES.BUILD_MODE;
@@ -132,10 +133,19 @@ export function BuildingSystem() {
     setPreviewValid(!isOccupied);
   }, [isBuildMode, hasPartAtPosition]);
 
-  // 处理零件上的点击 - 堆叠放置
+  // 处理零件上的点击 - 堆叠放置或删除
   const handlePartClick = useCallback((event, part) => {
-    if (!isBuildMode || !canAdd) return;
+    if (!isBuildMode) return;
     event.stopPropagation();
+    
+    // 删除模式下点击删除零件
+    if (isDeleteMode) {
+      removePartAtPosition(part.position);
+      playRemove();
+      return;
+    }
+    
+    if (!canAdd) return;
     
     const { face } = event;
     if (!face) return;
@@ -156,7 +166,7 @@ export function BuildingSystem() {
       rotation: [0, 0, 0],
     });
     playPlace();
-  }, [isBuildMode, selectedPartType, selectedPartTier, addPart, hasPartAtPosition, canAdd, playPlace]);
+  }, [isBuildMode, isDeleteMode, selectedPartType, selectedPartTier, addPart, hasPartAtPosition, canAdd, playPlace, removePartAtPosition, playRemove]);
 
   // 处理右键点击 - 删除零件
   const handlePartContextMenu = useCallback((event, part) => {
@@ -196,8 +206,8 @@ export function BuildingSystem() {
         />
       ))}
       
-      {/* 预览零件 */}
-      {previewPosition && canAdd && (
+      {/* 预览零件（非删除模式下显示） */}
+      {previewPosition && canAdd && !isDeleteMode && (
         <PreviewPart 
           type={selectedPartType} 
           tier={selectedPartTier}

@@ -7,11 +7,12 @@ export const LOCALES = {
     flightMode: '飞行模式',
     distance: '距离',
     meter: 'm',
-    holdToRise: '按住 空格键 或 鼠标 上升',
+    holdToRise: '按住 空格键 或 屏幕 上升',
     noEngine: '⚠️ 未安装引擎',
     parts: '零件',
     engine: '引擎',
     placePartFirst: '请先放置至少一个零件',
+    deleteMode: '删除模式',
     
     // 工具栏
     partTypes: {
@@ -52,11 +53,12 @@ export const LOCALES = {
     flightMode: '飛行模式',
     distance: '距離',
     meter: 'm',
-    holdToRise: '按住 空白鍵 或 滑鼠 上升',
+    holdToRise: '按住 空白鍵 或 螢幕 上升',
     noEngine: '⚠️ 未安裝引擎',
     parts: '零件',
     engine: '引擎',
     placePartFirst: '請先放置至少一個零件',
+    deleteMode: '刪除模式',
     
     partTypes: {
       Fuselage: '機身',
@@ -94,11 +96,12 @@ export const LOCALES = {
     flightMode: 'Flight Mode',
     distance: 'Distance',
     meter: 'm',
-    holdToRise: 'Hold SPACE or MOUSE to rise',
+    holdToRise: 'Hold SPACE or TAP to rise',
     noEngine: '⚠️ No engine installed',
     parts: 'Parts',
     engine: 'Engine',
     placePartFirst: 'Place at least one part first',
+    deleteMode: 'Delete',
     
     partTypes: {
       Fuselage: 'Fuselage',
@@ -136,11 +139,12 @@ export const LOCALES = {
     flightMode: '飛行モード',
     distance: '距離',
     meter: 'm',
-    holdToRise: 'スペース または マウス 長押しで上昇',
+    holdToRise: 'スペース または タップ 長押しで上昇',
     noEngine: '⚠️ エンジン未搭載',
     parts: 'パーツ',
     engine: 'エンジン',
     placePartFirst: '最低1つのパーツを配置してください',
+    deleteMode: '削除',
     
     partTypes: {
       Fuselage: '機体',
@@ -178,11 +182,12 @@ export const LOCALES = {
     flightMode: '비행 모드',
     distance: '거리',
     meter: 'm',
-    holdToRise: '스페이스 또는 마우스를 눌러 상승',
+    holdToRise: '스페이스 또는 화면을 눌러 상승',
     noEngine: '⚠️ 엔진 미설치',
     parts: '부품',
     engine: '엔진',
     placePartFirst: '최소 하나의 부품을 배치하세요',
+    deleteMode: '삭제',
     
     partTypes: {
       Fuselage: '동체',
@@ -220,11 +225,12 @@ export const LOCALES = {
     flightMode: 'Flugmodus',
     distance: 'Distanz',
     meter: 'm',
-    holdToRise: 'LEERTASTE oder MAUS gedrückt halten zum Steigen',
+    holdToRise: 'LEERTASTE oder TIPPEN zum Steigen',
     noEngine: '⚠️ Kein Motor installiert',
     parts: 'Teile',
     engine: 'Motor',
     placePartFirst: 'Bitte zuerst mindestens ein Teil platzieren',
+    deleteMode: 'Löschen',
     
     partTypes: {
       Fuselage: 'Rumpf',
@@ -262,11 +268,12 @@ export const LOCALES = {
     flightMode: 'Режим полёта',
     distance: 'Расстояние',
     meter: 'м',
-    holdToRise: 'Удерживайте ПРОБЕЛ или МЫШЬ для подъёма',
+    holdToRise: 'Удерживайте ПРОБЕЛ или ЭКРАН для подъёма',
     noEngine: '⚠️ Двигатель не установлен',
     parts: 'Детали',
     engine: 'Двигатель',
     placePartFirst: 'Сначала разместите хотя бы одну деталь',
+    deleteMode: 'Удалить',
     
     partTypes: {
       Fuselage: 'Фюзеляж',
@@ -304,11 +311,12 @@ export const LOCALES = {
     flightMode: 'Mode vol',
     distance: 'Distance',
     meter: 'm',
-    holdToRise: 'Maintenez ESPACE ou SOURIS pour monter',
+    holdToRise: 'Maintenez ESPACE ou TOUCHEZ pour monter',
     noEngine: '⚠️ Pas de moteur installé',
     parts: 'Pièces',
     engine: 'Moteur',
     placePartFirst: 'Placez au moins une pièce d\'abord',
+    deleteMode: 'Supprimer',
     
     partTypes: {
       Fuselage: 'Fuselage',

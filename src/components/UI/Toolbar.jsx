@@ -13,6 +13,8 @@ export function Toolbar() {
     isVIP,
     vehicleParts,
     getPartCountByType,
+    isDeleteMode,
+    setDeleteMode,
   } = useGameStore();
   const { t } = useI18n();
 
@@ -27,13 +29,21 @@ export function Toolbar() {
         {t('parts')} ({totalParts}/{PART_LIMITS.MAX_TOTAL})
       </div>
       
+      {/* 删除模式按钮 */}
+      <button
+        className={`delete-mode-btn ${isDeleteMode ? 'active' : ''}`}
+        onClick={() => setDeleteMode(!isDeleteMode)}
+      >
+        🗑️ {t('deleteMode')} {isDeleteMode ? '✓' : ''}
+      </button>
+      
       {/* 普通零件 */}
       <div className="toolbar-section">
         <div className="section-label">{t('partTiers.normal')}</div>
         <div className="toolbar-items">
           {partTypes.map((type) => {
             const stats = PART_STATS[type][PART_TIERS.NORMAL];
-            const isSelected = selectedPartType === type && selectedPartTier === PART_TIERS.NORMAL;
+            const isSelected = selectedPartType === type && selectedPartTier === PART_TIERS.NORMAL && !isDeleteMode;
             const count = getPartCountByType(type);
             const isMaxed = count >= PART_LIMITS.MAX_PER_TYPE || totalParts >= PART_LIMITS.MAX_TOTAL;
             
@@ -43,6 +53,7 @@ export function Toolbar() {
                 className={`toolbar-item ${isSelected ? 'active' : ''} ${isMaxed ? 'maxed' : ''}`}
                 style={{ '--part-color': stats.color }}
                 onClick={() => {
+                  setDeleteMode(false);
                   setSelectedPartType(type);
                   setSelectedPartTier(PART_TIERS.NORMAL);
                 }}
@@ -68,7 +79,7 @@ export function Toolbar() {
         <div className="toolbar-items">
           {partTypes.map((type) => {
             const stats = PART_STATS[type][PART_TIERS.VIP];
-            const isSelected = selectedPartType === type && selectedPartTier === PART_TIERS.VIP;
+            const isSelected = selectedPartType === type && selectedPartTier === PART_TIERS.VIP && !isDeleteMode;
             const count = getPartCountByType(type);
             const isMaxed = count >= PART_LIMITS.MAX_PER_TYPE || totalParts >= PART_LIMITS.MAX_TOTAL;
             
@@ -79,6 +90,7 @@ export function Toolbar() {
                 style={{ '--part-color': stats.color }}
                 onClick={() => {
                   if (!isVIP) return;
+                  setDeleteMode(false);
                   setSelectedPartType(type);
                   setSelectedPartTier(PART_TIERS.VIP);
                 }}

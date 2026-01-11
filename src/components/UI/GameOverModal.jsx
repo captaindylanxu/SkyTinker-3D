@@ -8,8 +8,14 @@ export function GameOverModal() {
 
   if (!isGameOver) return null;
 
+  const handleRestart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    resetGame();
+  };
+
   return (
-    <div className="game-over-overlay">
+    <div className="game-over-overlay" onClick={(e) => e.stopPropagation()}>
       <div className="game-over-modal">
         <h1 className="game-over-title">💥 {t('gameOver')}</h1>
         
@@ -18,7 +24,11 @@ export function GameOverModal() {
           <span className="score-value">{Math.floor(score)} {t('meter')}</span>
         </div>
 
-        <button className="restart-button" onClick={resetGame}>
+        <button 
+          className="restart-button" 
+          onClick={handleRestart}
+          onTouchEnd={handleRestart}
+        >
           🔄 {t('backToBuild')}
         </button>
       </div>

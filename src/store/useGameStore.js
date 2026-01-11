@@ -43,6 +43,10 @@ const useGameStore = create((set, get) => ({
   setSelectedPartType: (type) => set({ selectedPartType: type }),
   setSelectedPartTier: (tier) => set({ selectedPartTier: tier }),
 
+  // 删除模式（手机端用）
+  isDeleteMode: false,
+  setDeleteMode: (value) => set({ isDeleteMode: value }),
+
   // 载具零件数组
   vehicleParts: [],
   

@@ -93,3 +93,29 @@
   font-size: 12px;
   color: #718096;
 }
+
+
+/* 手机端适配 */
+@media (max-width: 768px) {
+  .game-over-modal {
+    padding: 30px 40px;
+    margin: 20px;
+  }
+  
+  .game-over-title {
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+  
+  .score-value {
+    font-size: 40px;
+  }
+  
+  .restart-button {
+    padding: 14px 36px;
+    font-size: 16px;
+    /* 确保触摸事件正常工作 */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
