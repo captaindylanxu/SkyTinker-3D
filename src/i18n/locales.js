@@ -31,6 +31,8 @@ export const LOCALES = {
     // 游戏结束
     gameOver: '游戏结束',
     finalScore: '最终距离',
+    highScore: '最高纪录',
+    newRecord: '🎉 新纪录！',
     backToBuild: '返回建造',
     
     // VIP商店
@@ -75,6 +77,8 @@ export const LOCALES = {
     
     gameOver: '遊戲結束',
     finalScore: '最終距離',
+    highScore: '最高紀錄',
+    newRecord: '🎉 新紀錄！',
     backToBuild: '返回建造',
     
     vipShop: 'VIP 商店',
@@ -118,6 +122,8 @@ export const LOCALES = {
     
     gameOver: 'Game Over',
     finalScore: 'Final Distance',
+    highScore: 'Best Record',
+    newRecord: '🎉 New Record!',
     backToBuild: 'Back to Build',
     
     vipShop: 'VIP Shop',
@@ -161,6 +167,8 @@ export const LOCALES = {
     
     gameOver: 'ゲームオーバー',
     finalScore: '最終距離',
+    highScore: '最高記録',
+    newRecord: '🎉 新記録！',
     backToBuild: '建造に戻る',
     
     vipShop: 'VIPショップ',
@@ -204,6 +212,8 @@ export const LOCALES = {
     
     gameOver: '게임 오버',
     finalScore: '최종 거리',
+    highScore: '최고 기록',
+    newRecord: '🎉 신기록!',
     backToBuild: '건설로 돌아가기',
     
     vipShop: 'VIP 상점',
@@ -247,6 +257,8 @@ export const LOCALES = {
     
     gameOver: 'Spiel vorbei',
     finalScore: 'Enddistanz',
+    highScore: 'Bestleistung',
+    newRecord: '🎉 Neuer Rekord!',
     backToBuild: 'Zurück zum Bauen',
     
     vipShop: 'VIP-Shop',
@@ -290,6 +302,8 @@ export const LOCALES = {
     
     gameOver: 'Игра окончена',
     finalScore: 'Итоговое расстояние',
+    highScore: 'Лучший результат',
+    newRecord: '🎉 Новый рекорд!',
     backToBuild: 'Вернуться к строительству',
     
     vipShop: 'VIP-магазин',
@@ -333,6 +347,8 @@ export const LOCALES = {
     
     gameOver: 'Fin de partie',
     finalScore: 'Distance finale',
+    highScore: 'Meilleur score',
+    newRecord: '🎉 Nouveau record!',
     backToBuild: 'Retour à la construction',
     
     vipShop: 'Boutique VIP',

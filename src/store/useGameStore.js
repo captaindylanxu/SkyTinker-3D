@@ -1,6 +1,25 @@
 import { create } from 'zustand';
 import { GAME_MODES, PART_TYPES, PART_TIERS, PART_LIMITS } from '../constants/gameConstants';
 
+// 从 localStorage 读取最高分
+const getStoredHighScore = () => {
+  try {
+    const stored = localStorage.getItem('flappy-vehicle-highscore');
+    return stored ? parseInt(stored, 10) : 0;
+  } catch {
+    return 0;
+  }
+};
+
+// 保存最高分到 localStorage
+const saveHighScore = (score) => {
+  try {
+    localStorage.setItem('flappy-vehicle-highscore', String(score));
+  } catch {
+    // localStorage 不可用时静默失败
+  }
+};
+
 const useGameStore = create((set, get) => ({
   // VIP 状态
   isVIP: false,
@@ -22,7 +41,10 @@ const useGameStore = create((set, get) => ({
   isGameOver: false,
   isExploded: false,
   
-  setGameOver: () => set({ isGameOver: true }),
+  setGameOver: () => {
+    get().updateHighScore();
+    set({ isGameOver: true });
+  },
   setExploded: () => set({ isExploded: true }),
   
   resetGame: () => set({
@@ -34,8 +56,18 @@ const useGameStore = create((set, get) => ({
 
   // 分数
   score: 0,
+  highScore: getStoredHighScore(),
   addScore: (points = 1) => set((state) => ({ score: state.score + points })),
   resetScore: () => set({ score: 0 }),
+  
+  // 更新最高分
+  updateHighScore: () => {
+    const { score, highScore } = get();
+    if (score > highScore) {
+      saveHighScore(score);
+      set({ highScore: score });
+    }
+  },
 
   // 当前选择的零件类型和等级
   selectedPartType: PART_TYPES.FUSELAGE,
