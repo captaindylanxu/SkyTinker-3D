@@ -62,30 +62,62 @@ vercel --prod
 
 部署完成后：
 
-1. 打开部署的网站
-2. 打开浏览器开发者工具（F12）
-3. 查看 Console 标签
-4. 应该看到：
+1. **打开部署的网站主页**（不是 env-test.html）
+2. **打开浏览器开发者工具**
+   - Windows/Linux: F12 或 Ctrl+Shift+I
+   - Mac: Cmd+Option+I
+3. **查看 Console 标签**
+4. **应该看到以下日志**：
    ```
-   Supabase Config: {
+   🔧 Supabase Config: {
      url: "https://zwtxjoamnjhuveaxwlbv...",
      keyLength: 267,
-     keyPrefix: "eyJhbGciOi..."
+     keyPrefix: "eyJhbGciOi...",
+     envMode: "production",
+     isDev: false,
+     isProd: true
    }
-   Supabase configured: true
+   ✅ Supabase configured: true
    ```
+
+5. **如果看到错误**：
+   ```
+   🔧 Supabase Config: {
+     url: "❌ NOT SET",
+     keyLength: 0,
+     keyPrefix: "❌ NOT SET",
+     ...
+   }
+   ✅ Supabase configured: false
+   ⚠️ Supabase is not configured. Please check environment variables:
+      - VITE_SUPABASE_URL: ✗ Missing
+      - VITE_SUPABASE_ANON_KEY: ✗ Missing
+   ```
+   说明环境变量没有生效，需要重新部署。
 
 ## 🔍 调试步骤
 
-### 检查环境变量是否生效
+### 方法 1：查看主应用控制台（推荐）
+
+1. 打开部署的网站主页
+2. 打开浏览器开发者工具（F12）
+3. 查看 Console 标签
+4. 寻找 `🔧 Supabase Config` 和 `✅ Supabase configured` 日志
+5. 如果显示 `false` 和警告信息，说明环境变量未生效
+
+### 方法 2：在控制台手动检查
+
+**注意**：以下命令只能在主应用页面的控制台运行，不能在普通 HTML 页面运行。
 
 在部署的网站控制台中运行：
 
 ```javascript
-// 检查环境变量
+// 这些命令只在主应用页面有效
 console.log('URL:', import.meta.env.VITE_SUPABASE_URL);
 console.log('Key length:', import.meta.env.VITE_SUPABASE_ANON_KEY?.length);
 ```
+
+**如果显示 `undefined`**，说明环境变量没有在构建时注入，需要重新部署。
 
 ### 如果仍然显示 undefined
 

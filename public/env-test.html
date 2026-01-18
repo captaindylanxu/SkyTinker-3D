@@ -59,100 +59,67 @@
     
     <div id="results"></div>
 
-    <script type="module">
-        const results = document.getElementById('results');
-        
-        // 检查环境变量
-        const checks = [
-            {
-                name: 'VITE_SUPABASE_URL',
-                value: import.meta.env.VITE_SUPABASE_URL,
-                expected: 'https://zwtxjoamnjhuveaxwlbv.supabase.co',
-            },
-            {
-                name: 'VITE_SUPABASE_ANON_KEY',
-                value: import.meta.env.VITE_SUPABASE_ANON_KEY,
-                expected: '以 eyJ 开头的长字符串',
-            },
-        ];
+    <div class="status warning">
+        <h3>⚠️ 注意</h3>
+        <p>由于 Vite 的环境变量在构建时被替换，这个静态 HTML 页面无法直接访问它们。</p>
+        <p><strong>请使用以下方法检查环境变量：</strong></p>
+        <ol>
+            <li>打开主应用页面（不是这个测试页面）</li>
+            <li>打开浏览器开发者工具（F12 或 Cmd+Option+I）</li>
+            <li>查看 Console 标签</li>
+            <li>寻找以下日志：
+                <pre>🔧 Supabase Config: { ... }
+✅ Supabase configured: true/false</pre>
+            </li>
+        </ol>
+    </div>
 
-        let allPassed = true;
+    <div class="status info">
+        <h3>📋 如何在控制台手动检查</h3>
+        <p>在主应用页面的控制台中运行以下命令（这些命令在这个页面不起作用）：</p>
+        <pre>// 这些命令只能在主应用页面使用
+// 不能在这个 HTML 页面使用
 
-        checks.forEach(check => {
-            const div = document.createElement('div');
-            div.className = 'check-item';
-            
-            if (check.value) {
-                const isUrl = check.name.includes('URL');
-                const displayValue = isUrl 
-                    ? check.value 
-                    : `${check.value.substring(0, 20)}... (长度: ${check.value.length})`;
-                
-                const matches = isUrl 
-                    ? check.value === check.expected
-                    : check.value.startsWith('eyJ');
-                
-                if (matches) {
-                    div.innerHTML = `✅ <strong>${check.name}</strong>: ${displayValue}`;
-                } else {
-                    div.innerHTML = `⚠️ <strong>${check.name}</strong>: ${displayValue}<br><small>期望: ${check.expected}</small>`;
-                    allPassed = false;
-                }
-            } else {
-                div.innerHTML = `❌ <strong>${check.name}</strong>: 未设置`;
-                allPassed = false;
-            }
-            
-            results.appendChild(div);
-        });
+// 在主应用页面控制台运行：
+import.meta.env.VITE_SUPABASE_URL
+import.meta.env.VITE_SUPABASE_ANON_KEY</pre>
+    </div>
 
-        // 总结
-        const summary = document.createElement('div');
-        summary.className = `status ${allPassed ? 'success' : 'error'}`;
-        
-        if (allPassed) {
-            summary.innerHTML = `
-                <h2>✅ 环境变量配置正确！</h2>
-                <p>所有必需的环境变量都已正确设置。Supabase 应该可以正常工作。</p>
-            `;
-        } else {
-            summary.innerHTML = `
-                <h2>❌ 环境变量配置有问题</h2>
-                <p>请按照以下步骤修复：</p>
-                <ol>
-                    <li>在 Vercel Dashboard 中检查环境变量设置</li>
-                    <li>确保变量名称正确（必须有 VITE_ 前缀）</li>
-                    <li>确保变量值正确（无空格、无换行）</li>
-                    <li>确保应用到了 Production 环境</li>
-                    <li><strong>清除构建缓存并重新部署</strong></li>
-                </ol>
-            `;
-        }
-        
-        results.insertBefore(summary, results.firstChild);
+    <div class="status info">
+        <h3>🔧 Vercel 部署检查清单</h3>
+        <div class="check-item">
+            <strong>1. 环境变量名称</strong><br>
+            ✓ VITE_SUPABASE_URL<br>
+            ✓ VITE_SUPABASE_ANON_KEY<br>
+            <small>（必须有 VITE_ 前缀）</small>
+        </div>
+        <div class="check-item">
+            <strong>2. 环境变量值</strong><br>
+            ✓ URL: https://zwtxjoamnjhuveaxwlbv.supabase.co<br>
+            ✓ Key: 以 eyJ 开头的长字符串（约 267 个字符）<br>
+            <small>（确保没有多余的空格或换行）</small>
+        </div>
+        <div class="check-item">
+            <strong>3. 应用环境</strong><br>
+            ✓ Production<br>
+            ✓ Preview<br>
+            ✓ Development<br>
+            <small>（全部勾选）</small>
+        </div>
+        <div class="check-item">
+            <strong>4. 重新部署</strong><br>
+            ⚠️ <strong>最重要！</strong>环境变量更改后必须重新部署<br>
+            ✓ 取消勾选 "Use existing Build Cache"<br>
+            ✓ 点击 "Redeploy"<br>
+            <small>（等待 1-2 分钟部署完成）</small>
+        </div>
+    </div>
 
-        // 显示所有环境变量（调试用）
-        const envDiv = document.createElement('div');
-        envDiv.className = 'status info';
-        envDiv.innerHTML = `
-            <h3>📋 环境信息</h3>
-            <pre>${JSON.stringify({
-                MODE: import.meta.env.MODE,
-                DEV: import.meta.env.DEV,
-                PROD: import.meta.env.PROD,
-                BASE_URL: import.meta.env.BASE_URL,
-            }, null, 2)}</pre>
-        `;
-        results.appendChild(envDiv);
-
-        // 控制台输出
-        console.log('🔍 Environment Variables Check:');
-        checks.forEach(check => {
-            console.log(`${check.name}:`, check.value ? '✓ Set' : '✗ Missing');
-            if (check.value) {
-                console.log(`  Value: ${check.value.substring(0, 30)}...`);
-            }
-        });
+    <script>
+        // 简单的说明页面，不需要访问环境变量
+        console.log('📄 这是一个静态说明页面');
+        console.log('💡 请访问主应用页面查看实际的环境变量配置');
+        console.log('🔗 主应用地址：', window.location.origin);
     </script>
 </body>
 </html>
