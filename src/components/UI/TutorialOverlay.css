@@ -1,0 +1,335 @@
+/* 遮罩层 - 完全不阻止交互 */
+.tutorial-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1800;
+  animation: fadeIn 0.3s ease;
+}
+
+/* 半透明背景 - 不阻止交互 */
+.tutorial-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+/* 高亮区域 - 完全不阻止点击穿透 */
+.tutorial-highlight {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1801;
+  border: 3px solid #fbbf24;
+  border-radius: 12px;
+  background: transparent;
+  animation: pulse 2s ease-in-out infinite;
+  transition: all 0.3s ease;
+}
+
+.tutorial-highlight::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+  border: 2px solid rgba(251, 191, 36, 0.5);
+  border-radius: 16px;
+  animation: glow 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.5), inset 0 0 20px rgba(251, 191, 36, 0.1);
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(251, 191, 36, 0.8), inset 0 0 30px rgba(251, 191, 36, 0.2);
+  }
+}
+
+@keyframes glow {
+  0%, 100% { 
+    opacity: 0.5;
+  }
+  50% { 
+    opacity: 1;
+  }
+}
+
+/* 教程卡片 - 固定在右侧或底部 */
+.tutorial-card {
+  position: fixed;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 20px;
+  padding: 24px;
+  max-width: 380px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  border: 2px solid #fbbf24;
+  z-index: 1900;
+  pointer-events: auto;
+  animation: slideIn 0.4s ease;
+}
+
+/* 默认位置：右侧中间 */
+.tutorial-card {
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* 有高亮时：根据高亮位置调整卡片位置 */
+.tutorial-card.with-highlight {
+  /* 默认右侧 */
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* 当高亮在底部时（工具栏），卡片移到右上角 */
+.tutorial-card.highlight-bottom {
+  right: 20px;
+  top: 100px;
+  transform: none;
+}
+
+/* 当高亮在顶部时（开始飞行按钮），卡片移到右下角 */
+.tutorial-card.highlight-top {
+  right: 20px;
+  bottom: 100px;
+  top: auto;
+  transform: none;
+}
+
+/* 当高亮在中间时（画布），卡片移到左侧 */
+.tutorial-card.highlight-center {
+  left: 20px;
+  right: auto;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+.tutorial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.tutorial-progress {
+  font-size: 12px;
+  color: #fbbf24;
+  font-weight: 600;
+  background: rgba(251, 191, 36, 0.15);
+  padding: 4px 12px;
+  border-radius: 12px;
+}
+
+.tutorial-skip {
+  font-size: 12px;
+  color: #a0aec0;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 4px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tutorial-skip:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
+}
+
+.tutorial-title {
+  font-size: 20px;
+  color: #fff;
+  margin: 0 0 10px 0;
+  font-weight: 600;
+}
+
+.tutorial-desc {
+  font-size: 14px;
+  color: #cbd5e0;
+  line-height: 1.6;
+  margin: 0 0 16px 0;
+}
+
+.tutorial-encouragement {
+  padding: 10px 14px;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(251, 191, 36, 0.05) 100%);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 10px;
+  color: #fbbf24;
+  font-size: 13px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.tutorial-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.tutorial-btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tutorial-btn.primary {
+  color: white;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+  flex: 1;
+}
+
+.tutorial-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(251, 191, 36, 0.5);
+}
+
+.tutorial-btn.secondary {
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tutorial-btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.tutorial-waiting {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fbbf24;
+  font-size: 13px;
+  padding: 10px 16px;
+  background: rgba(251, 191, 36, 0.1);
+  border-radius: 10px;
+  flex: 1;
+  justify-content: center;
+}
+
+.tutorial-spinner {
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(251, 191, 36, 0.3);
+  border-top-color: #fbbf24;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.tutorial-encouragement-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 32px;
+  color: #fbbf24;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  padding: 30px 50px;
+  border-radius: 20px;
+  border: 2px solid #fbbf24;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  z-index: 2000;
+  animation: popIn 0.5s ease;
+  pointer-events: none;
+}
+
+@keyframes popIn {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .tutorial-card {
+    max-width: 90%;
+    padding: 20px;
+    /* 移动端固定在底部 */
+    left: 50% !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: 20px !important;
+    transform: translateX(-50%) !important;
+  }
+
+  .tutorial-title {
+    font-size: 18px;
+  }
+
+  .tutorial-desc {
+    font-size: 13px;
+  }
+
+  .tutorial-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .tutorial-encouragement-popup {
+    font-size: 24px;
+    padding: 20px 30px;
+  }
+
+}
+
+/* 超小屏幕 */
+@media (max-width: 480px) {
+  .tutorial-card {
+    padding: 16px;
+  }
+
+  .tutorial-title {
+    font-size: 16px;
+  }
+
+  .tutorial-desc {
+    font-size: 12px;
+  }
+}

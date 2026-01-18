@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { GAME_MODES, PART_TYPES, PART_TIERS, PART_LIMITS } from '../constants/gameConstants';
 
 // 从 localStorage 读取最高分
@@ -20,10 +21,56 @@ const saveHighScore = (score) => {
   }
 };
 
-const useGameStore = create((set, get) => ({
+const useGameStore = create(
+  persist(
+    (set, get) => ({
   // VIP 状态
   isVIP: false,
   setVIP: (value) => set({ isVIP: value }),
+  
+  // 玩家信息
+  playerId: null,
+  playerName: null,
+  hasCompletedOnboarding: false,
+  
+  setPlayerInfo: (playerId, playerName) => set({ 
+    playerId, 
+    playerName,
+    hasCompletedOnboarding: true,
+  }),
+  
+  skipOnboarding: () => set({ hasCompletedOnboarding: true }),
+  
+  // 教程系统
+  tutorialStep: 0, // -1 表示已完成或跳过，0+ 表示当前步骤
+  
+  setTutorialStep: (step) => set({ tutorialStep: step }),
+  
+  completeTutorial: () => {
+    console.log('🎓 completeTutorial called');
+    const newState = { 
+      tutorialStep: -1,
+      gameMode: GAME_MODES.BUILD_MODE,
+      isGameOver: false,
+      isExploded: false,
+    };
+    console.log('🎓 Setting state:', newState);
+    set(newState);
+    console.log('🎓 State after set:', get().tutorialStep, get().gameMode);
+  },
+  
+  skipTutorial: () => {
+    console.log('⏭️ skipTutorial called');
+    const newState = { 
+      tutorialStep: -1,
+      gameMode: GAME_MODES.BUILD_MODE,
+      isGameOver: false,
+      isExploded: false,
+    };
+    console.log('⏭️ Setting state:', newState);
+    set(newState);
+    console.log('⏭️ State after set:', get().tutorialStep, get().gameMode);
+  },
   
   // 游戏模式
   gameMode: GAME_MODES.BUILD_MODE,
@@ -138,6 +185,18 @@ const useGameStore = create((set, get) => ({
              p.position[2] === position[2]
     );
   },
-}));
+}),
+    {
+      name: 'flappy-vehicle-storage',
+      partialize: (state) => ({
+        playerId: state.playerId,
+        playerName: state.playerName,
+        hasCompletedOnboarding: state.hasCompletedOnboarding,
+        tutorialStep: state.tutorialStep,
+        isVIP: state.isVIP,
+      }),
+    }
+  )
+);
 
 export default useGameStore;
