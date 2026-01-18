@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>环境变量测试</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .status {
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .success {
+            background: #10b981;
+        }
+        .error {
+            background: #ef4444;
+        }
+        .warning {
+            background: #f59e0b;
+        }
+        .info {
+            background: #3b82f6;
+        }
+        code {
+            background: rgba(255,255,255,0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        pre {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        h1 {
+            color: #60a5fa;
+        }
+        .check-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 环境变量测试页面</h1>
+    <p>这个页面帮助你检查 Vercel 部署后的环境变量是否正确配置。</p>
+    
+    <div id="results"></div>
+
+    <script type="module">
+        const results = document.getElementById('results');
+        
+        // 检查环境变量
+        const checks = [
+            {
+                name: 'VITE_SUPABASE_URL',
+                value: import.meta.env.VITE_SUPABASE_URL,
+                expected: 'https://zwtxjoamnjhuveaxwlbv.supabase.co',
+            },
+            {
+                name: 'VITE_SUPABASE_ANON_KEY',
+                value: import.meta.env.VITE_SUPABASE_ANON_KEY,
+                expected: '以 eyJ 开头的长字符串',
+            },
+        ];
+
+        let allPassed = true;
+
+        checks.forEach(check => {
+            const div = document.createElement('div');
+            div.className = 'check-item';
+            
+            if (check.value) {
+                const isUrl = check.name.includes('URL');
+                const displayValue = isUrl 
+                    ? check.value 
+                    : `${check.value.substring(0, 20)}... (长度: ${check.value.length})`;
+                
+                const matches = isUrl 
+                    ? check.value === check.expected
+                    : check.value.startsWith('eyJ');
+                
+                if (matches) {
+                    div.innerHTML = `✅ <strong>${check.name}</strong>: ${displayValue}`;
+                } else {
+                    div.innerHTML = `⚠️ <strong>${check.name}</strong>: ${displayValue}<br><small>期望: ${check.expected}</small>`;
+                    allPassed = false;
+                }
+            } else {
+                div.innerHTML = `❌ <strong>${check.name}</strong>: 未设置`;
+                allPassed = false;
+            }
+            
+            results.appendChild(div);
+        });
+
+        // 总结
+        const summary = document.createElement('div');
+        summary.className = `status ${allPassed ? 'success' : 'error'}`;
+        
+        if (allPassed) {
+            summary.innerHTML = `
+                <h2>✅ 环境变量配置正确！</h2>
+                <p>所有必需的环境变量都已正确设置。Supabase 应该可以正常工作。</p>
+            `;
+        } else {
+            summary.innerHTML = `
+                <h2>❌ 环境变量配置有问题</h2>
+                <p>请按照以下步骤修复：</p>
+                <ol>
+                    <li>在 Vercel Dashboard 中检查环境变量设置</li>
+                    <li>确保变量名称正确（必须有 VITE_ 前缀）</li>
+                    <li>确保变量值正确（无空格、无换行）</li>
+                    <li>确保应用到了 Production 环境</li>
+                    <li><strong>清除构建缓存并重新部署</strong></li>
+                </ol>
+            `;
+        }
+        
+        results.insertBefore(summary, results.firstChild);
+
+        // 显示所有环境变量（调试用）
+        const envDiv = document.createElement('div');
+        envDiv.className = 'status info';
+        envDiv.innerHTML = `
+            <h3>📋 环境信息</h3>
+            <pre>${JSON.stringify({
+                MODE: import.meta.env.MODE,
+                DEV: import.meta.env.DEV,
+                PROD: import.meta.env.PROD,
+                BASE_URL: import.meta.env.BASE_URL,
+            }, null, 2)}</pre>
+        `;
+        results.appendChild(envDiv);
+
+        // 控制台输出
+        console.log('🔍 Environment Variables Check:');
+        checks.forEach(check => {
+            console.log(`${check.name}:`, check.value ? '✓ Set' : '✗ Missing');
+            if (check.value) {
+                console.log(`  Value: ${check.value.substring(0, 30)}...`);
+            }
+        });
+    </script>
+</body>
+</html>
