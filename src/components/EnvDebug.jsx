@@ -1,7 +1,16 @@
 // 环境变量调试组件
 export function EnvDebug() {
-  const url = import.meta.env.VITE_SUPABASE_URL;
-  const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
+  // 检查 import.meta.env
+  const envUrl = import.meta.env.VITE_SUPABASE_URL;
+  const envKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+  
+  // 检查全局变量（由 vite define 注入）
+  const globalUrl = typeof __SUPABASE_URL__ !== 'undefined' ? __SUPABASE_URL__ : null;
+  const globalKey = typeof __SUPABASE_ANON_KEY__ !== 'undefined' ? __SUPABASE_ANON_KEY__ : null;
+  
+  // 使用的实际值
+  const url = globalUrl || envUrl;
+  const key = globalKey || envKey;
   
   // 硬编码的值用于对比
   const EXPECTED_URL = 'https://zwtxjoamnjhuveaxwlbv.supabase.co';
@@ -31,6 +40,10 @@ export function EnvDebug() {
       
       <div style={{ marginBottom: '8px' }}>
         <strong>MODE:</strong> {import.meta.env.MODE}
+      </div>
+      
+      <div style={{ marginBottom: '8px', fontSize: '10px', opacity: 0.7 }}>
+        <strong>来源:</strong> {globalUrl ? '全局变量 (define)' : envUrl ? 'import.meta.env' : '未设置'}
       </div>
       
       <div style={{ marginBottom: '8px' }}>

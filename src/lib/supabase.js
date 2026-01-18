@@ -1,11 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 
-// 调试：打印所有 import.meta.env
-console.log('🔍 All import.meta.env:', import.meta.env);
-
-// 从环境变量读取配置
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+// 使用全局变量（由 vite.config.js 的 define 注入）
+// 如果全局变量不存在，回退到 import.meta.env
+const supabaseUrl = typeof __SUPABASE_URL__ !== 'undefined' ? __SUPABASE_URL__ : (import.meta.env.VITE_SUPABASE_URL || '');
+const supabaseAnonKey = typeof __SUPABASE_ANON_KEY__ !== 'undefined' ? __SUPABASE_ANON_KEY__ : (import.meta.env.VITE_SUPABASE_ANON_KEY || '');
 
 // 调试信息
 console.log('🔧 Supabase Config:', {
@@ -17,6 +15,7 @@ console.log('🔧 Supabase Config:', {
   envMode: import.meta.env.MODE,
   isDev: import.meta.env.DEV,
   isProd: import.meta.env.PROD,
+  usingGlobalVars: typeof __SUPABASE_URL__ !== 'undefined',
 });
 
 // 创建 Supabase 客户端
