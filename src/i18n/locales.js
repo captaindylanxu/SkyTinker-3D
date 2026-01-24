@@ -14,6 +14,13 @@ export const LOCALES = {
     placePartFirst: '请先放置至少一个零件',
     deleteMode: '删除模式',
     
+    // 警告提示
+    warnings: {
+      disconnected: '有零件未连接！',
+      noEngine: '需要引擎才能飞行！',
+      noCockpit: '需要驾驶座才能飞行！',
+    },
+    
     // 工具栏
     partTypes: {
       Fuselage: '机身',
@@ -133,6 +140,13 @@ export const LOCALES = {
     placePartFirst: '請先放置至少一個零件',
     deleteMode: '刪除模式',
     
+    // 警告提示
+    warnings: {
+      disconnected: '有零件未連接！',
+      noEngine: '需要引擎才能飛行！',
+      noCockpit: '需要駕駛座才能飛行！',
+    },
+    
     partTypes: {
       Fuselage: '機身',
       Wing: '機翼',
@@ -245,6 +259,13 @@ export const LOCALES = {
     engine: 'Engine',
     placePartFirst: 'Place at least one part first',
     deleteMode: 'Delete',
+    
+    // Warnings
+    warnings: {
+      disconnected: 'Parts are not connected!',
+      noEngine: 'Engine required to fly!',
+      noCockpit: 'Cockpit required to fly!',
+    },
     
     partTypes: {
       Fuselage: 'Fuselage',
@@ -359,6 +380,13 @@ export const LOCALES = {
     placePartFirst: '最低1つのパーツを配置してください',
     deleteMode: '削除',
     
+    // 警告
+    warnings: {
+      disconnected: 'パーツが接続されていません！',
+      noEngine: '飛行にはエンジンが必要です！',
+      noCockpit: '飛行にはコックピットが必要です！',
+    },
+    
     partTypes: {
       Fuselage: '機体',
       Wing: '翼',
@@ -471,6 +499,13 @@ export const LOCALES = {
     engine: '엔진',
     placePartFirst: '최소 하나의 부품을 배치하세요',
     deleteMode: '삭제',
+    
+    // 경고
+    warnings: {
+      disconnected: '부품이 연결되지 않았습니다!',
+      noEngine: '비행하려면 엔진이 필요합니다!',
+      noCockpit: '비행하려면 조종석이 필요합니다!',
+    },
     
     partTypes: {
       Fuselage: '동체',
@@ -585,6 +620,13 @@ export const LOCALES = {
     placePartFirst: 'Bitte zuerst mindestens ein Teil platzieren',
     deleteMode: 'Löschen',
     
+    // Warnungen
+    warnings: {
+      disconnected: 'Teile sind nicht verbunden!',
+      noEngine: 'Motor erforderlich zum Fliegen!',
+      noCockpit: 'Cockpit erforderlich zum Fliegen!',
+    },
+    
     partTypes: {
       Fuselage: 'Rumpf',
       Wing: 'Flügel',
@@ -698,6 +740,13 @@ export const LOCALES = {
     placePartFirst: 'Сначала разместите хотя бы одну деталь',
     deleteMode: 'Удалить',
     
+    // Предупреждения
+    warnings: {
+      disconnected: 'Детали не соединены!',
+      noEngine: 'Для полёта нужен двигатель!',
+      noCockpit: 'Для полёта нужна кабина!',
+    },
+    
     partTypes: {
       Fuselage: 'Фюзеляж',
       Wing: 'Крыло',
@@ -810,6 +859,13 @@ export const LOCALES = {
     engine: 'Moteur',
     placePartFirst: 'Placez au moins une pièce d\'abord',
     deleteMode: 'Supprimer',
+    
+    // Avertissements
+    warnings: {
+      disconnected: 'Les pièces ne sont pas connectées!',
+      noEngine: 'Moteur requis pour voler!',
+      noCockpit: 'Cockpit requis pour voler!',
+    },
     
     partTypes: {
       Fuselage: 'Fuselage',

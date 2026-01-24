@@ -15,6 +15,7 @@ export function Toolbar() {
     getPartCountByType,
     isDeleteMode,
     setDeleteMode,
+    checkPartsConnectivity,
   } = useGameStore();
   const { t } = useI18n();
 
@@ -22,12 +23,39 @@ export function Toolbar() {
 
   const partTypes = Object.values(PART_TYPES);
   const totalParts = vehicleParts.length;
+  
+  // 检查连接性和必要零件
+  const connectivity = checkPartsConnectivity();
+  const hasEngine = vehicleParts.some(p => p.type === PART_TYPES.ENGINE);
+  const hasCockpit = vehicleParts.some(p => p.type === PART_TYPES.COCKPIT);
+  const hasWarnings = !connectivity.connected || !hasEngine || !hasCockpit;
 
   return (
     <div className="toolbar">
       <div className="toolbar-title">
         {t('parts')} ({totalParts}/{PART_LIMITS.MAX_TOTAL})
       </div>
+      
+      {/* 警告提示 */}
+      {hasWarnings && totalParts > 0 && (
+        <div className="toolbar-warnings">
+          {!connectivity.connected && (
+            <div className="warning-item disconnected">
+              ⚠️ {t('warnings.disconnected') || '有零件未连接！'}
+            </div>
+          )}
+          {!hasEngine && (
+            <div className="warning-item missing-part">
+              ⚠️ {t('warnings.noEngine') || '需要引擎才能飞行！'}
+            </div>
+          )}
+          {!hasCockpit && (
+            <div className="warning-item missing-part">
+              ⚠️ {t('warnings.noCockpit') || '需要驾驶座才能飞行！'}
+            </div>
+          )}
+        </div>
+      )}
       
       {/* 删除模式按钮 */}
       <button

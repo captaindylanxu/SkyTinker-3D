@@ -20,7 +20,16 @@ function PartModel({ type, tier }) {
 }
 
 // 静态零件（建造模式）
-export function StaticVehiclePart({ type, tier = PART_TIERS.NORMAL, position, rotation = [0, 0, 0], onClick, onContextMenu, onPointerMove }) {
+export function StaticVehiclePart({ 
+  type, 
+  tier = PART_TIERS.NORMAL, 
+  position, 
+  rotation = [0, 0, 0], 
+  isDisconnected = false,
+  onClick, 
+  onContextMenu, 
+  onPointerMove 
+}) {
   return (
     <group
       position={position}
@@ -30,6 +39,19 @@ export function StaticVehiclePart({ type, tier = PART_TIERS.NORMAL, position, ro
       onPointerMove={onPointerMove}
     >
       <PartModel type={type} tier={tier} />
+      
+      {/* 断开连接警告 - 红色闪烁边框 */}
+      {isDisconnected && (
+        <mesh>
+          <boxGeometry args={[1.1, 1.1, 1.1]} />
+          <meshBasicMaterial 
+            color="#ff0000" 
+            transparent 
+            opacity={0.3}
+            wireframe
+          />
+        </mesh>
+      )}
     </group>
   );
 }

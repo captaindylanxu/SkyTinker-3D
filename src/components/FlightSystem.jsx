@@ -133,8 +133,26 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, 
       }, 0);
   }, [parts]);
 
+  // 计算总升力（基于机翼数量和等级）
+  const totalLift = useMemo(() => {
+    return parts
+      .filter(p => p.type === PART_TYPES.WING)
+      .reduce((sum, p) => {
+        const stats = getPartStats(p.type, p.tier);
+        return sum + (stats.lift || 0);
+      }, 0);
+  }, [parts]);
+
+  // 检查是否有驾驶座
+  const hasCockpit = useMemo(() => {
+    return parts.some(p => p.type === PART_TYPES.COCKPIT);
+  }, [parts]);
+
   // 检查是否有引擎
   const hasEngine = totalPower > 0;
+  
+  // 检查是否可以飞行（需要驾驶座和引擎）
+  const canFly = hasEngine && hasCockpit;
 
   // 计算总质量（基于零件等级）
   const totalMass = useMemo(() => 
@@ -284,6 +302,13 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, 
       lastScoreX.current = currentPos[0];
     }
 
+    // 如果没有驾驶座或引擎，无法飞行
+    if (!canFly) {
+      // 快速下坠
+      api.applyForce([0, -totalMass * 5, 0], [0, 0, 0]);
+      return;
+    }
+
     // 推力基于引擎总功率，但在高度上限时不施加向上的力
     if (isFlapping.current && hasEngine && currentPos[1] < MAX_HEIGHT) {
       const flapPower = FLAP_FORCE * totalPower;
@@ -291,6 +316,14 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, 
       api.applyTorque([0, 0, FLAP_TORQUE]);
     } else {
       api.applyTorque([0, 0, -FLAP_TORQUE * 0.3]);
+    }
+
+    // 机翼提供持续升力（抵消部分重力）
+    // 升力与速度相关，速度越快升力越大
+    if (totalLift > 0) {
+      const speed = Math.abs(currentVel[0]);
+      const liftForce = totalLift * speed * 0.8; // 升力系数
+      api.applyForce([0, liftForce, 0], [0, 0, 0]);
     }
   });
 

@@ -72,10 +72,17 @@ export function BuildingSystem() {
     hasPartAtPosition,
     canAddPart,
     isDeleteMode,
+    checkPartsConnectivity,
   } = useGameStore();
 
   const isBuildMode = gameMode === GAME_MODES.BUILD_MODE;
   const canAdd = canAddPart(selectedPartType);
+  
+  // 检查连接性
+  const connectivity = checkPartsConnectivity();
+  const disconnectedPositions = new Set(
+    connectivity.disconnectedParts.map(pos => `${pos[0]},${pos[1]},${pos[2]}`)
+  );
 
   // 处理地面上的鼠标移动
   const handleGroundPointerMove = useCallback((event) => {
@@ -193,18 +200,24 @@ export function BuildingSystem() {
         onPointerLeave={handlePointerLeave}
       />
       
-      {vehicleParts.map((part) => (
-        <StaticVehiclePart
-          key={part.id}
-          type={part.type}
-          tier={part.tier}
-          position={part.position}
-          rotation={part.rotation}
-          onPointerMove={(e) => handlePartPointerMove(e, part)}
-          onClick={(e) => handlePartClick(e, part)}
-          onContextMenu={(e) => handlePartContextMenu(e, part)}
-        />
-      ))}
+      {vehicleParts.map((part) => {
+        const posKey = `${part.position[0]},${part.position[1]},${part.position[2]}`;
+        const isDisconnected = disconnectedPositions.has(posKey);
+        
+        return (
+          <StaticVehiclePart
+            key={part.id}
+            type={part.type}
+            tier={part.tier}
+            position={part.position}
+            rotation={part.rotation}
+            isDisconnected={isDisconnected}
+            onPointerMove={(e) => handlePartPointerMove(e, part)}
+            onClick={(e) => handlePartClick(e, part)}
+            onContextMenu={(e) => handlePartContextMenu(e, part)}
+          />
+        );
+      })}
       
       {/* 预览零件（非删除模式下显示） */}
       {previewPosition && canAdd && !isDeleteMode && (
