@@ -129,6 +129,10 @@ const useGameStore = create(
   // 载具零件数组
   vehicleParts: [],
   
+  // 飞行器稳定性评分
+  stabilityScore: 0,
+  setStabilityScore: (score) => set({ stabilityScore: score }),
+  
   // 检查零件连接性 - 使用BFS确保所有零件相互连接
   checkPartsConnectivity: () => {
     const parts = get().vehicleParts;

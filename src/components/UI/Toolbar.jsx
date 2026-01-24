@@ -16,6 +16,7 @@ export function Toolbar() {
     isDeleteMode,
     setDeleteMode,
     checkPartsConnectivity,
+    stabilityScore,
   } = useGameStore();
   const { t } = useI18n();
 
@@ -29,12 +30,46 @@ export function Toolbar() {
   const hasEngine = vehicleParts.some(p => p.type === PART_TYPES.ENGINE);
   const hasCockpit = vehicleParts.some(p => p.type === PART_TYPES.COCKPIT);
   const hasWarnings = !connectivity.connected || !hasEngine || !hasCockpit;
+  
+  // 稳定性等级
+  const getStabilityLevel = (score) => {
+    if (score >= 0.8) return { level: t('stability.excellent') || '优秀', color: '#22c55e' };
+    if (score >= 0.6) return { level: t('stability.good') || '良好', color: '#3b82f6' };
+    if (score >= 0.4) return { level: t('stability.fair') || '一般', color: '#fbbf24' };
+    return { level: t('stability.poor') || '较差', color: '#ef4444' };
+  };
+  
+  const stabilityInfo = getStabilityLevel(stabilityScore);
 
   return (
     <div className="toolbar">
       <div className="toolbar-title">
         {t('parts')} ({totalParts}/{PART_LIMITS.MAX_TOTAL})
       </div>
+      
+      {/* 稳定性指示器 */}
+      {totalParts > 0 && (
+        <div className="stability-indicator">
+          <div className="stability-label">
+            ✈️ {t('stability.title') || '飞行稳定性'}
+          </div>
+          <div className="stability-bar-container">
+            <div 
+              className="stability-bar" 
+              style={{ 
+                width: `${stabilityScore * 100}%`,
+                backgroundColor: stabilityInfo.color 
+              }}
+            />
+          </div>
+          <div className="stability-level" style={{ color: stabilityInfo.color }}>
+            {stabilityInfo.level}
+          </div>
+          <div className="stability-hint">
+            {stabilityScore < 0.6 && (t('stability.hint') || '💡 提示：左右对称放置机翼可提高稳定性')}
+          </div>
+        </div>
+      )}
       
       {/* 警告提示 */}
       {hasWarnings && totalParts > 0 && (

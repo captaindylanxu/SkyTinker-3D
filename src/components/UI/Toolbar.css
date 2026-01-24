@@ -262,6 +262,52 @@
   }
 }
 
+/* 稳定性指示器 */
+.stability-indicator {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stability-label {
+  font-size: 11px;
+  color: #93c5fd;
+  font-weight: 600;
+  text-align: center;
+}
+
+.stability-bar-container {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.stability-bar {
+  height: 100%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+  border-radius: 4px;
+}
+
+.stability-level {
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.stability-hint {
+  font-size: 10px;
+  color: #fbbf24;
+  text-align: center;
+  line-height: 1.4;
+}
+
 @media (max-width: 768px) {
   .toolbar-warnings {
     padding: 6px;
@@ -269,5 +315,21 @@
   
   .warning-item {
     font-size: 10px;
+  }
+  
+  .stability-indicator {
+    padding: 8px 10px;
+  }
+  
+  .stability-label {
+    font-size: 10px;
+  }
+  
+  .stability-level {
+    font-size: 11px;
+  }
+  
+  .stability-hint {
+    font-size: 9px;
   }
 }
