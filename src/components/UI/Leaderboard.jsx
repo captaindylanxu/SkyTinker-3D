@@ -14,9 +14,6 @@ export function Leaderboard() {
   const { t } = useI18n();
 
   const hasLeaderboard = isSupabaseConfigured();
-  
-  // 调试信息
-  console.log('Leaderboard render:', { hasLeaderboard, playerId, gameMode });
 
   useEffect(() => {
     if (isOpen && hasLeaderboard) {
