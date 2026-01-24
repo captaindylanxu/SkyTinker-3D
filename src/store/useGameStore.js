@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { GAME_MODES, PART_TYPES, PART_TIERS, PART_LIMITS } from '../constants/gameConstants';
+import { GAME_MODES, PART_TYPES, PART_TIERS, PART_LIMITS, GRID_SIZE } from '../constants/gameConstants';
 
 // 从 localStorage 读取最高分
 const getStoredHighScore = () => {
