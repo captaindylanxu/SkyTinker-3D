@@ -62,7 +62,7 @@ export function Scene() {
   return (
     <Canvas
       shadows
-      camera={{ position: [10, 10, 25], fov: 60 }}
+      camera={{ position: [10, 10, 25], fov: 75, near: 0.1, far: 1000 }}
       style={{ width: '100vw', height: '100vh' }}
       onContextMenu={(e) => e.preventDefault()}
     >

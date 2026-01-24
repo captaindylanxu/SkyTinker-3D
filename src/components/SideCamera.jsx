@@ -19,16 +19,18 @@ export function SideCamera({ targetX, targetY, frozen = false }) {
       return;
     }
 
-    // 平滑跟随，相机稍微拉远一点以便看到分散的零件
+    // 重置冻结位置
+    frozenPos.current = null;
+
+    // 平滑跟随
     smoothX.current += (targetX + CAMERA_OFFSET_X - smoothX.current) * 0.05;
     // 相机高度跟随飞机，但保持一定距离
     const targetCamY = Math.max(targetY, 8);
     smoothY.current += (targetCamY - smoothY.current) * 0.03;
 
     // 侧视视角：相机在Z轴上，看向X轴方向
-    // 增加相机距离以便看到更大范围
-    const cameraZ = CAMERA_OFFSET_Z + 10;
-    camera.position.set(smoothX.current, smoothY.current, cameraZ);
+    camera.position.set(smoothX.current, smoothY.current, CAMERA_OFFSET_Z);
+    // 相机看向飞行器位置（稍微前方）
     camera.lookAt(smoothX.current + 10, targetY, 0);
   });
 

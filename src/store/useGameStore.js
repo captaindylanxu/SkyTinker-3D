@@ -47,29 +47,21 @@ const useGameStore = create(
   setTutorialStep: (step) => set({ tutorialStep: step }),
   
   completeTutorial: () => {
-    console.log('🎓 completeTutorial called');
-    const newState = { 
+    set({ 
       tutorialStep: -1,
       gameMode: GAME_MODES.BUILD_MODE,
       isGameOver: false,
       isExploded: false,
-    };
-    console.log('🎓 Setting state:', newState);
-    set(newState);
-    console.log('🎓 State after set:', get().tutorialStep, get().gameMode);
+    });
   },
   
   skipTutorial: () => {
-    console.log('⏭️ skipTutorial called');
-    const newState = { 
+    set({ 
       tutorialStep: -1,
       gameMode: GAME_MODES.BUILD_MODE,
       isGameOver: false,
       isExploded: false,
-    };
-    console.log('⏭️ Setting state:', newState);
-    set(newState);
-    console.log('⏭️ State after set:', get().tutorialStep, get().gameMode);
+    });
   },
   
   // 游戏模式

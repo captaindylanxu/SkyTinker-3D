@@ -109,18 +109,23 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, 
     };
   }, [playFlap]);
 
-  // 计算中心偏移
+  // 计算中心偏移（使用加权平均，与物理引擎的重心计算一致）
   const centerOffset = useMemo(() => {
     if (parts.length === 0) return [0, 0, 0];
     
     let sumX = 0, sumY = 0, sumZ = 0;
+    let totalWeight = 0;
+    
     parts.forEach(part => {
-      sumX += part.position[0];
-      sumY += part.position[1];
-      sumZ += part.position[2];
+      const stats = getPartStats(part.type, part.tier);
+      const weight = stats.weight || 1;
+      sumX += part.position[0] * weight;
+      sumY += part.position[1] * weight;
+      sumZ += part.position[2] * weight;
+      totalWeight += weight;
     });
     
-    return [sumX / parts.length, sumY / parts.length, sumZ / parts.length];
+    return [sumX / totalWeight, sumY / totalWeight, sumZ / totalWeight];
   }, [parts]);
 
   // 计算总推力（基于引擎数量和等级）
