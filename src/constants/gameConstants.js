@@ -50,7 +50,8 @@ export const PART_COLORS = {
 export const GRID_SIZE = 1;
 
 // 地面配置
-export const GROUND_SIZE = 200;
+export const GROUND_SIZE = 20;  // 建造区域大小（20x20网格）
+export const BUILD_AREA_LIMIT = 10;  // 建造范围限制（从中心点±10格）
 
 // 零件数量限制
 export const PART_LIMITS = {

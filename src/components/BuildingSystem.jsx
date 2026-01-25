@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import useGameStore from '../store/useGameStore';
-import { GRID_SIZE, GAME_MODES } from '../constants/gameConstants';
+import { GRID_SIZE, GAME_MODES, BUILD_AREA_LIMIT } from '../constants/gameConstants';
 import { Ground } from './Ground';
 import { StaticVehiclePart, PreviewPart } from './VehiclePart';
 import { useSound } from '../hooks/useSound';
@@ -47,6 +47,11 @@ const calculateStackPosition = (partPosition, faceNormal) => {
   return newPosition;
 };
 
+// 检查位置是否在建造范围内
+const isWithinBuildArea = (x, z) => {
+  return Math.abs(x) <= BUILD_AREA_LIMIT && Math.abs(z) <= BUILD_AREA_LIMIT;
+};
+
 // 计算地面上的放置位置
 const calculateGroundPosition = (point) => {
   const x = snapToGrid(point.x);
@@ -87,9 +92,10 @@ export function BuildingSystem() {
     
     const position = calculateGroundPosition(event.point);
     const isOccupied = hasPartAtPosition(position);
+    const inBuildArea = isWithinBuildArea(position[0], position[2]);
     
     setPreviewPosition(position);
-    setPreviewValid(!isOccupied);
+    setPreviewValid(!isOccupied && inBuildArea);
   }, [isBuildMode, hasPartAtPosition]);
 
   // 处理地面点击 - 放置零件
@@ -98,6 +104,9 @@ export function BuildingSystem() {
     event.stopPropagation();
     
     const position = calculateGroundPosition(event.point);
+    
+    // 检查是否在建造范围内
+    if (!isWithinBuildArea(position[0], position[2])) return;
     
     if (hasPartAtPosition(position)) return;
     
@@ -123,6 +132,7 @@ export function BuildingSystem() {
     
     const position = calculateStackPosition(part.position, face.normal);
     const isOccupied = hasPartAtPosition(position);
+    const inBuildArea = isWithinBuildArea(position[0], position[2]);
     
     // 确保不会放到地面以下
     if (position[1] < GRID_SIZE / 2) {
@@ -130,7 +140,7 @@ export function BuildingSystem() {
     }
     
     setPreviewPosition(position);
-    setPreviewValid(!isOccupied);
+    setPreviewValid(!isOccupied && inBuildArea);
   }, [isBuildMode, hasPartAtPosition]);
 
   // 处理零件上的点击 - 堆叠放置或删除
@@ -156,6 +166,9 @@ export function BuildingSystem() {
     if (position[1] < GRID_SIZE / 2) {
       position[1] = GRID_SIZE / 2;
     }
+    
+    // 检查是否在建造范围内
+    if (!isWithinBuildArea(position[0], position[2])) return;
     
     if (hasPartAtPosition(position)) return;
     
