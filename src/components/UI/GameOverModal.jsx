@@ -14,7 +14,7 @@ export function GameOverModal() {
     resetGame,
     isFirstGame,
     setFirstFlightCompleted,
-    startTutorial,
+    hasCompletedOnboarding,
   } = useGameStore();
   const { t } = useI18n();
 
@@ -33,25 +33,26 @@ export function GameOverModal() {
     e.preventDefault();
     e.stopPropagation();
     
-    // 如果是第一次游戏，进入建造模式并开始教程
+    // 如果是第一次游戏，标记第一次飞行完成，然后显示账号创建界面
     if (isFirstGame) {
       setFirstFlightCompleted();
-      startTutorial();
+      // 不直接启动教程，让 AccountModal 显示
+      // 账号创建完成后会自动启动教程
     } else {
       resetGame();
     }
   };
 
+  // 如果是第一次游戏且还没完成账号创建，不显示 GameOverModal
+  // 让 AccountModal 显示
+  if (isFirstGame && !hasCompletedOnboarding) {
+    return null;
+  }
+
   return (
     <div className="game-over-overlay" onClick={(e) => e.stopPropagation()}>
       <div className="game-over-modal">
         <h1 className="game-over-title">💥 {t('gameOver')}</h1>
-        
-        {isFirstGame && (
-          <div className="first-game-message">
-            <p>🎮 {t('firstGameMessage')}</p>
-          </div>
-        )}
         
         {isNewRecord && !isFirstGame && (
           <div className="new-record-badge">{t('newRecord')}</div>
@@ -74,7 +75,7 @@ export function GameOverModal() {
           onClick={handleRestart}
           onTouchEnd={handleRestart}
         >
-          {isFirstGame ? '🛠️ ' + t('startBuilding') : '🔄 ' + t('backToBuild')}
+          🔄 {t('backToBuild')}
         </button>
       </div>
     </div>
