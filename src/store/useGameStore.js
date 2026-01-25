@@ -21,6 +21,16 @@ const saveHighScore = (score) => {
   }
 };
 
+// 默认飞机配置（新用户体验用）
+const DEFAULT_VEHICLE_PARTS = [
+  { id: 1, type: PART_TYPES.FUSELAGE, tier: PART_TIERS.NORMAL, position: [0, 0.5, 0], rotation: [0, 0, 0] },
+  { id: 2, type: PART_TYPES.FUSELAGE, tier: PART_TIERS.NORMAL, position: [1, 0.5, 0], rotation: [0, 0, 0] },
+  { id: 3, type: PART_TYPES.COCKPIT, tier: PART_TIERS.NORMAL, position: [2, 0.5, 0], rotation: [0, 0, 0] },
+  { id: 4, type: PART_TYPES.ENGINE, tier: PART_TIERS.NORMAL, position: [-1, 0.5, 0], rotation: [0, 0, 0] },
+  { id: 5, type: PART_TYPES.WING, tier: PART_TIERS.NORMAL, position: [0, 0.5, 1], rotation: [0, 0, 0] },
+  { id: 6, type: PART_TYPES.WING, tier: PART_TIERS.NORMAL, position: [0, 0.5, -1], rotation: [0, 0, 0] },
+];
+
 const useGameStore = create(
   persist(
     (set, get) => ({
@@ -86,8 +96,8 @@ const useGameStore = create(
     console.log('⏭️ State after set:', get().tutorialStep, get().gameMode);
   },
   
-  // 游戏模式
-  gameMode: GAME_MODES.BUILD_MODE,
+  // 游戏模式 - 新用户默认进入飞行模式
+  gameMode: GAME_MODES.FLIGHT_MODE,
   setGameMode: (mode) => set({ gameMode: mode }),
   toggleGameMode: () => set((state) => ({
     gameMode: state.gameMode === GAME_MODES.BUILD_MODE 
@@ -151,8 +161,8 @@ const useGameStore = create(
   isDeleteMode: false,
   setDeleteMode: (value) => set({ isDeleteMode: value }),
 
-  // 载具零件数组
-  vehicleParts: [],
+  // 载具零件数组 - 新用户默认有一个飞机
+  vehicleParts: DEFAULT_VEHICLE_PARTS,
   
   // 获取某类型零件数量
   getPartCountByType: (type) => {
