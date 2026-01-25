@@ -34,6 +34,15 @@ export const LOCALES = {
     highScore: '最高纪录',
     newRecord: '🎉 新纪录！',
     backToBuild: '返回建造',
+    startBuilding: '开始建造',
+    firstGameMessage: '不错的尝试！现在让我们学习如何建造自己的飞机吧',
+    
+    // 首次飞行提示
+    firstFlight: {
+      title: '试试飞行吧！',
+      desc: '按住空格键或点击屏幕让飞机上升，穿过障碍物的缝隙',
+      gotIt: '知道了',
+    },
     
     // VIP商店
     vipShop: 'VIP 商店',
@@ -151,6 +160,14 @@ export const LOCALES = {
     highScore: '最高紀錄',
     newRecord: '🎉 新紀錄！',
     backToBuild: '返回建造',
+    startBuilding: '開始建造',
+    firstGameMessage: '不錯的嘗試！現在讓我們學習如何建造自己的飛機吧',
+    
+    firstFlight: {
+      title: '試試飛行吧！',
+      desc: '按住空白鍵或點擊螢幕讓飛機上升，穿過障礙物的縫隙',
+      gotIt: '知道了',
+    },
     
     vipShop: 'VIP 商店',
     vipMember: 'VIP 會員',
@@ -264,6 +281,14 @@ export const LOCALES = {
     highScore: 'Best Record',
     newRecord: '🎉 New Record!',
     backToBuild: 'Back to Build',
+    startBuilding: 'Start Building',
+    firstGameMessage: 'Nice try! Now let\'s learn how to build your own aircraft',
+    
+    firstFlight: {
+      title: 'Try Flying!',
+      desc: 'Hold SPACE or tap the screen to make the plane rise, navigate through obstacle gaps',
+      gotIt: 'Got it',
+    },
     
     vipShop: 'VIP Shop',
     vipMember: 'VIP Member',

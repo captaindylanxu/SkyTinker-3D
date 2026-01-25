@@ -5,7 +5,17 @@ import { submitScore } from '../../services/leaderboard';
 import './GameOverModal.css';
 
 export function GameOverModal() {
-  const { isGameOver, score, highScore, playerId, playerName, resetGame } = useGameStore();
+  const { 
+    isGameOver, 
+    score, 
+    highScore, 
+    playerId, 
+    playerName, 
+    resetGame,
+    isFirstGame,
+    setFirstFlightCompleted,
+    startTutorial,
+  } = useGameStore();
   const { t } = useI18n();
 
   const isNewRecord = score >= highScore && score > 0;
@@ -22,7 +32,14 @@ export function GameOverModal() {
   const handleRestart = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    resetGame();
+    
+    // 如果是第一次游戏，进入建造模式并开始教程
+    if (isFirstGame) {
+      setFirstFlightCompleted();
+      startTutorial();
+    } else {
+      resetGame();
+    }
   };
 
   return (
@@ -30,7 +47,13 @@ export function GameOverModal() {
       <div className="game-over-modal">
         <h1 className="game-over-title">💥 {t('gameOver')}</h1>
         
-        {isNewRecord && (
+        {isFirstGame && (
+          <div className="first-game-message">
+            <p>🎮 {t('firstGameMessage')}</p>
+          </div>
+        )}
+        
+        {isNewRecord && !isFirstGame && (
           <div className="new-record-badge">{t('newRecord')}</div>
         )}
         
@@ -39,17 +62,19 @@ export function GameOverModal() {
           <span className="score-value">{Math.floor(score)} {t('meter')}</span>
         </div>
         
-        <div className="high-score">
-          <span className="high-score-label">🏆 {t('highScore')}</span>
-          <span className="high-score-value">{Math.floor(highScore)} {t('meter')}</span>
-        </div>
+        {!isFirstGame && (
+          <div className="high-score">
+            <span className="high-score-label">🏆 {t('highScore')}</span>
+            <span className="high-score-value">{Math.floor(highScore)} {t('meter')}</span>
+          </div>
+        )}
 
         <button 
           className="restart-button" 
           onClick={handleRestart}
           onTouchEnd={handleRestart}
         >
-          🔄 {t('backToBuild')}
+          {isFirstGame ? '🛠️ ' + t('startBuilding') : '🔄 ' + t('backToBuild')}
         </button>
       </div>
     </div>

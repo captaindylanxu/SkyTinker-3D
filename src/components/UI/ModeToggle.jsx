@@ -5,13 +5,22 @@ import { useI18n } from '../../i18n/useI18n';
 import './ModeToggle.css';
 
 export function ModeToggle() {
-  const { gameMode, toggleGameMode, vehicleParts, score } = useGameStore();
+  const { 
+    gameMode, 
+    toggleGameMode, 
+    vehicleParts, 
+    score,
+    isFirstGame,
+  } = useGameStore();
   const { playModeSwitch } = useSound();
   const { t } = useI18n();
 
   const isBuildMode = gameMode === GAME_MODES.BUILD_MODE;
   const hasNoParts = vehicleParts.length === 0;
   const hasEngine = vehicleParts.some(p => p.type === PART_TYPES.ENGINE);
+
+  // 第一次游戏时隐藏
+  if (isFirstGame) return null;
 
   const handleClick = () => {
     playModeSwitch();

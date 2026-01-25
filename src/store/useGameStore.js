@@ -41,10 +41,29 @@ const useGameStore = create(
   
   skipOnboarding: () => set({ hasCompletedOnboarding: true }),
   
+  // 首次游戏标记
+  isFirstGame: true, // 是否是第一次游戏
+  hasPlayedFirstFlight: false, // 是否已经玩过第一次飞行
+  
+  setFirstFlightCompleted: () => set({ 
+    hasPlayedFirstFlight: true,
+    isFirstGame: false,
+  }),
+  
   // 教程系统
-  tutorialStep: 0, // -1 表示已完成或跳过，0+ 表示当前步骤
+  tutorialStep: -1, // -1 表示未开始/已完成，0+ 表示当前步骤
   
   setTutorialStep: (step) => set({ tutorialStep: step }),
+  
+  startTutorial: () => {
+    console.log('🎓 startTutorial called');
+    set({ 
+      tutorialStep: 0,
+      gameMode: GAME_MODES.BUILD_MODE,
+      isGameOver: false,
+      isExploded: false,
+    });
+  },
   
   completeTutorial: () => {
     console.log('🎓 completeTutorial called');
@@ -72,8 +91,8 @@ const useGameStore = create(
     console.log('⏭️ State after set:', get().tutorialStep, get().gameMode);
   },
   
-  // 游戏模式
-  gameMode: GAME_MODES.BUILD_MODE,
+  // 游戏模式（第一次游戏时默认飞行模式）
+  gameMode: GAME_MODES.FLIGHT_MODE,
   setGameMode: (mode) => set({ gameMode: mode }),
   toggleGameMode: () => set((state) => ({
     gameMode: state.gameMode === GAME_MODES.BUILD_MODE 
@@ -126,8 +145,15 @@ const useGameStore = create(
   isDeleteMode: false,
   setDeleteMode: (value) => set({ isDeleteMode: value }),
 
-  // 载具零件数组
-  vehicleParts: [],
+  // 载具零件数组（第一次游戏时使用默认飞机）
+  vehicleParts: [
+    // 默认飞机配置
+    { id: 1, type: 'Cockpit', tier: 'normal', position: [0, 0.5, 0], rotation: [0, 0, 0] },
+    { id: 2, type: 'Fuselage', tier: 'normal', position: [0, 0.5, -1], rotation: [0, 0, 0] },
+    { id: 3, type: 'Engine', tier: 'normal', position: [0, 0.5, -2], rotation: [0, 0, 0] },
+    { id: 4, type: 'Wing', tier: 'normal', position: [-1, 0.5, -1], rotation: [0, 0, 0] },
+    { id: 5, type: 'Wing', tier: 'normal', position: [1, 0.5, -1], rotation: [0, 0, 0] },
+  ],
   
   // 获取某类型零件数量
   getPartCountByType: (type) => {
@@ -194,6 +220,8 @@ const useGameStore = create(
         hasCompletedOnboarding: state.hasCompletedOnboarding,
         tutorialStep: state.tutorialStep,
         isVIP: state.isVIP,
+        hasPlayedFirstFlight: state.hasPlayedFirstFlight,
+        isFirstGame: state.isFirstGame,
       }),
     }
   )
