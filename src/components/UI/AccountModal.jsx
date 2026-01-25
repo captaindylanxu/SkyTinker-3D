@@ -6,7 +6,13 @@ import { isSupabaseConfigured } from '../../lib/supabase';
 import './AccountModal.css';
 
 export function AccountModal() {
-  const { hasCompletedOnboarding, setPlayerInfo, skipOnboarding } = useGameStore();
+  const { 
+    showAccountModal, 
+    setPlayerInfo, 
+    skipOnboarding, 
+    closeAccountModal,
+    setTutorialStep,
+  } = useGameStore();
   const { t } = useI18n();
   
   const [mode, setMode] = useState('welcome'); // welcome, create, recover
@@ -17,15 +23,28 @@ export function AccountModal() {
 
   const hasLeaderboard = isSupabaseConfigured();
 
-  if (hasCompletedOnboarding) return null;
+  // 只在 showAccountModal 为 true 时显示
+  if (!showAccountModal) return null;
+
+  // 完成账号创建/找回后，启动教程
+  const handleAccountComplete = (playerId, playerName) => {
+    setPlayerInfo(playerId, playerName);
+    setTutorialStep(0); // 启动教程
+  };
+
+  // 跳过账号流程，也启动教程
+  const handleSkip = () => {
+    skipOnboarding();
+    setTutorialStep(0); // 启动教程
+  };
 
   // 欢迎界面
   if (mode === 'welcome') {
     return (
       <div className="account-overlay">
         <div className="account-modal">
-          <h2 className="account-title">✈️ {t('account.welcome')}</h2>
-          <p className="account-description">{t('account.welcomeDesc')}</p>
+          <h2 className="account-title">🎉 {t('account.firstGameComplete')}</h2>
+          <p className="account-description">{t('account.createAccountPrompt')}</p>
 
           {hasLeaderboard ? (
             <div className="account-buttons">
@@ -43,7 +62,7 @@ export function AccountModal() {
               </button>
               <button
                 className="account-button skip"
-                onClick={skipOnboarding}
+                onClick={handleSkip}
               >
                 {t('account.skip')}
               </button>
@@ -51,9 +70,9 @@ export function AccountModal() {
           ) : (
             <button
               className="account-button primary"
-              onClick={skipOnboarding}
+              onClick={handleSkip}
             >
-              {t('account.startGame')}
+              {t('account.continue')}
             </button>
           )}
         </div>
@@ -97,7 +116,7 @@ export function AccountModal() {
       setIsProcessing(false);
 
       if (result.success) {
-        setPlayerInfo(result.data.playerId, result.data.playerName);
+        handleAccountComplete(result.data.playerId, result.data.playerName);
       } else {
         setError(result.error === 'Name already exists' 
           ? t('account.nameExists') 
@@ -181,7 +200,7 @@ export function AccountModal() {
       setIsProcessing(false);
 
       if (result.success) {
-        setPlayerInfo(result.data.playerId, result.data.playerName);
+        handleAccountComplete(result.data.playerId, result.data.playerName);
       } else {
         if (result.error === 'Account not found') {
           setError(t('account.accountNotFound'));

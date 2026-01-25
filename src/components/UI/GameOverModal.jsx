@@ -5,7 +5,7 @@ import { submitScore } from '../../services/leaderboard';
 import './GameOverModal.css';
 
 export function GameOverModal() {
-  const { isGameOver, score, highScore, playerId, playerName, resetGame } = useGameStore();
+  const { isGameOver, score, highScore, playerId, playerName, resetGame, showAccountModal } = useGameStore();
   const { t } = useI18n();
 
   const isNewRecord = score >= highScore && score > 0;
@@ -17,7 +17,8 @@ export function GameOverModal() {
     }
   }, [isGameOver, playerId, playerName, score]);
 
-  if (!isGameOver) return null;
+  // 如果正在显示账号弹窗，不显示游戏结束弹窗
+  if (!isGameOver || showAccountModal) return null;
 
   const handleRestart = (e) => {
     e.preventDefault();

@@ -32,17 +32,31 @@ const useGameStore = create(
   playerId: null,
   playerName: null,
   hasCompletedOnboarding: false,
+  hasPlayedFirstGame: false, // 是否已经玩过第一局游戏
+  showAccountModal: false, // 是否显示账号弹窗
   
   setPlayerInfo: (playerId, playerName) => set({ 
     playerId, 
     playerName,
     hasCompletedOnboarding: true,
+    showAccountModal: false,
   }),
   
-  skipOnboarding: () => set({ hasCompletedOnboarding: true }),
+  skipOnboarding: () => set({ 
+    hasCompletedOnboarding: true,
+    showAccountModal: false,
+  }),
+  
+  // 第一局游戏结束后触发账号流程
+  triggerAccountFlow: () => set({
+    hasPlayedFirstGame: true,
+    showAccountModal: true,
+  }),
+  
+  closeAccountModal: () => set({ showAccountModal: false }),
   
   // 教程系统
-  tutorialStep: 0, // -1 表示已完成或跳过，0+ 表示当前步骤
+  tutorialStep: -1, // -1 表示已完成或跳过，0+ 表示当前步骤（默认跳过，账号创建后开始）
   
   setTutorialStep: (step) => set({ tutorialStep: step }),
   
@@ -89,8 +103,19 @@ const useGameStore = create(
   isExploded: false,
   
   setGameOver: () => {
-    get().updateHighScore();
-    set({ isGameOver: true });
+    const state = get();
+    state.updateHighScore();
+    
+    // 如果是第一次游戏结束且还没完成 onboarding，触发账号流程
+    if (!state.hasPlayedFirstGame && !state.hasCompletedOnboarding) {
+      set({ 
+        isGameOver: true,
+        hasPlayedFirstGame: true,
+        showAccountModal: true,
+      });
+    } else {
+      set({ isGameOver: true });
+    }
   },
   setExploded: () => set({ isExploded: true }),
   
@@ -192,6 +217,7 @@ const useGameStore = create(
         playerId: state.playerId,
         playerName: state.playerName,
         hasCompletedOnboarding: state.hasCompletedOnboarding,
+        hasPlayedFirstGame: state.hasPlayedFirstGame,
         tutorialStep: state.tutorialStep,
         isVIP: state.isVIP,
       }),
