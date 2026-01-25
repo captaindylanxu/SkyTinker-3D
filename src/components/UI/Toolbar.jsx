@@ -15,12 +15,10 @@ export function Toolbar() {
     getPartCountByType,
     isDeleteMode,
     setDeleteMode,
-    isFirstGame,
   } = useGameStore();
   const { t } = useI18n();
 
-  // 第一次游戏时隐藏
-  if (gameMode !== GAME_MODES.BUILD_MODE || isFirstGame) return null;
+  if (gameMode !== GAME_MODES.BUILD_MODE) return null;
 
   const partTypes = Object.values(PART_TYPES);
   const totalParts = vehicleParts.length;

@@ -6,7 +6,6 @@ import VIPShop from './components/UI/VIPShop';
 import AccountModal from './components/UI/AccountModal';
 import Leaderboard from './components/UI/Leaderboard';
 import TutorialOverlay from './components/UI/TutorialOverlay';
-import FirstFlightHint from './components/UI/FirstFlightHint';
 import './App.css';
 
 function App() {
@@ -20,7 +19,6 @@ function App() {
       <GameOverModal />
       <AccountModal />
       <TutorialOverlay />
-      <FirstFlightHint />
     </div>
   );
 }
