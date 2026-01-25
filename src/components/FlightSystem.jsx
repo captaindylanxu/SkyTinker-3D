@@ -60,7 +60,7 @@ const getPartStats = (type, tier = PART_TIERS.NORMAL) => {
 };
 
 // Flappy Bird 风格载具
-function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, obstacles = [], onStabilityUpdate }) {
+function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, obstacles = [] }) {
   const { addScore, setExploded, setGameOver } = useGameStore();
   const { playFlap, playCrash, playScore } = useSound();
   const groupRef = useRef();
@@ -109,23 +109,18 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, 
     };
   }, [playFlap]);
 
-  // 计算中心偏移（使用加权平均，与物理引擎的重心计算一致）
+  // 计算中心偏移
   const centerOffset = useMemo(() => {
     if (parts.length === 0) return [0, 0, 0];
     
     let sumX = 0, sumY = 0, sumZ = 0;
-    let totalWeight = 0;
-    
     parts.forEach(part => {
-      const stats = getPartStats(part.type, part.tier);
-      const weight = stats.weight || 1;
-      sumX += part.position[0] * weight;
-      sumY += part.position[1] * weight;
-      sumZ += part.position[2] * weight;
-      totalWeight += weight;
+      sumX += part.position[0];
+      sumY += part.position[1];
+      sumZ += part.position[2];
     });
     
-    return [sumX / totalWeight, sumY / totalWeight, sumZ / totalWeight];
+    return [sumX / parts.length, sumY / parts.length, sumZ / parts.length];
   }, [parts]);
 
   // 计算总推力（基于引擎数量和等级）
@@ -138,113 +133,8 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, 
       }, 0);
   }, [parts]);
 
-  // 计算总升力（基于机翼数量和等级）
-  const totalLift = useMemo(() => {
-    return parts
-      .filter(p => p.type === PART_TYPES.WING)
-      .reduce((sum, p) => {
-        const stats = getPartStats(p.type, p.tier);
-        return sum + (stats.lift || 0);
-      }, 0);
-  }, [parts]);
-
-  // 检查是否有驾驶座
-  const hasCockpit = useMemo(() => {
-    return parts.some(p => p.type === PART_TYPES.COCKPIT);
-  }, [parts]);
-
   // 检查是否有引擎
   const hasEngine = totalPower > 0;
-  
-  // 检查是否可以飞行（需要驾驶座和引擎）
-  const canFly = hasEngine && hasCockpit;
-
-  // 计算飞行器的稳定性
-  const stability = useMemo(() => {
-    if (parts.length === 0) return { score: 0, balanced: false, wingBalance: 0 };
-    
-    // 计算重心
-    let centerX = 0, centerY = 0, centerZ = 0;
-    let totalWeight = 0;
-    
-    parts.forEach(part => {
-      const stats = getPartStats(part.type, part.tier);
-      const weight = stats.weight || 1;
-      centerX += part.position[0] * weight;
-      centerY += part.position[1] * weight;
-      centerZ += part.position[2] * weight;
-      totalWeight += weight;
-    });
-    
-    centerX /= totalWeight;
-    centerY /= totalWeight;
-    centerZ /= totalWeight;
-    
-    // 计算机翼平衡（左右对称性）
-    const wings = parts.filter(p => p.type === PART_TYPES.WING);
-    let wingBalance = 1.0;
-    
-    if (wings.length > 0) {
-      // 计算机翼相对于重心的Z轴偏移
-      const wingOffsets = wings.map(w => w.position[2] - centerZ);
-      const leftWings = wingOffsets.filter(z => z < -0.5).length;
-      const rightWings = wingOffsets.filter(z => z > 0.5).length;
-      const centerWings = wingOffsets.filter(z => Math.abs(z) <= 0.5).length;
-      
-      // 对称性越好，平衡度越高
-      if (leftWings > 0 && rightWings > 0) {
-        const ratio = Math.min(leftWings, rightWings) / Math.max(leftWings, rightWings);
-        wingBalance = 0.5 + ratio * 0.5; // 0.5-1.0
-      } else if (centerWings > 0) {
-        wingBalance = 0.7; // 中间机翼提供一些稳定性
-      } else {
-        wingBalance = 0.3; // 单侧机翼很不稳定
-      }
-    } else {
-      wingBalance = 0.2; // 没有机翼非常不稳定
-    }
-    
-    // 计算质量分布的均匀性
-    let massDistribution = 0;
-    parts.forEach(part => {
-      const stats = getPartStats(part.type, part.tier);
-      const weight = stats.weight || 1;
-      const dx = part.position[0] - centerX;
-      const dy = part.position[1] - centerY;
-      const dz = part.position[2] - centerZ;
-      const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-      massDistribution += distance * weight;
-    });
-    massDistribution /= totalWeight;
-    
-    // 质量分布越均匀越好（但不能太集中）
-    const distributionScore = Math.min(1.0, massDistribution / 2.0);
-    
-    // 综合稳定性评分 (0-1)
-    const score = (wingBalance * 0.6 + distributionScore * 0.4);
-    
-    return {
-      score,
-      balanced: score > 0.6,
-      wingBalance,
-      centerOfMass: [centerX, centerY, centerZ],
-    };
-  }, [parts]);
-
-  // 根据稳定性调整角阻尼
-  const effectiveAngularDamping = useMemo(() => {
-    // 稳定性越高，角阻尼越大，飞行器越不容易翻转
-    const baseAngularDamping = ANGULAR_DAMPING;
-    const stabilityMultiplier = 0.3 + stability.score * 1.5; // 0.3-1.8倍
-    return baseAngularDamping * stabilityMultiplier;
-  }, [stability]);
-
-  // 更新稳定性评分到父组件
-  useEffect(() => {
-    if (onStabilityUpdate) {
-      onStabilityUpdate(stability);
-    }
-  }, [stability, onStabilityUpdate]);
 
   // 计算总质量（基于零件等级）
   const totalMass = useMemo(() => 
@@ -337,9 +227,9 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, 
     position: [0, 10, 0],
     shapes,
     linearDamping: 0.1,
-    angularDamping: effectiveAngularDamping,
+    angularDamping: ANGULAR_DAMPING,
     onCollide: handleCollide,
-  }), groupRef, [shapes, totalMass, effectiveAngularDamping]);
+  }), groupRef, [shapes, totalMass]);
 
   useEffect(() => {
     const unsubPos = api.position.subscribe((p) => {
@@ -394,41 +284,13 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, 
       lastScoreX.current = currentPos[0];
     }
 
-    // 如果没有驾驶座或引擎，无法飞行
-    if (!canFly) {
-      // 快速下坠
-      api.applyForce([0, -totalMass * 5, 0], [0, 0, 0]);
-      return;
-    }
-
     // 推力基于引擎总功率，但在高度上限时不施加向上的力
     if (isFlapping.current && hasEngine && currentPos[1] < MAX_HEIGHT) {
       const flapPower = FLAP_FORCE * totalPower;
       api.applyForce([0, flapPower, 0], [0, 0, 0]);
-      
-      // 根据稳定性调整扭矩
-      // 稳定性低的飞行器会产生更大的旋转
-      const torqueMultiplier = 2.0 - stability.score; // 1.0-2.0倍
-      api.applyTorque([0, 0, FLAP_TORQUE * torqueMultiplier]);
+      api.applyTorque([0, 0, FLAP_TORQUE]);
     } else {
-      // 稳定性高的飞行器会自动回正
-      const stabilizingTorque = -FLAP_TORQUE * 0.3 * stability.score;
-      api.applyTorque([0, 0, stabilizingTorque]);
-    }
-
-    // 机翼提供持续升力（抵消部分重力）
-    // 升力与速度相关，速度越快升力越大
-    if (totalLift > 0) {
-      const speed = Math.abs(currentVel[0]);
-      const liftForce = totalLift * speed * 0.8; // 升力系数
-      api.applyForce([0, liftForce, 0], [0, 0, 0]);
-      
-      // 机翼还提供稳定力矩（抵抗翻转）
-      // 这模拟了机翼的气动稳定性
-      if (stability.wingBalance > 0.5) {
-        const stabilizingForce = (stability.wingBalance - 0.5) * 2.0 * speed;
-        api.applyTorque([0, 0, -stabilizingForce * 0.5]);
-      }
+      api.applyTorque([0, 0, -FLAP_TORQUE * 0.3]);
     }
   });
 
@@ -461,7 +323,7 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, 
 }
 
 export function FlightSystem() {
-  const { vehicleParts, isExploded, isVIP, setExploded, setGameOver, setStabilityScore } = useGameStore();
+  const { vehicleParts, isExploded, isVIP, setExploded, setGameOver } = useGameStore();
   const [vehiclePos, setVehiclePos] = useState({ x: 0, y: 10 });
   const [explodedParts, setExplodedParts] = useState([]);
   const [explosionPos, setExplosionPos] = useState(null);
@@ -478,11 +340,6 @@ export function FlightSystem() {
     setExplosionPos(position);
     setShowExplosion(true);
   }, []);
-
-  // 处理稳定性更新
-  const handleStabilityUpdate = useCallback((stability) => {
-    setStabilityScore(stability.score);
-  }, [setStabilityScore]);
 
   // 注册障碍物位置（用于备用碰撞检测）
   const registerObstacle = useCallback((obs) => {
@@ -511,7 +368,6 @@ export function FlightSystem() {
         parts={vehicleParts} 
         onPositionUpdate={handlePositionUpdate}
         onExplode={handleExplode}
-        onStabilityUpdate={handleStabilityUpdate}
         isExploded={isExploded}
         isVIP={isVIP}
         obstacles={obstacles}

@@ -14,23 +14,6 @@ export const LOCALES = {
     placePartFirst: '请先放置至少一个零件',
     deleteMode: '删除模式',
     
-    // 警告提示
-    warnings: {
-      disconnected: '有零件未连接！',
-      noEngine: '需要引擎才能飞行！',
-      noCockpit: '需要驾驶座才能飞行！',
-    },
-    
-    // 稳定性
-    stability: {
-      title: '飞行稳定性',
-      excellent: '优秀',
-      good: '良好',
-      fair: '一般',
-      poor: '较差',
-      hint: '💡 提示：左右对称放置机翼可提高稳定性',
-    },
-    
     // 工具栏
     partTypes: {
       Fuselage: '机身',
@@ -113,16 +96,14 @@ export const LOCALES = {
       step3Desc: '点击地面上的任意位置放置零件',
       step4Title: '🏗️ 堆叠建造',
       step4Desc: '点击已放置的零件表面可以堆叠更多零件，建造立体结构',
-      step5Title: '✈️ 飞行稳定性',
-      step5Desc: '左右对称放置机翼可以提高飞行稳定性。不平衡的飞行器会不停翻转，难以操控！',
-      step6Title: '🗑️ 删除零件',
-      step6Desc: '点击"删除模式"按钮，然后点击零件即可删除',
-      step7Title: '🚀 准备起飞',
-      step7Desc: '建造完成后，点击"开始飞行"按钮测试你的飞行器',
-      step8Title: '🎮 控制飞行',
-      step8Desc: '按住空格键或点击屏幕让飞机上升，穿过障碍物的缝隙',
-      step9Title: '🎉 准备好了！',
-      step9Desc: '现在你已经掌握了所有技巧，开始创造属于你的飞行器吧！',
+      step5Title: '🗑️ 删除零件',
+      step5Desc: '点击"删除模式"按钮，然后点击零件即可删除',
+      step6Title: '🚀 准备起飞',
+      step6Desc: '建造完成后，点击"开始飞行"按钮测试你的飞行器',
+      step7Title: '✈️ 控制飞行',
+      step7Desc: '按住空格键或点击屏幕让飞机上升，穿过障碍物的缝隙',
+      step8Title: '🎉 准备好了！',
+      step8Desc: '现在你已经掌握了所有技巧，开始创造属于你的飞行器吧！',
       encouragement1: '太棒了！继续建造更复杂的结构',
       encouragement2: '保持冷静，注意控制高度',
       encouragement3: '祝你飞得更远！',
@@ -151,13 +132,6 @@ export const LOCALES = {
     engine: '引擎',
     placePartFirst: '請先放置至少一個零件',
     deleteMode: '刪除模式',
-    
-    // 警告提示
-    warnings: {
-      disconnected: '有零件未連接！',
-      noEngine: '需要引擎才能飛行！',
-      noCockpit: '需要駕駛座才能飛行！',
-    },
     
     partTypes: {
       Fuselage: '機身',
@@ -272,23 +246,6 @@ export const LOCALES = {
     placePartFirst: 'Place at least one part first',
     deleteMode: 'Delete',
     
-    // Warnings
-    warnings: {
-      disconnected: 'Parts are not connected!',
-      noEngine: 'Engine required to fly!',
-      noCockpit: 'Cockpit required to fly!',
-    },
-    
-    // Stability
-    stability: {
-      title: 'Flight Stability',
-      excellent: 'Excellent',
-      good: 'Good',
-      fair: 'Fair',
-      poor: 'Poor',
-      hint: '💡 Tip: Place wings symmetrically to improve stability',
-    },
-    
     partTypes: {
       Fuselage: 'Fuselage',
       Wing: 'Wing',
@@ -366,16 +323,14 @@ export const LOCALES = {
       step3Desc: 'Click anywhere on the ground to place a part',
       step4Title: '🏗️ Stack & Build',
       step4Desc: 'Click on placed parts to stack more parts and build 3D structures',
-      step5Title: '✈️ Flight Stability',
-      step5Desc: 'Place wings symmetrically to improve stability. Unbalanced aircraft will keep flipping and be hard to control!',
-      step6Title: '🗑️ Delete Parts',
-      step6Desc: 'Click "Delete Mode" button, then click parts to remove them',
-      step7Title: '🚀 Ready for Takeoff',
-      step7Desc: 'Once built, click "Start Flight" button to test your aircraft',
-      step8Title: '🎮 Control Flight',
-      step8Desc: 'Hold SPACE or tap screen to rise, navigate through obstacle gaps',
-      step9Title: '🎉 You\'re Ready!',
-      step9Desc: 'Now you know everything! Start creating your own aircraft!',
+      step5Title: '🗑️ Delete Parts',
+      step5Desc: 'Click "Delete Mode" button, then click parts to remove them',
+      step6Title: '🚀 Ready for Takeoff',
+      step6Desc: 'Once built, click "Start Flight" button to test your aircraft',
+      step7Title: '✈️ Control Flight',
+      step7Desc: 'Hold SPACE or tap screen to rise, navigate through obstacle gaps',
+      step8Title: '🎉 You\'re Ready!',
+      step8Desc: 'Now you know everything! Start creating your own aircraft!',
       encouragement1: 'Awesome! Keep building more complex structures',
       encouragement2: 'Stay calm and control your altitude',
       encouragement3: 'Fly high and far!',
@@ -403,13 +358,6 @@ export const LOCALES = {
     engine: 'エンジン',
     placePartFirst: '最低1つのパーツを配置してください',
     deleteMode: '削除',
-    
-    // 警告
-    warnings: {
-      disconnected: 'パーツが接続されていません！',
-      noEngine: '飛行にはエンジンが必要です！',
-      noCockpit: '飛行にはコックピットが必要です！',
-    },
     
     partTypes: {
       Fuselage: '機体',
@@ -524,13 +472,6 @@ export const LOCALES = {
     placePartFirst: '최소 하나의 부품을 배치하세요',
     deleteMode: '삭제',
     
-    // 경고
-    warnings: {
-      disconnected: '부품이 연결되지 않았습니다!',
-      noEngine: '비행하려면 엔진이 필요합니다!',
-      noCockpit: '비행하려면 조종석이 필요합니다!',
-    },
-    
     partTypes: {
       Fuselage: '동체',
       Wing: '날개',
@@ -643,13 +584,6 @@ export const LOCALES = {
     engine: 'Motor',
     placePartFirst: 'Bitte zuerst mindestens ein Teil platzieren',
     deleteMode: 'Löschen',
-    
-    // Warnungen
-    warnings: {
-      disconnected: 'Teile sind nicht verbunden!',
-      noEngine: 'Motor erforderlich zum Fliegen!',
-      noCockpit: 'Cockpit erforderlich zum Fliegen!',
-    },
     
     partTypes: {
       Fuselage: 'Rumpf',
@@ -764,13 +698,6 @@ export const LOCALES = {
     placePartFirst: 'Сначала разместите хотя бы одну деталь',
     deleteMode: 'Удалить',
     
-    // Предупреждения
-    warnings: {
-      disconnected: 'Детали не соединены!',
-      noEngine: 'Для полёта нужен двигатель!',
-      noCockpit: 'Для полёта нужна кабина!',
-    },
-    
     partTypes: {
       Fuselage: 'Фюзеляж',
       Wing: 'Крыло',
@@ -883,13 +810,6 @@ export const LOCALES = {
     engine: 'Moteur',
     placePartFirst: 'Placez au moins une pièce d\'abord',
     deleteMode: 'Supprimer',
-    
-    // Avertissements
-    warnings: {
-      disconnected: 'Les pièces ne sont pas connectées!',
-      noEngine: 'Moteur requis pour voler!',
-      noCockpit: 'Cockpit requis pour voler!',
-    },
     
     partTypes: {
       Fuselage: 'Fuselage',

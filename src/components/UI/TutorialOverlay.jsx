@@ -37,39 +37,32 @@ const TUTORIAL_STEPS = [
     encouragement: 'tutorial.encouragement1',
   },
   {
-    id: 'stability',
+    id: 'delete-mode',
     title: 'tutorial.step5Title',
     desc: 'tutorial.step5Desc',
-    highlight: '.stability-indicator',
-    mode: GAME_MODES.BUILD_MODE,
-  },
-  {
-    id: 'delete-mode',
-    title: 'tutorial.step6Title',
-    desc: 'tutorial.step6Desc',
     highlight: '.delete-mode-btn',
     mode: GAME_MODES.BUILD_MODE,
   },
   {
     id: 'start-flight',
-    title: 'tutorial.step7Title',
-    desc: 'tutorial.step7Desc',
+    title: 'tutorial.step6Title',
+    desc: 'tutorial.step6Desc',
     highlight: '.toggle-button',
     mode: GAME_MODES.BUILD_MODE,
     waitFor: 'flight-started',
   },
   {
     id: 'control-flight',
-    title: 'tutorial.step8Title',
-    desc: 'tutorial.step8Desc',
+    title: 'tutorial.step7Title',
+    desc: 'tutorial.step7Desc',
     highlight: null,
     mode: GAME_MODES.FLIGHT_MODE,
     encouragement: 'tutorial.encouragement2',
   },
   {
     id: 'complete',
-    title: 'tutorial.step9Title',
-    desc: 'tutorial.step9Desc',
+    title: 'tutorial.step8Title',
+    desc: 'tutorial.step8Desc',
     highlight: null,
     mode: null,
     encouragement: 'tutorial.encouragement3',
@@ -105,8 +98,6 @@ export function TutorialOverlay() {
       
       if (currentStep.highlight === '.toolbar') {
         element = document.querySelector('.toolbar');
-      } else if (currentStep.highlight === '.stability-indicator') {
-        element = document.querySelector('.stability-indicator');
       } else if (currentStep.highlight === '.delete-mode-btn') {
         // 高亮整个工具栏（因为删除按钮在工具栏内）
         element = document.querySelector('.toolbar');
@@ -205,7 +196,7 @@ export function TutorialOverlay() {
   const getCardPositionClass = () => {
     if (!currentStep.highlight) return '';
     
-    if (currentStep.highlight === '.toolbar' || currentStep.highlight === '.delete-mode-btn' || currentStep.highlight === '.stability-indicator') {
+    if (currentStep.highlight === '.toolbar' || currentStep.highlight === '.delete-mode-btn') {
       return 'highlight-bottom';
     }
     if (currentStep.highlight === '.toggle-button') {

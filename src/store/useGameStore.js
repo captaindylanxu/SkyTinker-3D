@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { GAME_MODES, PART_TYPES, PART_TIERS, PART_LIMITS, GRID_SIZE } from '../constants/gameConstants';
+import { GAME_MODES, PART_TYPES, PART_TIERS, PART_LIMITS } from '../constants/gameConstants';
 
 // 从 localStorage 读取最高分
 const getStoredHighScore = () => {
@@ -47,21 +47,29 @@ const useGameStore = create(
   setTutorialStep: (step) => set({ tutorialStep: step }),
   
   completeTutorial: () => {
-    set({ 
+    console.log('🎓 completeTutorial called');
+    const newState = { 
       tutorialStep: -1,
       gameMode: GAME_MODES.BUILD_MODE,
       isGameOver: false,
       isExploded: false,
-    });
+    };
+    console.log('🎓 Setting state:', newState);
+    set(newState);
+    console.log('🎓 State after set:', get().tutorialStep, get().gameMode);
   },
   
   skipTutorial: () => {
-    set({ 
+    console.log('⏭️ skipTutorial called');
+    const newState = { 
       tutorialStep: -1,
       gameMode: GAME_MODES.BUILD_MODE,
       isGameOver: false,
       isExploded: false,
-    });
+    };
+    console.log('⏭️ Setting state:', newState);
+    set(newState);
+    console.log('⏭️ State after set:', get().tutorialStep, get().gameMode);
   },
   
   // 游戏模式
@@ -120,67 +128,6 @@ const useGameStore = create(
 
   // 载具零件数组
   vehicleParts: [],
-  
-  // 飞行器稳定性评分
-  stabilityScore: 0,
-  setStabilityScore: (score) => set({ stabilityScore: score }),
-  
-  // 检查零件连接性 - 使用BFS确保所有零件相互连接
-  checkPartsConnectivity: () => {
-    const parts = get().vehicleParts;
-    if (parts.length === 0) return { connected: true, disconnectedParts: [] };
-    if (parts.length === 1) return { connected: true, disconnectedParts: [] };
-    
-    // 构建邻接表
-    const adjacency = new Map();
-    parts.forEach(part => {
-      const key = `${part.position[0]},${part.position[1]},${part.position[2]}`;
-      adjacency.set(key, part);
-    });
-    
-    // 检查两个零件是否相邻（共享一个面）
-    const areAdjacent = (pos1, pos2) => {
-      const dx = Math.abs(pos1[0] - pos2[0]);
-      const dy = Math.abs(pos1[1] - pos2[1]);
-      const dz = Math.abs(pos1[2] - pos2[2]);
-      
-      // 相邻意味着在一个轴上相差GRID_SIZE，其他轴相同
-      return (
-        (dx === GRID_SIZE && dy === 0 && dz === 0) ||
-        (dx === 0 && dy === GRID_SIZE && dz === 0) ||
-        (dx === 0 && dy === 0 && dz === GRID_SIZE)
-      );
-    };
-    
-    // BFS从第一个零件开始
-    const visited = new Set();
-    const queue = [parts[0]];
-    visited.add(`${parts[0].position[0]},${parts[0].position[1]},${parts[0].position[2]}`);
-    
-    while (queue.length > 0) {
-      const current = queue.shift();
-      
-      // 检查所有其他零件
-      parts.forEach(part => {
-        const key = `${part.position[0]},${part.position[1]},${part.position[2]}`;
-        if (!visited.has(key) && areAdjacent(current.position, part.position)) {
-          visited.add(key);
-          queue.push(part);
-        }
-      });
-    }
-    
-    // 找出未连接的零件
-    const disconnectedParts = parts.filter(part => {
-      const key = `${part.position[0]},${part.position[1]},${part.position[2]}`;
-      return !visited.has(key);
-    });
-    
-    return {
-      connected: disconnectedParts.length === 0,
-      disconnectedParts: disconnectedParts.map(p => p.position),
-    };
-  },
   
   // 获取某类型零件数量
   getPartCountByType: (type) => {

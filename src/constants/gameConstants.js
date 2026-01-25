@@ -95,7 +95,7 @@ export const FLAPPY_CONFIG = {
   CLEANUP_DISTANCE: 30,
   
   // 相机配置
-  CAMERA_OFFSET_Z: 35,  // 增加距离以看到更大的飞行器
-  CAMERA_OFFSET_X: -8,  // 稍微向后偏移
+  CAMERA_OFFSET_Z: 25,
+  CAMERA_OFFSET_X: -5,
   CAMERA_HEIGHT: 10,
 };
