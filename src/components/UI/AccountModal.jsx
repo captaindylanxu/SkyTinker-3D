@@ -29,12 +29,16 @@ export function AccountModal() {
   // 完成账号创建/找回后，启动教程
   const handleAccountComplete = (playerId, playerName) => {
     setPlayerInfo(playerId, playerName);
+    // 重置游戏状态并启动教程
+    useGameStore.getState().resetGame();
     setTutorialStep(0); // 启动教程
   };
 
   // 跳过账号流程，也启动教程
   const handleSkip = () => {
     skipOnboarding();
+    // 重置游戏状态并启动教程
+    useGameStore.getState().resetGame();
     setTutorialStep(0); // 启动教程
   };
 
