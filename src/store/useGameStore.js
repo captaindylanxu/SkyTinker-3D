@@ -23,16 +23,17 @@ const saveHighScore = (score) => {
 
 // 默认飞机配置（新用户体验用）
 // 布局：前面三个引擎，后面中间是机身，机身两边是机翼，机身上面是驾驶座
+// 注意：飞行时飞机会旋转 -90 度，所以这里的 Z 轴在飞行时变成前进方向
 const DEFAULT_VEHICLE_PARTS = [
-  // 前排：三个引擎
-  { id: 1, type: PART_TYPES.ENGINE, tier: PART_TIERS.NORMAL, position: [1, 0.5, -1], rotation: [0, 0, 0] },
-  { id: 2, type: PART_TYPES.ENGINE, tier: PART_TIERS.NORMAL, position: [1, 0.5, 0], rotation: [0, 0, 0] },
-  { id: 3, type: PART_TYPES.ENGINE, tier: PART_TIERS.NORMAL, position: [1, 0.5, 1], rotation: [0, 0, 0] },
-  // 后排中间：机身
+  // 前排：三个引擎 (z=-1 是飞行时的前方)
+  { id: 1, type: PART_TYPES.ENGINE, tier: PART_TIERS.NORMAL, position: [-1, 0.5, -1], rotation: [0, 0, 0] },
+  { id: 2, type: PART_TYPES.ENGINE, tier: PART_TIERS.NORMAL, position: [0, 0.5, -1], rotation: [0, 0, 0] },
+  { id: 3, type: PART_TYPES.ENGINE, tier: PART_TIERS.NORMAL, position: [1, 0.5, -1], rotation: [0, 0, 0] },
+  // 后排：机身在中间 (z=0 是飞行时的后方)
   { id: 4, type: PART_TYPES.FUSELAGE, tier: PART_TIERS.NORMAL, position: [0, 0.5, 0], rotation: [0, 0, 0] },
-  // 机身两边：机翼
-  { id: 5, type: PART_TYPES.WING, tier: PART_TIERS.NORMAL, position: [0, 0.5, -1], rotation: [0, 0, 0] },
-  { id: 6, type: PART_TYPES.WING, tier: PART_TIERS.NORMAL, position: [0, 0.5, 1], rotation: [0, 0, 0] },
+  // 后排：机翼在机身两边 (x 是飞行时的左右)
+  { id: 5, type: PART_TYPES.WING, tier: PART_TIERS.NORMAL, position: [-1, 0.5, 0], rotation: [0, 0, 0] },
+  { id: 6, type: PART_TYPES.WING, tier: PART_TIERS.NORMAL, position: [1, 0.5, 0], rotation: [0, 0, 0] },
   // 机身上面：驾驶座
   { id: 7, type: PART_TYPES.COCKPIT, tier: PART_TIERS.NORMAL, position: [0, 1.5, 0], rotation: [0, 0, 0] },
 ];
