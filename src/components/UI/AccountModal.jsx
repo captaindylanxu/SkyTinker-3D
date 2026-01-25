@@ -6,14 +6,7 @@ import { isSupabaseConfigured } from '../../lib/supabase';
 import './AccountModal.css';
 
 export function AccountModal() {
-  const { 
-    hasCompletedOnboarding, 
-    setPlayerInfo, 
-    skipOnboarding,
-    isFirstGame,
-    hasPlayedFirstFlight,
-    startTutorial,
-  } = useGameStore();
+  const { hasCompletedOnboarding, setPlayerInfo, skipOnboarding } = useGameStore();
   const { t } = useI18n();
   
   const [mode, setMode] = useState('welcome'); // welcome, create, recover
@@ -24,10 +17,7 @@ export function AccountModal() {
 
   const hasLeaderboard = isSupabaseConfigured();
 
-  // 只在第一次游戏后且未完成账号创建时显示
-  const shouldShow = !isFirstGame && hasPlayedFirstFlight && !hasCompletedOnboarding;
-  
-  if (!shouldShow) return null;
+  if (hasCompletedOnboarding) return null;
 
   // 欢迎界面
   if (mode === 'welcome') {
@@ -36,13 +26,6 @@ export function AccountModal() {
         <div className="account-modal">
           <h2 className="account-title">✈️ {t('account.welcome')}</h2>
           <p className="account-description">{t('account.welcomeDesc')}</p>
-          
-          {/* 第一次游戏后的特殊提示 */}
-          {hasPlayedFirstFlight && (
-            <div className="first-game-message">
-              <p>🎮 {t('firstGameMessage')}</p>
-            </div>
-          )}
 
           {hasLeaderboard ? (
             <div className="account-buttons">
@@ -60,13 +43,7 @@ export function AccountModal() {
               </button>
               <button
                 className="account-button skip"
-                onClick={() => {
-                  skipOnboarding();
-                  // 跳过后启动教程
-                  if (hasPlayedFirstFlight) {
-                    setTimeout(() => startTutorial(), 100);
-                  }
-                }}
+                onClick={skipOnboarding}
               >
                 {t('account.skip')}
               </button>
@@ -74,13 +51,7 @@ export function AccountModal() {
           ) : (
             <button
               className="account-button primary"
-              onClick={() => {
-                skipOnboarding();
-                // 跳过后启动教程
-                if (hasPlayedFirstFlight) {
-                  setTimeout(() => startTutorial(), 100);
-                }
-              }}
+              onClick={skipOnboarding}
             >
               {t('account.startGame')}
             </button>
@@ -127,10 +98,6 @@ export function AccountModal() {
 
       if (result.success) {
         setPlayerInfo(result.data.playerId, result.data.playerName);
-        // 创建账号后启动教程
-        if (hasPlayedFirstFlight) {
-          setTimeout(() => startTutorial(), 100);
-        }
       } else {
         setError(result.error === 'Name already exists' 
           ? t('account.nameExists') 
@@ -215,10 +182,6 @@ export function AccountModal() {
 
       if (result.success) {
         setPlayerInfo(result.data.playerId, result.data.playerName);
-        // 找回账号后启动教程
-        if (hasPlayedFirstFlight) {
-          setTimeout(() => startTutorial(), 100);
-        }
       } else {
         if (result.error === 'Account not found') {
           setError(t('account.accountNotFound'));

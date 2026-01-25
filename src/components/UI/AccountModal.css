@@ -58,22 +58,6 @@
   line-height: 1.6;
 }
 
-.first-game-message {
-  margin-bottom: 20px;
-  padding: 16px 24px;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
-  border-radius: 12px;
-  border: 1px solid rgba(102, 126, 234, 0.3);
-}
-
-.first-game-message p {
-  margin: 0;
-  font-size: 16px;
-  color: #e2e8f0;
-  line-height: 1.6;
-  text-align: center;
-}
-
 .account-buttons {
   display: flex;
   flex-direction: column;
