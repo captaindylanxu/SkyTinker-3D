@@ -147,12 +147,14 @@ const useGameStore = create(
 
   // 载具零件数组（第一次游戏时使用默认飞机）
   vehicleParts: [
-    // 默认飞机配置
+    // 默认飞机配置 - 前面三个引擎提供足够推力
     { id: 1, type: 'Cockpit', tier: 'normal', position: [0, 0.5, 0], rotation: [0, 0, 0] },
-    { id: 2, type: 'Fuselage', tier: 'normal', position: [0, 0.5, -1], rotation: [0, 0, 0] },
-    { id: 3, type: 'Engine', tier: 'normal', position: [0, 0.5, -2], rotation: [0, 0, 0] },
-    { id: 4, type: 'Wing', tier: 'normal', position: [-1, 0.5, -1], rotation: [0, 0, 0] },
-    { id: 5, type: 'Wing', tier: 'normal', position: [1, 0.5, -1], rotation: [0, 0, 0] },
+    { id: 2, type: 'Engine', tier: 'normal', position: [-1, 0.5, 0], rotation: [0, 0, 0] },
+    { id: 3, type: 'Engine', tier: 'normal', position: [1, 0.5, 0], rotation: [0, 0, 0] },
+    { id: 4, type: 'Engine', tier: 'normal', position: [0, 0.5, 1], rotation: [0, 0, 0] },
+    { id: 5, type: 'Fuselage', tier: 'normal', position: [0, 0.5, -1], rotation: [0, 0, 0] },
+    { id: 6, type: 'Wing', tier: 'normal', position: [-1, 0.5, -1], rotation: [0, 0, 0] },
+    { id: 7, type: 'Wing', tier: 'normal', position: [1, 0.5, -1], rotation: [0, 0, 0] },
   ],
   
   // 获取某类型零件数量
