@@ -21,6 +21,16 @@ const saveHighScore = (score) => {
   }
 };
 
+// 检查是否是新用户（没有存储过数据）
+const isNewUser = () => {
+  try {
+    const stored = localStorage.getItem('flappy-vehicle-storage');
+    return !stored;
+  } catch {
+    return true;
+  }
+};
+
 // 默认飞机配置（新用户体验用）
 // 布局：前面三个引擎，后面中间是机身，机身两边是机翼，机身上面是驾驶座
 // 注意：飞行时飞机会旋转 -90 度，所以这里的 Z 轴在飞行时变成前进方向
@@ -37,6 +47,9 @@ const DEFAULT_VEHICLE_PARTS = [
   // 机身上面：驾驶座
   { id: 7, type: PART_TYPES.COCKPIT, tier: PART_TIERS.NORMAL, position: [0, 1.5, 0], rotation: [0, 0, 0] },
 ];
+
+// 根据是否新用户决定初始状态
+const _isNewUser = isNewUser();
 
 const useGameStore = create(
   persist(
@@ -103,8 +116,8 @@ const useGameStore = create(
     console.log('⏭️ State after set:', get().tutorialStep, get().gameMode);
   },
   
-  // 游戏模式 - 新用户默认进入飞行模式
-  gameMode: GAME_MODES.FLIGHT_MODE,
+  // 游戏模式 - 新用户默认飞行模式，老用户默认建造模式
+  gameMode: _isNewUser ? GAME_MODES.FLIGHT_MODE : GAME_MODES.BUILD_MODE,
   setGameMode: (mode) => set({ gameMode: mode }),
   toggleGameMode: () => set((state) => ({
     gameMode: state.gameMode === GAME_MODES.BUILD_MODE 
@@ -168,8 +181,8 @@ const useGameStore = create(
   isDeleteMode: false,
   setDeleteMode: (value) => set({ isDeleteMode: value }),
 
-  // 载具零件数组 - 新用户默认有一个飞机
-  vehicleParts: DEFAULT_VEHICLE_PARTS,
+  // 载具零件数组 - 新用户默认有一个飞机，老用户为空
+  vehicleParts: _isNewUser ? DEFAULT_VEHICLE_PARTS : [],
   
   // 获取某类型零件数量
   getPartCountByType: (type) => {
