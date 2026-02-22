@@ -16,6 +16,8 @@ export function AccountModal() {
     setPlayerInfo, 
     skipOnboarding, 
     setTutorialStep,
+    hasCompletedOnboarding,
+    playerId: currentPlayerId,
   } = useGameStore();
   const { t } = useI18n();
   
@@ -35,20 +37,26 @@ export function AccountModal() {
   // 只在 showAccountModal 为 true 时显示
   if (!showAccountModal) return null;
 
-  // 完成账号创建/找回后，启动教程
+  // 完成账号创建/找回后
   const handleAccountComplete = (playerId, playerName) => {
     setPlayerInfo(playerId, playerName);
-    // 重置游戏状态并启动教程
-    useGameStore.getState().resetGame();
-    setTutorialStep(0); // 启动教程
+    const state = useGameStore.getState();
+    // 只有新用户（还没完成过 onboarding）才启动教程
+    if (!state.hasCompletedOnboarding) {
+      useGameStore.getState().resetGame();
+      setTutorialStep(0);
+    }
   };
 
-  // 跳过账号流程，也启动教程
+  // 跳过账号流程
   const handleSkip = () => {
+    const wasOnboarded = useGameStore.getState().hasCompletedOnboarding;
     skipOnboarding();
-    // 重置游戏状态并启动教程
-    useGameStore.getState().resetGame();
-    setTutorialStep(0); // 启动教程
+    // 只有新用户才启动教程
+    if (!wasOnboarded) {
+      useGameStore.getState().resetGame();
+      setTutorialStep(0);
+    }
   };
 
   // overlay 的通用事件属性（阻止穿透到 Canvas）
@@ -61,11 +69,23 @@ export function AccountModal() {
 
   // 欢迎界面
   if (mode === 'welcome') {
+    // 从 UserBadge 打开（已完成 onboarding）vs 新用户首次
+    const isFromBadge = hasCompletedOnboarding;
+    
     return (
       <div className="account-overlay" {...overlayProps}>
         <div className="account-modal">
-          <h2 className="account-title">🎉 {t('account.firstGameComplete')}</h2>
-          <p className="account-description">{t('account.createAccountPrompt')}</p>
+          {isFromBadge && (
+            <button className="account-back" onClick={() => useGameStore.setState({ showAccountModal: false })}>
+              ✕
+            </button>
+          )}
+          <h2 className="account-title">
+            {isFromBadge ? `👤 ${t('account.createAccount')}` : `🎉 ${t('account.firstGameComplete')}`}
+          </h2>
+          <p className="account-description">
+            {isFromBadge ? t('account.welcomeDesc') : t('account.createAccountPrompt')}
+          </p>
 
           {hasLeaderboard ? (
             <div className="account-buttons">
@@ -81,17 +101,19 @@ export function AccountModal() {
               >
                 🔑 {t('account.recoverAccount')}
               </button>
-              <button
-                className="account-button skip"
-                onClick={handleSkip}
-              >
-                {t('account.skip')}
-              </button>
+              {!isFromBadge && (
+                <button
+                  className="account-button skip"
+                  onClick={handleSkip}
+                >
+                  {t('account.skip')}
+                </button>
+              )}
             </div>
           ) : (
             <button
               className="account-button primary"
-              onClick={handleSkip}
+              onClick={isFromBadge ? () => useGameStore.setState({ showAccountModal: false }) : handleSkip}
             >
               {t('account.continue')}
             </button>

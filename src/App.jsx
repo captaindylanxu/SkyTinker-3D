@@ -6,6 +6,7 @@ import VIPShop from './components/UI/VIPShop';
 import AccountModal from './components/UI/AccountModal';
 import Leaderboard from './components/UI/Leaderboard';
 import TutorialOverlay from './components/UI/TutorialOverlay';
+import UserBadge from './components/UI/UserBadge';
 import WelcomePoster from './components/UI/WelcomePoster';
 import './App.css';
 
@@ -17,6 +18,7 @@ function App() {
       <Toolbar />
       <VIPShop />
       <Leaderboard />
+      <UserBadge />
       <GameOverModal />
       <AccountModal />
       <TutorialOverlay />

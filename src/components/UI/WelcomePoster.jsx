@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useRef, useCallback } from 'react';
-import useGameStore from '../../store/useGameStore';
+import useGameStore, { DEFAULT_VEHICLE_PARTS } from '../../store/useGameStore';
 import { GAME_MODES } from '../../constants/gameConstants';
 import { useI18n } from '../../i18n/useI18n';
 import { getLeaderboard } from '../../services/leaderboard';
@@ -240,9 +240,18 @@ export function WelcomePoster() {
   const handleEnterGame = () => {
     const state = useGameStore.getState();
     if (state.hasCompletedOnboarding) {
+      // 老用户 → 直接进入建造模式
       useGameStore.setState({ hasSeenPoster: true, gameMode: GAME_MODES.BUILD_MODE });
     } else {
-      useGameStore.setState({ hasSeenPoster: true, showAccountModal: true, gameMode: GAME_MODES.BUILD_MODE });
+      // 新用户 → 用默认飞机直接试玩飞行模式，炸毁后再弹账号弹窗
+      useGameStore.setState({ 
+        hasSeenPoster: true, 
+        gameMode: GAME_MODES.FLIGHT_MODE,
+        vehicleParts: DEFAULT_VEHICLE_PARTS,
+        score: 0,
+        isGameOver: false,
+        isExploded: false,
+      });
     }
   };
 

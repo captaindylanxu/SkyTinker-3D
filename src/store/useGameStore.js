@@ -21,6 +21,17 @@ const saveHighScore = (score) => {
   }
 };
 
+// 默认飞机配置（新用户试玩用）
+export const DEFAULT_VEHICLE_PARTS = [
+  { id: 1, type: PART_TYPES.ENGINE, tier: PART_TIERS.NORMAL, position: [-1, 0.5, -1], rotation: [0, 0, 0] },
+  { id: 2, type: PART_TYPES.ENGINE, tier: PART_TIERS.NORMAL, position: [0, 0.5, -1], rotation: [0, 0, 0] },
+  { id: 3, type: PART_TYPES.ENGINE, tier: PART_TIERS.NORMAL, position: [1, 0.5, -1], rotation: [0, 0, 0] },
+  { id: 4, type: PART_TYPES.FUSELAGE, tier: PART_TIERS.NORMAL, position: [0, 0.5, 0], rotation: [0, 0, 0] },
+  { id: 5, type: PART_TYPES.WING, tier: PART_TIERS.NORMAL, position: [-1, 0.5, 0], rotation: [0, 0, 0] },
+  { id: 6, type: PART_TYPES.WING, tier: PART_TIERS.NORMAL, position: [1, 0.5, 0], rotation: [0, 0, 0] },
+  { id: 7, type: PART_TYPES.COCKPIT, tier: PART_TIERS.NORMAL, position: [0, 1.5, 0], rotation: [0, 0, 0] },
+];
+
 const useGameStore = create(
   persist(
     (set, get) => ({
@@ -106,7 +117,12 @@ const useGameStore = create(
   setGameOver: () => {
     const state = get();
     state.updateHighScore();
-    set({ isGameOver: true });
+    // 新用户第一次炸毁后，弹出账号弹窗
+    if (!state.hasCompletedOnboarding) {
+      set({ isGameOver: true, showAccountModal: true });
+    } else {
+      set({ isGameOver: true });
+    }
   },
   setExploded: () => set({ isExploded: true }),
   

@@ -1,7 +1,7 @@
 .leaderboard-toggle {
   position: fixed;
   top: 20px;
-  left: 20px;
+  right: 160px;
   padding: 10px 20px;
   font-size: 14px;
   font-weight: 600;
@@ -12,7 +12,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
-  z-index: 9999; /* 提高 z-index 确保显示在最上层 */
+  z-index: 100;
 }
 
 .leaderboard-toggle:hover {
@@ -199,8 +199,8 @@
 @media (max-width: 768px) {
   .leaderboard-toggle {
     top: 48px;
-    left: auto;
     right: 10px;
+    left: auto;
     padding: 7px 12px;
     font-size: 11px;
     border-radius: 8px;
