@@ -198,10 +198,10 @@
 
 @media (max-width: 768px) {
   .leaderboard-toggle {
-    top: auto;
-    bottom: 10px;
-    left: 10px;
-    padding: 8px 14px;
+    top: 48px;
+    left: auto;
+    right: 10px;
+    padding: 7px 12px;
     font-size: 11px;
     border-radius: 8px;
   }
