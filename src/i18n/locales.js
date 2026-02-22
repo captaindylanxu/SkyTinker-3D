@@ -137,6 +137,24 @@ export const LOCALES = {
       hint: '按住空格键或点击屏幕控制飞行',
       storyBtn: "Captain Dylan 的故事",
     },
+
+    // 故事旁白
+    story: {
+      s1Title: '✨ 冒险的开始',
+      s1Desc: '在云端之上，有一个叫做"天空工坊"的神奇地方。这里是所有飞行梦想开始的地方。',
+      s2Title: '🔧 天空工坊',
+      s2Desc: 'Dylan 队长在他的工坊里日夜钻研，用各种零件拼装出独一无二的飞行器。',
+      s3Title: '🛩️ 首次试飞',
+      s3Desc: '经过无数次尝试，Dylan 终于造出了他的第一架飞行器，准备迎接天空的挑战。',
+      s4Title: '🌤️ 翱翔蓝天',
+      s4Desc: '飞行器穿越云层，Dylan 感受到了前所未有的自由。风在耳边呼啸，世界在脚下展开。',
+      s5Title: '⚡ 重重障碍',
+      s5Desc: '天空并不总是一帆风顺。各种障碍物考验着 Dylan 的飞行技术和飞行器的性能。',
+      s6Title: '💥 坠落与重生',
+      s6Desc: '失败并不可怕。每一次坠落都是一次学习的机会，让下一架飞行器飞得更远。',
+      s7Title: '🏆 你的冒险',
+      s7Desc: '现在，轮到你来建造自己的飞行器了。发挥创意，挑战天空，创造属于你的飞行传奇！',
+    },
     
     // 分享续命
     share: {
@@ -300,6 +318,23 @@ export const LOCALES = {
       hint: '按住空白鍵或點擊螢幕控制飛行',
       storyBtn: "Captain Dylan 的故事",
     },
+
+    story: {
+      s1Title: '✨ 冒險的開始',
+      s1Desc: '在雲端之上，有一個叫做「天空工坊」的神奇地方。這裡是所有飛行夢想開始的地方。',
+      s2Title: '🔧 天空工坊',
+      s2Desc: 'Dylan 隊長在他的工坊裡日夜鑽研，用各種零件拼裝出獨一無二的飛行器。',
+      s3Title: '🛩️ 首次試飛',
+      s3Desc: '經過無數次嘗試，Dylan 終於造出了他的第一架飛行器，準備迎接天空的挑戰。',
+      s4Title: '🌤️ 翱翔藍天',
+      s4Desc: '飛行器穿越雲層，Dylan 感受到了前所未有的自由。風在耳邊呼嘯，世界在腳下展開。',
+      s5Title: '⚡ 重重障礙',
+      s5Desc: '天空並不總是一帆風順。各種障礙物考驗著 Dylan 的飛行技術和飛行器的性能。',
+      s6Title: '💥 墜落與重生',
+      s6Desc: '失敗並不可怕。每一次墜落都是一次學習的機會，讓下一架飛行器飛得更遠。',
+      s7Title: '🏆 你的冒險',
+      s7Desc: '現在，輪到你來建造自己的飛行器了。發揮創意，挑戰天空，創造屬於你的飛行傳奇！',
+    },
     
     share: {
       reviveTitle: '還有機會！',
@@ -461,6 +496,23 @@ export const LOCALES = {
       play: 'TAKE OFF',
       hint: 'Hold SPACE or tap screen to fly',
       storyBtn: "Captain Dylan's Story",
+    },
+
+    story: {
+      s1Title: '✨ The Beginning',
+      s1Desc: 'High above the clouds lies a magical place called the Sky Workshop. This is where all flight dreams begin.',
+      s2Title: '🔧 The Sky Workshop',
+      s2Desc: 'Captain Dylan works day and night in his workshop, assembling unique aircraft from all kinds of parts.',
+      s3Title: '🛩️ First Flight',
+      s3Desc: 'After countless attempts, Dylan finally built his first aircraft, ready to take on the sky.',
+      s4Title: '🌤️ Soaring High',
+      s4Desc: 'The aircraft breaks through the clouds. Dylan feels a freedom like never before, the world unfolding below.',
+      s5Title: '⚡ Obstacles Ahead',
+      s5Desc: "The sky isn't always clear. Various obstacles test Dylan's piloting skills and his aircraft's performance.",
+      s6Title: '💥 Fall & Rise Again',
+      s6Desc: "Failure isn't the end. Every crash is a chance to learn, making the next aircraft fly even further.",
+      s7Title: '🏆 Your Adventure',
+      s7Desc: "Now it's your turn to build your own aircraft. Get creative, challenge the sky, and write your own flight legend!",
     },
     
     share: {
@@ -624,6 +676,23 @@ export const LOCALES = {
       hint: 'スペースキーまたはタップで飛行',
       storyBtn: 'Captain Dylan の物語',
     },
+
+    story: {
+      s1Title: '✨ 冒険の始まり',
+      s1Desc: '雲の上に「スカイ工房」という不思議な場所があります。ここはすべての飛行の夢が始まる場所です。',
+      s2Title: '🔧 スカイ工房',
+      s2Desc: 'Dylan 隊長は工房で昼夜を問わず研究し、様々なパーツで唯一無二の航空機を組み立てています。',
+      s3Title: '🛩️ 初飛行',
+      s3Desc: '数え切れない試行の末、Dylan はついに最初の航空機を完成させ、空への挑戦に備えました。',
+      s4Title: '🌤️ 大空を翔ける',
+      s4Desc: '航空機が雲を突き抜け、Dylan はかつてない自由を感じました。風が耳元で唸り、世界が足元に広がります。',
+      s5Title: '⚡ 立ちはだかる障害',
+      s5Desc: '空はいつも穏やかとは限りません。様々な障害物が Dylan の操縦技術と航空機の性能を試します。',
+      s6Title: '💥 墜落と再起',
+      s6Desc: '失敗は怖くありません。墜落するたびに学び、次の航空機をもっと遠くへ飛ばせるようになります。',
+      s7Title: '🏆 あなたの冒険',
+      s7Desc: 'さあ、あなたの番です。自分だけの航空機を作り、空に挑戦し、あなたの飛行伝説を作りましょう！',
+    },
     
     share: {
       reviveTitle: 'もう一度チャンス！',
@@ -785,6 +854,23 @@ export const LOCALES = {
       play: '이륙',
       hint: '스페이스 키 또는 화면을 탭하여 비행',
       storyBtn: 'Captain Dylan의 이야기',
+    },
+
+    story: {
+      s1Title: '✨ 모험의 시작',
+      s1Desc: '구름 위에 "스카이 공방"이라는 신비로운 곳이 있습니다. 이곳은 모든 비행의 꿈이 시작되는 곳입니다.',
+      s2Title: '🔧 스카이 공방',
+      s2Desc: 'Dylan 대장은 공방에서 밤낮으로 연구하며, 다양한 부품으로 독특한 항공기를 조립합니다.',
+      s3Title: '🛩️ 첫 비행',
+      s3Desc: '수많은 시도 끝에 Dylan은 마침내 첫 번째 항공기를 완성하고 하늘의 도전에 나섰습니다.',
+      s4Title: '🌤️ 하늘을 날다',
+      s4Desc: '항공기가 구름을 뚫고 나아갑니다. Dylan은 전에 없던 자유를 느끼며, 세상이 발아래 펼쳐집니다.',
+      s5Title: '⚡ 장애물 앞에서',
+      s5Desc: '하늘이 항상 맑은 것은 아닙니다. 다양한 장애물이 Dylan의 조종 실력과 항공기 성능을 시험합니다.',
+      s6Title: '💥 추락과 재기',
+      s6Desc: '실패는 두렵지 않습니다. 매번 추락할 때마다 배우고, 다음 항공기를 더 멀리 날릴 수 있습니다.',
+      s7Title: '🏆 당신의 모험',
+      s7Desc: '이제 당신의 차례입니다. 나만의 항공기를 만들고, 하늘에 도전하고, 당신만의 비행 전설을 써보세요!',
     },
     
     share: {
@@ -948,6 +1034,23 @@ export const LOCALES = {
       hint: 'Halte LEERTASTE oder tippe zum Fliegen',
       storyBtn: 'Captain Dylans Geschichte',
     },
+
+    story: {
+      s1Title: '✨ Der Anfang',
+      s1Desc: 'Hoch über den Wolken liegt ein magischer Ort namens „Himmelswerkstatt". Hier beginnen alle Flugträume.',
+      s2Title: '🔧 Die Himmelswerkstatt',
+      s2Desc: 'Captain Dylan arbeitet Tag und Nacht in seiner Werkstatt und baut einzigartige Flugzeuge aus allen möglichen Teilen.',
+      s3Title: '🛩️ Erster Flug',
+      s3Desc: 'Nach unzähligen Versuchen hat Dylan endlich sein erstes Flugzeug gebaut, bereit für die Herausforderung des Himmels.',
+      s4Title: '🌤️ Hoch hinaus',
+      s4Desc: 'Das Flugzeug durchbricht die Wolken. Dylan spürt eine nie dagewesene Freiheit, die Welt breitet sich unter ihm aus.',
+      s5Title: '⚡ Hindernisse voraus',
+      s5Desc: 'Der Himmel ist nicht immer klar. Verschiedene Hindernisse testen Dylans Flugkünste und die Leistung seines Flugzeugs.',
+      s6Title: '💥 Absturz & Neustart',
+      s6Desc: 'Scheitern ist nicht das Ende. Jeder Absturz ist eine Chance zu lernen und das nächste Flugzeug noch weiter fliegen zu lassen.',
+      s7Title: '🏆 Dein Abenteuer',
+      s7Desc: 'Jetzt bist du dran! Baue dein eigenes Flugzeug, fordere den Himmel heraus und schreibe deine eigene Fluglegende!',
+    },
     
     share: {
       reviveTitle: 'Noch eine Chance!',
@@ -1110,6 +1213,23 @@ export const LOCALES = {
       hint: 'Удерживайте ПРОБЕЛ или нажимайте для полёта',
       storyBtn: 'История Captain Dylan',
     },
+
+    story: {
+      s1Title: '✨ Начало приключения',
+      s1Desc: 'Высоко над облаками есть волшебное место — «Небесная мастерская». Здесь начинаются все мечты о полёте.',
+      s2Title: '🔧 Небесная мастерская',
+      s2Desc: 'Капитан Dylan работает день и ночь в своей мастерской, собирая уникальные самолёты из разных деталей.',
+      s3Title: '🛩️ Первый полёт',
+      s3Desc: 'После бесчисленных попыток Dylan наконец построил свой первый самолёт, готовый к вызову неба.',
+      s4Title: '🌤️ Паря в небесах',
+      s4Desc: 'Самолёт прорывается сквозь облака. Dylan чувствует невиданную свободу, мир раскрывается внизу.',
+      s5Title: '⚡ Препятствия впереди',
+      s5Desc: 'Небо не всегда безоблачно. Различные препятствия испытывают мастерство Dylan и возможности его самолёта.',
+      s6Title: '💥 Падение и возрождение',
+      s6Desc: 'Неудача — не конец. Каждое падение — шанс научиться и заставить следующий самолёт лететь ещё дальше.',
+      s7Title: '🏆 Твоё приключение',
+      s7Desc: 'Теперь твоя очередь! Построй свой самолёт, бросай вызов небу и создай свою лётную легенду!',
+    },
     
     share: {
       reviveTitle: 'Ещё один шанс!',
@@ -1271,6 +1391,23 @@ export const LOCALES = {
       play: 'DÉCOLLAGE',
       hint: 'Maintiens ESPACE ou touche pour voler',
       storyBtn: "L'histoire de Captain Dylan",
+    },
+
+    story: {
+      s1Title: '✨ Le commencement',
+      s1Desc: "Au-dessus des nuages se trouve un lieu magique appelé l'Atelier du Ciel. C'est ici que tous les rêves de vol commencent.",
+      s2Title: "🔧 L'Atelier du Ciel",
+      s2Desc: 'Le Capitaine Dylan travaille jour et nuit dans son atelier, assemblant des avions uniques à partir de toutes sortes de pièces.',
+      s3Title: '🛩️ Premier vol',
+      s3Desc: "Après d'innombrables tentatives, Dylan a enfin construit son premier avion, prêt à relever le défi du ciel.",
+      s4Title: '🌤️ En plein ciel',
+      s4Desc: "L'avion perce les nuages. Dylan ressent une liberté inédite, le monde s'étend sous ses pieds.",
+      s5Title: '⚡ Obstacles en vue',
+      s5Desc: "Le ciel n'est pas toujours dégagé. Divers obstacles mettent à l'épreuve les talents de pilotage de Dylan.",
+      s6Title: '💥 Chute et renaissance',
+      s6Desc: "L'échec n'est pas la fin. Chaque crash est une occasion d'apprendre et de faire voler le prochain avion encore plus loin.",
+      s7Title: '🏆 Ton aventure',
+      s7Desc: "C'est ton tour ! Construis ton propre avion, défie le ciel et écris ta propre légende aérienne !",
     },
     
     share: {

@@ -6,20 +6,142 @@ import { getLeaderboard } from '../../services/leaderboard';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import './WelcomePoster.css';
 
-// 故事图片配置
+// 故事图片 + 多语言文案 key
 const STORY_SLIDES = [
-  { src: '/story/story1.jpg' },
-  { src: '/story/story2.jpg' },
-  { src: '/story/story3.jpg' },
-  { src: '/story/story4.jpg' },
-  { src: '/story/story5.jpg' },
-  { src: '/story/story6.jpg' },
-  { src: '/story/story7.jpg' },
+  { src: '/story/story1.jpg', titleKey: 'story.s1Title', descKey: 'story.s1Desc' },
+  { src: '/story/story2.jpg', titleKey: 'story.s2Title', descKey: 'story.s2Desc' },
+  { src: '/story/story3.jpg', titleKey: 'story.s3Title', descKey: 'story.s3Desc' },
+  { src: '/story/story4.jpg', titleKey: 'story.s4Title', descKey: 'story.s4Desc' },
+  { src: '/story/story5.jpg', titleKey: 'story.s5Title', descKey: 'story.s5Desc' },
+  { src: '/story/story6.jpg', titleKey: 'story.s6Title', descKey: 'story.s6Desc' },
+  { src: '/story/story7.jpg', titleKey: 'story.s7Title', descKey: 'story.s7Desc' },
 ];
 
-const AUTO_PLAY_INTERVAL = 4000;
+const AUTO_PLAY_INTERVAL = 5000;
 
-// 生成随机星星
+// ===== 背景音乐生成器（梦幻冒险风） =====
+class StoryBGM {
+  constructor() {
+    this.ctx = null;
+    this.gainNode = null;
+    this.playing = false;
+    this.nodes = [];
+  }
+
+  start() {
+    if (this.playing) return;
+    try {
+      this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      this.gainNode = this.ctx.createGain();
+      this.gainNode.gain.setValueAtTime(0, this.ctx.currentTime);
+      this.gainNode.gain.linearRampToValueAtTime(0.12, this.ctx.currentTime + 2);
+      this.gainNode.connect(this.ctx.destination);
+      this.playing = true;
+      this._playPad();
+      this._playMelody();
+    } catch (e) {
+      console.warn('BGM not supported');
+    }
+  }
+
+  // 柔和的和弦垫音
+  _playPad() {
+    if (!this.ctx) return;
+    const chords = [
+      [261.6, 329.6, 392.0], // C major
+      [293.7, 370.0, 440.0], // D major
+      [349.2, 440.0, 523.3], // F major
+      [392.0, 493.9, 587.3], // G major
+    ];
+    const now = this.ctx.currentTime;
+    const chordDur = 4;
+    const totalDur = chords.length * chordDur;
+
+    const loop = (startTime) => {
+      chords.forEach((chord, ci) => {
+        chord.forEach((freq) => {
+          const osc = this.ctx.createOscillator();
+          const g = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          g.gain.setValueAtTime(0, startTime + ci * chordDur);
+          g.gain.linearRampToValueAtTime(0.06, startTime + ci * chordDur + 0.5);
+          g.gain.linearRampToValueAtTime(0.04, startTime + ci * chordDur + chordDur - 0.3);
+          g.gain.linearRampToValueAtTime(0, startTime + ci * chordDur + chordDur);
+          osc.connect(g);
+          g.connect(this.gainNode);
+          osc.start(startTime + ci * chordDur);
+          osc.stop(startTime + ci * chordDur + chordDur);
+          this.nodes.push(osc);
+        });
+      });
+    };
+
+    // 循环播放 3 轮（足够覆盖故事时长）
+    for (let i = 0; i < 3; i++) {
+      loop(now + i * totalDur);
+    }
+  }
+
+  // 简单的旋律线
+  _playMelody() {
+    if (!this.ctx) return;
+    const notes = [
+      523.3, 587.3, 659.3, 784.0, 659.3, 587.3, 523.3, 0,
+      587.3, 659.3, 784.0, 880.0, 784.0, 659.3, 587.3, 0,
+      523.3, 659.3, 784.0, 1046.5, 880.0, 784.0, 659.3, 0,
+    ];
+    const now = this.ctx.currentTime;
+    const noteDur = 0.8;
+
+    const playOnce = (offset) => {
+      notes.forEach((freq, i) => {
+        if (freq === 0) return;
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.value = freq;
+        const t = offset + i * noteDur;
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(0.05, t + 0.05);
+        g.gain.exponentialRampToValueAtTime(0.001, t + noteDur - 0.05);
+        osc.connect(g);
+        g.connect(this.gainNode);
+        osc.start(t);
+        osc.stop(t + noteDur);
+        this.nodes.push(osc);
+      });
+    };
+
+    // 延迟 1 秒开始旋律，循环 2 轮
+    const melodyLen = notes.length * noteDur;
+    for (let i = 0; i < 2; i++) {
+      playOnce(now + 1 + i * (melodyLen + 2));
+    }
+  }
+
+  fadeOut() {
+    if (!this.ctx || !this.gainNode) return;
+    try {
+      this.gainNode.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 1.5);
+      setTimeout(() => this.stop(), 1600);
+    } catch (e) {
+      this.stop();
+    }
+  }
+
+  stop() {
+    this.playing = false;
+    this.nodes.forEach((n) => { try { n.stop(); } catch (e) {} });
+    this.nodes = [];
+    if (this.ctx) {
+      try { this.ctx.close(); } catch (e) {}
+      this.ctx = null;
+    }
+  }
+}
+
+// ===== 星星背景 =====
 function Stars() {
   const stars = useMemo(() => {
     return Array.from({ length: 50 }, (_, i) => ({
@@ -49,16 +171,41 @@ function Stars() {
   );
 }
 
-// 故事书轮播组件
+// ===== 故事书轮播组件 =====
 function StoryBook({ onFinish }) {
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
-  const [direction, setDirection] = useState(1); // 1=forward, -1=back
+  const [textVisible, setTextVisible] = useState(true);
+  const [musicStarted, setMusicStarted] = useState(false);
   const timerRef = useRef(null);
   const touchStartX = useRef(0);
+  const bgmRef = useRef(null);
   const { t } = useI18n();
   const total = STORY_SLIDES.length;
   const isLast = current === total - 1;
+
+  // 初始化背景音乐
+  useEffect(() => {
+    bgmRef.current = new StoryBGM();
+    return () => {
+      if (bgmRef.current) bgmRef.current.stop();
+    };
+  }, []);
+
+  // 用户首次交互后启动音乐
+  const ensureMusic = useCallback(() => {
+    if (!musicStarted && bgmRef.current) {
+      bgmRef.current.start();
+      setMusicStarted(true);
+    }
+  }, [musicStarted]);
+
+  // 切换幻灯片时重置文字动画
+  useEffect(() => {
+    setTextVisible(false);
+    const timer = setTimeout(() => setTextVisible(true), 100);
+    return () => clearTimeout(timer);
+  }, [current]);
 
   // 自动播放
   useEffect(() => {
@@ -67,21 +214,18 @@ function StoryBook({ onFinish }) {
       return;
     }
     timerRef.current = setInterval(() => {
-      setDirection(1);
       setCurrent((c) => Math.min(c + 1, total - 1));
     }, AUTO_PLAY_INTERVAL);
     return () => clearInterval(timerRef.current);
   }, [paused, current, isLast, total]);
 
   const goTo = useCallback((idx) => {
-    setDirection(idx > current ? 1 : -1);
     setCurrent(idx);
     setPaused(true);
-  }, [current]);
+  }, []);
 
   const goNext = useCallback(() => {
     if (current < total - 1) {
-      setDirection(1);
       setCurrent((c) => c + 1);
       setPaused(true);
     }
@@ -89,14 +233,21 @@ function StoryBook({ onFinish }) {
 
   const goPrev = useCallback(() => {
     if (current > 0) {
-      setDirection(-1);
       setCurrent((c) => c - 1);
       setPaused(true);
     }
   }, [current]);
 
+  const handleFinish = useCallback(() => {
+    if (bgmRef.current) bgmRef.current.fadeOut();
+    onFinish();
+  }, [onFinish]);
+
   // 触摸滑动
-  const handleTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+    ensureMusic();
+  };
   const handleTouchEnd = (e) => {
     const dx = e.changedTouches[0].clientX - touchStartX.current;
     if (Math.abs(dx) > 50) {
@@ -106,12 +257,15 @@ function StoryBook({ onFinish }) {
 
   // 点击左右区域翻页
   const handleAreaClick = (e) => {
+    ensureMusic();
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     if (x < rect.width * 0.3) goPrev();
     else if (x > rect.width * 0.7) goNext();
     else setPaused((p) => !p);
   };
+
+  const slide = STORY_SLIDES[current];
 
   return (
     <div className="storybook">
@@ -122,7 +276,7 @@ function StoryBook({ onFinish }) {
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {STORY_SLIDES.map((slide, i) => (
+        {STORY_SLIDES.map((s, i) => (
           <div
             key={i}
             className={`storybook-slide ${i === current ? 'active' : ''} ${
@@ -130,9 +284,15 @@ function StoryBook({ onFinish }) {
             }`}
             style={{ '--ken-burns-dir': i % 2 === 0 ? '1' : '-1' }}
           >
-            <img src={slide.src} alt={`Story ${i + 1}`} draggable={false} />
+            <img src={s.src} alt={`Story ${i + 1}`} draggable={false} />
           </div>
         ))}
+
+        {/* 文字叠加层 */}
+        <div className={`storybook-caption ${textVisible ? 'visible' : ''}`}>
+          <h2 className="storybook-caption-title">{t(slide.titleKey)}</h2>
+          <p className="storybook-caption-desc">{t(slide.descKey)}</p>
+        </div>
 
         {/* 左右翻页提示 */}
         {current > 0 && <div className="storybook-nav-hint left">‹</div>}
@@ -141,7 +301,6 @@ function StoryBook({ onFinish }) {
 
       {/* 底部控制区 */}
       <div className="storybook-controls">
-        {/* 进度点 */}
         <div className="storybook-dots">
           {STORY_SLIDES.map((_, i) => (
             <button
@@ -152,14 +311,13 @@ function StoryBook({ onFinish }) {
           ))}
         </div>
 
-        {/* 跳过 / 开始冒险 */}
         <div className="storybook-actions">
           {!isLast ? (
-            <button className="storybook-skip" onClick={onFinish}>
+            <button className="storybook-skip" onClick={handleFinish}>
               {t('tutorial.skip')} →
             </button>
           ) : (
-            <button className="storybook-start" onClick={onFinish}>
+            <button className="storybook-start" onClick={handleFinish}>
               ▶ {t('poster.play')}
             </button>
           )}
@@ -180,7 +338,7 @@ function StoryBook({ onFinish }) {
   );
 }
 
-// 海报内嵌排行榜
+// ===== 海报内嵌排行榜 =====
 function PosterLeaderboard({ onClose }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -228,24 +386,22 @@ function PosterLeaderboard({ onClose }) {
   );
 }
 
+// ===== 主组件：刷新后直接自动播放故事 =====
 export function WelcomePoster() {
   const { hasSeenPoster } = useGameStore();
-  const [showStory, setShowStory] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const { t } = useI18n();
 
   if (hasSeenPoster) return null;
 
-  // 进入游戏（故事结束或主页 TAKE OFF）
+  // 进入游戏
   const handleEnterGame = () => {
     const state = useGameStore.getState();
     if (state.hasCompletedOnboarding) {
-      // 老用户 → 直接进入建造模式
       useGameStore.setState({ hasSeenPoster: true, gameMode: GAME_MODES.BUILD_MODE });
     } else {
-      // 新用户 → 用默认飞机直接试玩飞行模式，炸毁后再弹账号弹窗
-      useGameStore.setState({ 
-        hasSeenPoster: true, 
+      useGameStore.setState({
+        hasSeenPoster: true,
         gameMode: GAME_MODES.FLIGHT_MODE,
         vehicleParts: DEFAULT_VEHICLE_PARTS,
         score: 0,
@@ -255,51 +411,10 @@ export function WelcomePoster() {
     }
   };
 
-  // 故事书模式
-  if (showStory) {
-    return (
-      <div className="welcome-poster">
-        <StoryBook onFinish={handleEnterGame} />
-      </div>
-    );
-  }
-
-  // 主海报页
+  // 直接显示故事书（自动播放）
   return (
     <div className="welcome-poster">
-      <div className="welcome-bg"><Stars /></div>
-
-      <div className="welcome-content">
-        <div className="welcome-avatar-wrapper">
-          <div className="welcome-avatar-glow" />
-          <img className="welcome-avatar" src="/captaindylan.png" alt="Captain Dylan" />
-        </div>
-
-        <h1 className="welcome-title">SKYTINKER</h1>
-        <p className="welcome-subtitle">{t('poster.subtitle')}</p>
-        <div className="welcome-divider" />
-
-        {/* 故事入口 - 大图预览 */}
-        <button className="story-preview-btn" onClick={() => setShowStory(true)}>
-          <img src="/story/story1.jpg" alt="Story" className="story-preview-img" />
-          <div className="story-preview-overlay">
-            <span className="story-preview-play">▶</span>
-            <span className="story-preview-text">{t('poster.storyBtn')}</span>
-          </div>
-        </button>
-
-        <div className="welcome-buttons">
-          <button className="welcome-play-btn" onClick={handleEnterGame}>
-            ▶ {t('poster.play')}
-          </button>
-          <button className="welcome-leaderboard-btn" onClick={() => setShowLeaderboard(true)}>
-            🏆 {t('leaderboard.title')}
-          </button>
-        </div>
-
-        <p className="welcome-hint">{t('poster.hint')}</p>
-      </div>
-
+      <StoryBook onFinish={handleEnterGame} />
       {showLeaderboard && <PosterLeaderboard onClose={() => setShowLeaderboard(false)} />}
     </div>
   );
