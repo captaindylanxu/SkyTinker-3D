@@ -267,7 +267,9 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, 
       clampedVelY = Math.min(clampedVelY, 0); // 阻止继续上升
     }
     if (currentPos[1] < MIN_HEIGHT) {
-      clampedY = MIN_HEIGHT;
+      // 飞机掉到地面，直接爆炸
+      triggerExplosion();
+      return;
     }
 
     api.velocity.set(FORWARD_SPEED, clampedVelY, 0);
