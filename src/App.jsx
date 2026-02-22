@@ -11,11 +11,15 @@ import UserBadge from './components/UI/UserBadge';
 import WelcomePoster from './components/UI/WelcomePoster';
 import useGameStore from './store/useGameStore';
 import { getReferralLives } from './services/referral';
+import { useBGM } from './hooks/useBGM';
 import './App.css';
 
 function App() {
   const playerId = useGameStore((s) => s.playerId);
   const setReferralLives = useGameStore((s) => s.setReferralLives);
+
+  // 背景音乐（自动根据游戏状态切换）
+  useBGM();
 
   // 加载邀请续命次数
   useEffect(() => {
