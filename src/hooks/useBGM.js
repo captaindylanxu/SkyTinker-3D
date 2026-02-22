@@ -8,47 +8,48 @@ class BGMEngine {
     this.ctx = null;
     this.masterGain = null;
     this.currentMode = null;
-    this.pendingMode = null; // 等待用户交互后播放的模式
+    this.desiredMode = null; // 期望播放的模式（不管 ctx 状态）
     this.nodes = [];
     this.loopTimer = null;
-    this.userInteracted = false;
-    this._setupInteractionListener();
-    this._setupVisibilityListener();
+    this._unlocked = false;
+    this._boundUnlock = this._unlock.bind(this);
+    this._addUnlockListeners();
+    this._addVisibilityListener();
   }
 
-  // 监听用户首次交互，解锁 AudioContext
-  _setupInteractionListener() {
-    const unlock = () => {
-      this.userInteracted = true;
-      if (this.ctx && this.ctx.state === 'suspended') {
-        this.ctx.resume().then(() => {
-          // 如果有待播放的模式，现在启动
-          if (this.pendingMode && !this.currentMode) {
-            this.currentMode = this.pendingMode;
-            this.pendingMode = null;
-            this._startMode(this.currentMode);
-            this._fadeIn(2);
-          }
-        }).catch(() => {});
-      }
-      window.removeEventListener('touchstart', unlock, true);
-      window.removeEventListener('touchend', unlock, true);
-      window.removeEventListener('click', unlock, true);
-      window.removeEventListener('keydown', unlock, true);
-    };
-    window.addEventListener('touchstart', unlock, true);
-    window.addEventListener('touchend', unlock, true);
-    window.addEventListener('click', unlock, true);
-    window.addEventListener('keydown', unlock, true);
+  // 用户交互解锁
+  _addUnlockListeners() {
+    const events = ['touchstart', 'touchend', 'click', 'keydown'];
+    events.forEach((e) => document.addEventListener(e, this._boundUnlock, { capture: true, passive: true }));
   }
 
-  // 页面切到后台时暂停，回到前台时恢复
-  _setupVisibilityListener() {
+  _removeUnlockListeners() {
+    const events = ['touchstart', 'touchend', 'click', 'keydown'];
+    events.forEach((e) => document.removeEventListener(e, this._boundUnlock, { capture: true }));
+  }
+
+  _unlock() {
+    this._unlocked = true;
+    this._removeUnlockListeners();
+
+    // 如果已有 ctx 但被挂起，恢复它
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume().catch(() => {});
+    }
+
+    // 如果有期望模式但还没真正播放，现在启动
+    if (this.desiredMode && !this.currentMode) {
+      this._doSwitch(this.desiredMode);
+    }
+  }
+
+  // 页面可见性
+  _addVisibilityListener() {
     document.addEventListener('visibilitychange', () => {
-      if (!this.ctx) return;
+      if (!this.ctx || this.ctx.state === 'closed') return;
       if (document.hidden) {
         this.ctx.suspend().catch(() => {});
-      } else {
+      } else if (this._unlocked) {
         this.ctx.resume().catch(() => {});
       }
     });
@@ -62,51 +63,42 @@ class BGMEngine {
         this.masterGain.gain.value = 0;
         this.masterGain.connect(this.ctx.destination);
       } catch (e) {
-        console.warn('Web Audio API not supported');
         return false;
       }
-    }
-    if (this.ctx.state === 'suspended') {
-      this.ctx.resume().catch(() => {});
     }
     return true;
   }
 
   _stopCurrent() {
-    if (this.loopTimer) {
-      clearInterval(this.loopTimer);
-      this.loopTimer = null;
-    }
+    if (this.loopTimer) { clearInterval(this.loopTimer); this.loopTimer = null; }
     this.nodes.forEach((n) => { try { n.stop(); } catch (e) {} });
     this.nodes = [];
   }
 
-  // 淡入
-  _fadeIn(duration = 2) {
-    if (!this.masterGain) return;
+  _fadeIn(dur = 2) {
+    if (!this.masterGain || !this.ctx) return;
     const now = this.ctx.currentTime;
     this.masterGain.gain.cancelScheduledValues(now);
     this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, now);
-    this.masterGain.gain.linearRampToValueAtTime(0.15, now + duration);
+    this.masterGain.gain.linearRampToValueAtTime(0.15, now + dur);
   }
 
-  // 淡出并停止
-  _fadeOut(duration = 1.5) {
-    if (!this.masterGain) return;
+  _fadeOut(dur = 1.5) {
+    if (!this.masterGain || !this.ctx) return;
     const now = this.ctx.currentTime;
     this.masterGain.gain.cancelScheduledValues(now);
     this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, now);
-    this.masterGain.gain.linearRampToValueAtTime(0, now + duration);
-    setTimeout(() => this._stopCurrent(), duration * 1000 + 100);
+    this.masterGain.gain.linearRampToValueAtTime(0, now + dur);
+    setTimeout(() => this._stopCurrent(), dur * 1000 + 100);
   }
 
-  // ===== 欢迎页 BGM：梦幻温暖 =====
+  // ===== 欢迎页 BGM =====
   _playWelcome() {
     const chords = [
-      [261.6, 329.6, 392.0], // C
-      [293.7, 370.0, 440.0], // D
-      [349.2, 440.0, 523.3], // F
-      [392.0, 493.9, 587.3], // G
+      [261.6, 329.6, 392.0],
+      [293.7, 370.0, 440.0],
+      [349.2, 440.0, 523.3],
+      [392.0, 493.9, 587.3],
     ];
     const chordDur = 4;
     const totalDur = chords.length * chordDur;
@@ -114,28 +106,21 @@ class BGMEngine {
     const scheduleLoop = () => {
       if (!this.ctx || this.currentMode !== 'welcome') return;
       const now = this.ctx.currentTime;
-
-      // 和弦垫音
       chords.forEach((chord, ci) => {
         chord.forEach((freq) => {
           const osc = this.ctx.createOscillator();
           const g = this.ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.value = freq;
+          osc.type = 'sine'; osc.frequency.value = freq;
           const t = now + ci * chordDur;
           g.gain.setValueAtTime(0, t);
           g.gain.linearRampToValueAtTime(0.04, t + 0.5);
           g.gain.linearRampToValueAtTime(0.03, t + chordDur - 0.3);
           g.gain.linearRampToValueAtTime(0, t + chordDur);
-          osc.connect(g);
-          g.connect(this.masterGain);
-          osc.start(t);
-          osc.stop(t + chordDur);
+          osc.connect(g); g.connect(this.masterGain);
+          osc.start(t); osc.stop(t + chordDur);
           this.nodes.push(osc);
         });
       });
-
-      // 旋律
       const melody = [523.3, 587.3, 659.3, 784.0, 659.3, 587.3, 523.3, 0,
                        587.3, 659.3, 784.0, 880.0, 784.0, 659.3, 587.3, 0];
       const noteDur = 0.9;
@@ -143,32 +128,27 @@ class BGMEngine {
         if (freq === 0) return;
         const osc = this.ctx.createOscillator();
         const g = this.ctx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.value = freq;
+        osc.type = 'triangle'; osc.frequency.value = freq;
         const t = now + 0.5 + i * noteDur;
         g.gain.setValueAtTime(0, t);
         g.gain.linearRampToValueAtTime(0.035, t + 0.05);
         g.gain.exponentialRampToValueAtTime(0.001, t + noteDur - 0.05);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start(t);
-        osc.stop(t + noteDur);
+        osc.connect(g); g.connect(this.masterGain);
+        osc.start(t); osc.stop(t + noteDur);
         this.nodes.push(osc);
       });
     };
-
     scheduleLoop();
     this.loopTimer = setInterval(scheduleLoop, totalDur * 1000);
   }
 
-  // ===== 建造模式 BGM：轻松创意 Lo-fi 风 =====
+  // ===== 建造模式 BGM =====
   _playBuild() {
-    // 温暖的 lo-fi 和弦进行 Am - F - C - G
     const chords = [
-      [220.0, 261.6, 329.6],  // Am
-      [174.6, 220.0, 261.6],  // F
-      [130.8, 164.8, 196.0],  // C (低八度)
-      [196.0, 246.9, 293.7],  // G
+      [220.0, 261.6, 329.6],
+      [174.6, 220.0, 261.6],
+      [130.8, 164.8, 196.0],
+      [196.0, 246.9, 293.7],
     ];
     const chordDur = 3.5;
     const totalDur = chords.length * chordDur;
@@ -176,32 +156,23 @@ class BGMEngine {
     const scheduleLoop = () => {
       if (!this.ctx || this.currentMode !== 'build') return;
       const now = this.ctx.currentTime;
-
-      // 柔和的和弦垫音
       chords.forEach((chord, ci) => {
         chord.forEach((freq) => {
           const osc = this.ctx.createOscillator();
           const g = this.ctx.createGain();
           const filter = this.ctx.createBiquadFilter();
-          osc.type = 'sine';
-          osc.frequency.value = freq;
-          filter.type = 'lowpass';
-          filter.frequency.value = 800;
+          osc.type = 'sine'; osc.frequency.value = freq;
+          filter.type = 'lowpass'; filter.frequency.value = 800;
           const t = now + ci * chordDur;
           g.gain.setValueAtTime(0, t);
           g.gain.linearRampToValueAtTime(0.05, t + 0.8);
           g.gain.linearRampToValueAtTime(0.04, t + chordDur - 0.5);
           g.gain.linearRampToValueAtTime(0, t + chordDur);
-          osc.connect(filter);
-          filter.connect(g);
-          g.connect(this.masterGain);
-          osc.start(t);
-          osc.stop(t + chordDur);
+          osc.connect(filter); filter.connect(g); g.connect(this.masterGain);
+          osc.start(t); osc.stop(t + chordDur);
           this.nodes.push(osc);
         });
       });
-
-      // 轻柔的琶音旋律
       const arp = [
         329.6, 392.0, 440.0, 523.3, 440.0, 392.0,
         349.2, 440.0, 523.3, 587.3, 523.3, 440.0,
@@ -212,34 +183,28 @@ class BGMEngine {
       arp.forEach((freq, i) => {
         const osc = this.ctx.createOscillator();
         const g = this.ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.value = freq;
+        osc.type = 'sine'; osc.frequency.value = freq;
         const t = now + i * noteDur;
         g.gain.setValueAtTime(0, t);
         g.gain.linearRampToValueAtTime(0.025, t + 0.04);
         g.gain.exponentialRampToValueAtTime(0.001, t + noteDur * 0.9);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start(t);
-        osc.stop(t + noteDur);
+        osc.connect(g); g.connect(this.masterGain);
+        osc.start(t); osc.stop(t + noteDur);
         this.nodes.push(osc);
       });
     };
-
     scheduleLoop();
     this.loopTimer = setInterval(scheduleLoop, totalDur * 1000);
   }
 
-  // ===== 飞行模式 BGM：紧张刺激但不烦躁 =====
+  // ===== 飞行模式 BGM =====
   _playFlight() {
-    // 节奏感的低音 + 紧张但悦耳的和弦
-    // Em - C - G - D 进行，有推进感
-    const bassNotes = [164.8, 130.8, 98.0, 146.8]; // Em, C, G, D 低音
+    const bassNotes = [164.8, 130.8, 98.0, 146.8];
     const chords = [
-      [329.6, 392.0, 493.9],  // Em
-      [261.6, 329.6, 392.0],  // C
-      [196.0, 246.9, 293.7],  // G
-      [293.7, 370.0, 440.0],  // D
+      [329.6, 392.0, 493.9],
+      [261.6, 329.6, 392.0],
+      [196.0, 246.9, 293.7],
+      [293.7, 370.0, 440.0],
     ];
     const chordDur = 2.8;
     const totalDur = chords.length * chordDur;
@@ -247,48 +212,36 @@ class BGMEngine {
     const scheduleLoop = () => {
       if (!this.ctx || this.currentMode !== 'flight') return;
       const now = this.ctx.currentTime;
-
-      // 脉冲低音（有节奏感但不是"噔噔噔"）
       bassNotes.forEach((freq, ci) => {
         const beatCount = 4;
         for (let b = 0; b < beatCount; b++) {
           const osc = this.ctx.createOscillator();
           const g = this.ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.value = freq;
+          osc.type = 'sine'; osc.frequency.value = freq;
           const t = now + ci * chordDur + b * (chordDur / beatCount);
           g.gain.setValueAtTime(0, t);
           g.gain.linearRampToValueAtTime(0.06, t + 0.05);
           g.gain.exponentialRampToValueAtTime(0.001, t + chordDur / beatCount - 0.05);
-          osc.connect(g);
-          g.connect(this.masterGain);
-          osc.start(t);
-          osc.stop(t + chordDur / beatCount);
+          osc.connect(g); g.connect(this.masterGain);
+          osc.start(t); osc.stop(t + chordDur / beatCount);
           this.nodes.push(osc);
         }
       });
-
-      // 持续的和弦垫音（营造紧张氛围）
       chords.forEach((chord, ci) => {
         chord.forEach((freq) => {
           const osc = this.ctx.createOscillator();
           const g = this.ctx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.value = freq;
+          osc.type = 'triangle'; osc.frequency.value = freq;
           const t = now + ci * chordDur;
           g.gain.setValueAtTime(0, t);
           g.gain.linearRampToValueAtTime(0.025, t + 0.3);
           g.gain.linearRampToValueAtTime(0.02, t + chordDur - 0.2);
           g.gain.linearRampToValueAtTime(0, t + chordDur);
-          osc.connect(g);
-          g.connect(this.masterGain);
-          osc.start(t);
-          osc.stop(t + chordDur);
+          osc.connect(g); g.connect(this.masterGain);
+          osc.start(t); osc.stop(t + chordDur);
           this.nodes.push(osc);
         });
       });
-
-      // 高音旋律线（冒险感）
       const melody = [
         659.3, 0, 784.0, 659.3, 587.3, 0, 523.3, 587.3,
         659.3, 0, 784.0, 880.0, 784.0, 0, 659.3, 0,
@@ -298,41 +251,42 @@ class BGMEngine {
         if (freq === 0) return;
         const osc = this.ctx.createOscillator();
         const g = this.ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.value = freq;
+        osc.type = 'sine'; osc.frequency.value = freq;
         const t = now + i * noteDur;
         g.gain.setValueAtTime(0, t);
         g.gain.linearRampToValueAtTime(0.03, t + 0.03);
         g.gain.exponentialRampToValueAtTime(0.001, t + noteDur * 0.85);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start(t);
-        osc.stop(t + noteDur);
+        osc.connect(g); g.connect(this.masterGain);
+        osc.start(t); osc.stop(t + noteDur);
         this.nodes.push(osc);
       });
     };
-
     scheduleLoop();
     this.loopTimer = setInterval(scheduleLoop, totalDur * 1000);
   }
 
-  // ===== 切换模式 =====
+  // ===== 切换 =====
   switchTo(mode) {
-    if (mode === this.currentMode) return;
-    if (!this._ensureContext()) return;
+    this.desiredMode = mode;
 
-    // 如果 AudioContext 还是 suspended（移动端未交互），记住待播放模式
-    if (this.ctx.state === 'suspended') {
-      this.pendingMode = mode;
-      // 如果已有当前模式在播放，先停掉
-      if (this.currentMode) {
-        this._stopCurrent();
-        this.currentMode = null;
-      }
+    // 还没解锁（移动端未交互），先记住，等 _unlock 触发
+    if (!this._unlocked) {
+      // 预创建 ctx 以便 unlock 时能 resume
+      this._ensureContext();
       return;
     }
 
-    // 淡出当前
+    this._doSwitch(mode);
+  }
+
+  _doSwitch(mode) {
+    if (mode === this.currentMode) return;
+    if (!this._ensureContext()) return;
+
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume().catch(() => {});
+    }
+
     if (this.currentMode) {
       this._fadeOut(1);
       setTimeout(() => {
@@ -357,6 +311,7 @@ class BGMEngine {
   }
 
   stop() {
+    this.desiredMode = null;
     this._fadeOut(1);
     setTimeout(() => {
       this._stopCurrent();
@@ -380,17 +335,12 @@ export function useBGM() {
   const startedRef = useRef(false);
 
   useEffect(() => {
-    // 欢迎页
     if (!hasSeenPoster) {
       bgmEngine.switchTo('welcome');
       startedRef.current = true;
       return;
     }
-
-    // 游戏结束时不切换（保持当前音乐淡出）
     if (isGameOver) return;
-
-    // 根据游戏模式切换
     if (gameMode === GAME_MODES.BUILD_MODE) {
       bgmEngine.switchTo('build');
     } else if (gameMode === GAME_MODES.FLIGHT_MODE) {
@@ -399,12 +349,9 @@ export function useBGM() {
     startedRef.current = true;
   }, [hasSeenPoster, gameMode, isGameOver]);
 
-  // 组件卸载时清理
   useEffect(() => {
     return () => {
-      if (startedRef.current) {
-        bgmEngine.stop();
-      }
+      if (startedRef.current) bgmEngine.stop();
     };
   }, []);
 }
