@@ -120,8 +120,22 @@ export const LOCALES = {
       empty: '暂无排名数据',
       refresh: '刷新',
     },
+    
+    // 欢迎海报
+    poster: {
+      subtitle: 'Captain Dylan 的飞行冒险',
+      feature1Title: '创意建造',
+      feature1Desc: '用零件搭建你的专属飞行器',
+      feature2Title: '物理飞行',
+      feature2Desc: '真实物理引擎驱动的飞行体验',
+      feature3Title: '全球排行',
+      feature3Desc: '与全世界玩家比拼飞行距离',
+      feature4Title: '多语言',
+      feature4Desc: '支持8种语言，全球畅玩',
+      play: '立即起飞',
+      hint: '按住空格键或点击屏幕控制飞行',
+    },
   },
-  
   'zh-TW': {
     startFlight: '🚀 開始飛行',
     stopSimulation: '🔧 停止模擬',
@@ -235,6 +249,20 @@ export const LOCALES = {
       loading: '載入中...',
       empty: '暫無排名資料',
       refresh: '刷新',
+    },
+    
+    poster: {
+      subtitle: 'Captain Dylan 的飛行冒險',
+      feature1Title: '創意建造',
+      feature1Desc: '用零件搭建你的專屬飛行器',
+      feature2Title: '物理飛行',
+      feature2Desc: '真實物理引擎驅動的飛行體驗',
+      feature3Title: '全球排行',
+      feature3Desc: '與全世界玩家比拼飛行距離',
+      feature4Title: '多語言',
+      feature4Desc: '支持8種語言，全球暢玩',
+      play: '立即起飛',
+      hint: '按住空白鍵或點擊螢幕控制飛行',
     },
   },
   
@@ -352,6 +380,20 @@ export const LOCALES = {
       empty: 'No rankings yet',
       refresh: 'Refresh',
     },
+    
+    poster: {
+      subtitle: "Captain Dylan's Flight Adventure",
+      feature1Title: 'Build & Create',
+      feature1Desc: 'Design your own aircraft from modular parts',
+      feature2Title: 'Physics Flight',
+      feature2Desc: 'Real physics engine powers every flight',
+      feature3Title: 'Global Ranking',
+      feature3Desc: 'Compete with players worldwide',
+      feature4Title: '8 Languages',
+      feature4Desc: 'Play in your language, anywhere',
+      play: 'TAKE OFF',
+      hint: 'Hold SPACE or tap screen to fly',
+    },
   },
   
   'ja': {
@@ -467,6 +509,20 @@ export const LOCALES = {
       loading: '読み込み中...',
       empty: 'まだランキングがありません',
       refresh: '更新',
+    },
+    
+    poster: {
+      subtitle: 'Captain Dylan の飛行アドベンチャー',
+      feature1Title: '自由に建造',
+      feature1Desc: 'パーツを組み合わせてオリジナル航空機を作ろう',
+      feature2Title: '物理飛行',
+      feature2Desc: 'リアルな物理エンジンで飛行体験',
+      feature3Title: '世界ランキング',
+      feature3Desc: '世界中のプレイヤーと競争',
+      feature4Title: '8言語対応',
+      feature4Desc: 'あなたの言語でプレイ',
+      play: 'テイクオフ',
+      hint: 'スペースキーまたはタップで飛行',
     },
   },
   
@@ -584,6 +640,20 @@ export const LOCALES = {
       empty: '아직 순위가 없습니다',
       refresh: '새로고침',
     },
+    
+    poster: {
+      subtitle: 'Captain Dylan의 비행 모험',
+      feature1Title: '자유 건설',
+      feature1Desc: '부품으로 나만의 항공기를 만들어보세요',
+      feature2Title: '물리 비행',
+      feature2Desc: '실제 물리 엔진으로 비행 체험',
+      feature3Title: '글로벌 랭킹',
+      feature3Desc: '전 세계 플레이어와 경쟁',
+      feature4Title: '8개 언어',
+      feature4Desc: '당신의 언어로 플레이',
+      play: '이륙',
+      hint: '스페이스 키 또는 화면을 탭하여 비행',
+    },
   },
   
   'de': {
@@ -699,6 +769,20 @@ export const LOCALES = {
       loading: 'Lädt...',
       empty: 'Noch keine Rankings',
       refresh: 'Aktualisieren',
+    },
+    
+    poster: {
+      subtitle: 'Captain Dylans Flugabenteuer',
+      feature1Title: 'Kreativ Bauen',
+      feature1Desc: 'Baue dein eigenes Flugzeug aus Teilen',
+      feature2Title: 'Physik-Flug',
+      feature2Desc: 'Echte Physik-Engine für jedes Flugerlebnis',
+      feature3Title: 'Weltrangliste',
+      feature3Desc: 'Tritt gegen Spieler weltweit an',
+      feature4Title: '8 Sprachen',
+      feature4Desc: 'Spiele in deiner Sprache',
+      play: 'ABHEBEN',
+      hint: 'Halte LEERTASTE oder tippe zum Fliegen',
     },
   },
   
@@ -816,6 +900,20 @@ export const LOCALES = {
       empty: 'Пока нет рейтингов',
       refresh: 'Обновить',
     },
+    
+    poster: {
+      subtitle: 'Лётное приключение Captain Dylan',
+      feature1Title: 'Строй и создавай',
+      feature1Desc: 'Собери свой самолёт из деталей',
+      feature2Title: 'Физика полёта',
+      feature2Desc: 'Реальный физический движок',
+      feature3Title: 'Мировой рейтинг',
+      feature3Desc: 'Соревнуйся с игроками по всему миру',
+      feature4Title: '8 языков',
+      feature4Desc: 'Играй на своём языке',
+      play: 'ВЗЛЁТ',
+      hint: 'Удерживайте ПРОБЕЛ или нажимайте для полёта',
+    },
   },
   
   'fr': {
@@ -931,6 +1029,20 @@ export const LOCALES = {
       loading: 'Chargement...',
       empty: 'Pas encore de classements',
       refresh: 'Actualiser',
+    },
+    
+    poster: {
+      subtitle: "L'aventure aérienne de Captain Dylan",
+      feature1Title: 'Construis & Crée',
+      feature1Desc: 'Conçois ton propre avion avec des pièces',
+      feature2Title: 'Vol Physique',
+      feature2Desc: 'Un vrai moteur physique pour chaque vol',
+      feature3Title: 'Classement Mondial',
+      feature3Desc: 'Affronte des joueurs du monde entier',
+      feature4Title: '8 Langues',
+      feature4Desc: 'Joue dans ta langue, partout',
+      play: 'DÉCOLLAGE',
+      hint: 'Maintiens ESPACE ou touche pour voler',
     },
   },
 };

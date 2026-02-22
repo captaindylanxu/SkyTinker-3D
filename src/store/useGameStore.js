@@ -63,6 +63,7 @@ const useGameStore = create(
   playerName: null,
   hasCompletedOnboarding: false,
   hasPlayedFirstGame: false, // 是否已经玩过第一局游戏
+  hasSeenPoster: false, // 是否已经看过欢迎海报
   showAccountModal: false, // 是否显示账号弹窗
   
   setPlayerInfo: (playerId, playerName) => set({ 
