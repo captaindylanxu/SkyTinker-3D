@@ -163,6 +163,23 @@
   box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
 }
 
+.revive-now-btn {
+  background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+  font-size: 18px;
+  animation: reviveReady 1.5s ease-in-out infinite;
+}
+
+.revive-now-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.5);
+}
+
+@keyframes reviveReady {
+  0%, 100% { box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4); }
+  50% { box-shadow: 0 4px 25px rgba(34, 197, 94, 0.7); }
+}
+
 /* 续命倒计时 */
 .revive-countdown {
   margin-bottom: 16px;
@@ -237,7 +254,8 @@
   text-align: center;
   width: 100%;
   padding: 0 40px;
-  line-height: 1.6;
+  line-height: 1.8;
+  white-space: pre-line;
 }
 
 .wechat-guide-dismiss {

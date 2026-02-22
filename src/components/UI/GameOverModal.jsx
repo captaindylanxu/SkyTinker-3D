@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import useGameStore from '../../store/useGameStore';
 import { useI18n } from '../../i18n/useI18n';
 import { submitScore, getPlayerHighScore } from '../../services/leaderboard';
-import { generateShareUrl, getShareText, doShare, isWeChatBrowser } from '../../services/share';
+import { generateShareUrl, getShareText, doShare } from '../../services/share';
 import { useReferralLife } from '../../services/referral';
 import './GameOverModal.css';
 
@@ -14,10 +14,10 @@ export function GameOverModal() {
     shareRevive, referralRevive, setReferralLives,
   } = useGameStore();
   const { t } = useI18n();
-  const [shareSuccess, setShareSuccess] = useState(false);
+  // shared: 用户已完成分享动作，等待手动续命
+  const [shared, setShared] = useState(false);
   const [showWeChatGuide, setShowWeChatGuide] = useState(false);
   const [showCopyTip, setShowCopyTip] = useState(false);
-  const [reviveCountdown, setReviveCountdown] = useState(0);
   const [dbHighScore, setDbHighScore] = useState(null);
 
   const displayHighScore = playerId && dbHighScore !== null
@@ -25,9 +25,9 @@ export function GameOverModal() {
     : highScore;
 
   const isNewRecord = score >= displayHighScore && score > 0;
-  const canShareRevive = !hasUsedShareRevive;
+  const canShareRevive = !hasUsedShareRevive && !shared;
   const canReferralRevive = !hasUsedReferralRevive && referralLives > 0;
-  const canRevive = canShareRevive || canReferralRevive;
+  const canRevive = canShareRevive || canReferralRevive || shared;
 
   useEffect(() => {
     if (isGameOver && playerId && playerName && score > 0) {
@@ -47,44 +47,40 @@ export function GameOverModal() {
     }
   }, [isGameOver, playerId]);
 
+  // 重置状态
   useEffect(() => {
     if (isGameOver) {
-      setShareSuccess(false);
+      setShared(false);
       setShowWeChatGuide(false);
       setShowCopyTip(false);
-      setReviveCountdown(0);
     }
   }, [isGameOver]);
 
-  useEffect(() => {
-    if (reviveCountdown > 0) {
-      const timer = setTimeout(() => {
-        if (reviveCountdown === 1) {
-          shareRevive();
-        }
-        setReviveCountdown(reviveCountdown - 1);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [reviveCountdown, shareRevive]);
-
-  const handleShareToRevive = useCallback(async () => {
+  // 第一步：点击分享按钮 → 复制内容 + 显示引导
+  const handleShareClick = useCallback(async () => {
     const url = generateShareUrl(playerId);
     const text = getShareText(score, t);
     const result = await doShare(url, text);
 
     if (result.wechat) {
-      // 微信内：显示引导蒙层，提示用户点右上角分享
       setShowWeChatGuide(true);
     } else {
-      // 非微信：显示复制成功提示
+      // 非微信：直接标记为已分享，显示复制提示
       setShowCopyTip(true);
+      setShared(true);
     }
-
-    // 方案A：点击即视为已分享，开始续命倒计时
-    setShareSuccess(true);
-    setReviveCountdown(3);
   }, [playerId, score, t]);
+
+  // 微信引导蒙层关闭 → 标记为已分享
+  const dismissWeChatGuide = useCallback(() => {
+    setShowWeChatGuide(false);
+    setShared(true);
+  }, []);
+
+  // 第二步：用户主动点击续命
+  const handleReviveNow = useCallback(() => {
+    shareRevive();
+  }, [shareRevive]);
 
   const handleReferralRevive = useCallback(async () => {
     if (!canReferralRevive) return;
@@ -135,20 +131,40 @@ export function GameOverModal() {
         </div>
 
         {/* 续命区域 */}
-        {canRevive && !shareSuccess && (
+        {canRevive && (
           <div className="revive-section">
             <div className="revive-title">💖 {t('share.reviveTitle')}</div>
 
+            {/* 还没分享：显示分享按钮 */}
             {canShareRevive && (
               <button
                 className="revive-button share-revive-btn"
-                onClick={handleButtonAction(handleShareToRevive)}
-                onTouchEnd={handleButtonAction(handleShareToRevive)}
+                onClick={handleButtonAction(handleShareClick)}
+                onTouchEnd={handleButtonAction(handleShareClick)}
               >
                 📢 {t('share.shareToRevive')}
               </button>
             )}
 
+            {/* 已分享：显示复制提示 + 续命按钮 */}
+            {shared && (
+              <>
+                {showCopyTip && (
+                  <div className="copy-guide-tip">
+                    {t('share.copyGuide')}
+                  </div>
+                )}
+                <button
+                  className="revive-button revive-now-btn"
+                  onClick={handleButtonAction(handleReviveNow)}
+                  onTouchEnd={handleButtonAction(handleReviveNow)}
+                >
+                  ✅ {t('share.reviveNow')}
+                </button>
+              </>
+            )}
+
+            {/* 邀请续命 */}
             {canReferralRevive && (
               <button
                 className="revive-button referral-revive-btn"
@@ -161,28 +177,6 @@ export function GameOverModal() {
           </div>
         )}
 
-        {/* 分享成功 + 续命倒计时 */}
-        {shareSuccess && reviveCountdown > 0 && (
-          <div className="revive-countdown">
-            {showWeChatGuide && (
-              <div className="wechat-guide-tip">
-                {t('share.wechatGuide')}
-              </div>
-            )}
-            {showCopyTip && (
-              <div className="copy-guide-tip">
-                {t('share.copyGuide')}
-              </div>
-            )}
-            <div className="revive-countdown-text">
-              ✅ {t('share.shareSuccess')}
-            </div>
-            <div className="revive-countdown-number">
-              {t('share.reviveIn').replace('{seconds}', reviveCountdown)}
-            </div>
-          </div>
-        )}
-
         <button
           className="restart-button"
           onClick={handleRestart}
@@ -192,12 +186,12 @@ export function GameOverModal() {
         </button>
       </div>
 
-      {/* 微信引导蒙层：提示用户点右上角分享 */}
+      {/* 微信引导蒙层 */}
       {showWeChatGuide && (
         <div
           className="wechat-guide-overlay"
-          onClick={handleButtonAction(() => setShowWeChatGuide(false))}
-          onTouchEnd={handleButtonAction(() => setShowWeChatGuide(false))}
+          onClick={handleButtonAction(dismissWeChatGuide)}
+          onTouchEnd={handleButtonAction(dismissWeChatGuide)}
         >
           <div className="wechat-guide-arrow">
             <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
