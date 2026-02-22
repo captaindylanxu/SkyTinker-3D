@@ -13,6 +13,7 @@ class BGMEngine {
     this.loopTimer = null;
     this.userInteracted = false;
     this._setupInteractionListener();
+    this._setupVisibilityListener();
   }
 
   // 监听用户首次交互，解锁 AudioContext
@@ -39,6 +40,18 @@ class BGMEngine {
     window.addEventListener('touchend', unlock, true);
     window.addEventListener('click', unlock, true);
     window.addEventListener('keydown', unlock, true);
+  }
+
+  // 页面切到后台时暂停，回到前台时恢复
+  _setupVisibilityListener() {
+    document.addEventListener('visibilitychange', () => {
+      if (!this.ctx) return;
+      if (document.hidden) {
+        this.ctx.suspend().catch(() => {});
+      } else {
+        this.ctx.resume().catch(() => {});
+      }
+    });
   }
 
   _ensureContext() {
