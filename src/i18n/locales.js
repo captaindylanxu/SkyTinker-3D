@@ -134,6 +134,7 @@ export const LOCALES = {
       feature4Desc: '支持8种语言，全球畅玩',
       play: '立即起飞',
       hint: '按住空格键或点击屏幕控制飞行',
+      storyBtn: "Captain Dylan 的故事",
     },
   },
   'zh-TW': {
@@ -263,6 +264,7 @@ export const LOCALES = {
       feature4Desc: '支持8種語言，全球暢玩',
       play: '立即起飛',
       hint: '按住空白鍵或點擊螢幕控制飛行',
+      storyBtn: "Captain Dylan 的故事",
     },
   },
   
@@ -393,6 +395,7 @@ export const LOCALES = {
       feature4Desc: 'Play in your language, anywhere',
       play: 'TAKE OFF',
       hint: 'Hold SPACE or tap screen to fly',
+      storyBtn: "Captain Dylan's Story",
     },
   },
   
@@ -523,6 +526,7 @@ export const LOCALES = {
       feature4Desc: 'あなたの言語でプレイ',
       play: 'テイクオフ',
       hint: 'スペースキーまたはタップで飛行',
+      storyBtn: 'Captain Dylan の物語',
     },
   },
   
@@ -653,6 +657,7 @@ export const LOCALES = {
       feature4Desc: '당신의 언어로 플레이',
       play: '이륙',
       hint: '스페이스 키 또는 화면을 탭하여 비행',
+      storyBtn: 'Captain Dylan의 이야기',
     },
   },
   
@@ -783,6 +788,7 @@ export const LOCALES = {
       feature4Desc: 'Spiele in deiner Sprache',
       play: 'ABHEBEN',
       hint: 'Halte LEERTASTE oder tippe zum Fliegen',
+      storyBtn: 'Captain Dylans Geschichte',
     },
   },
   
@@ -913,6 +919,7 @@ export const LOCALES = {
       feature4Desc: 'Играй на своём языке',
       play: 'ВЗЛЁТ',
       hint: 'Удерживайте ПРОБЕЛ или нажимайте для полёта',
+      storyBtn: 'История Captain Dylan',
     },
   },
   
@@ -1043,6 +1050,7 @@ export const LOCALES = {
       feature4Desc: 'Joue dans ta langue, partout',
       play: 'DÉCOLLAGE',
       hint: 'Maintiens ESPACE ou touche pour voler',
+      storyBtn: "L'histoire de Captain Dylan",
     },
   },
 };
