@@ -171,169 +171,83 @@ function Stars() {
   );
 }
 
-// ===== 故事书轮播组件 =====
-function StoryBook({ onFinish }) {
+// ===== 内嵌迷你轮播组件（在海报页内自动播放） =====
+function InlineStoryCarousel() {
   const [current, setCurrent] = useState(0);
-  const [paused, setPaused] = useState(false);
   const [textVisible, setTextVisible] = useState(true);
-  const [musicStarted, setMusicStarted] = useState(false);
   const timerRef = useRef(null);
   const touchStartX = useRef(0);
-  const bgmRef = useRef(null);
   const { t } = useI18n();
   const total = STORY_SLIDES.length;
-  const isLast = current === total - 1;
 
-  // 初始化背景音乐
+  // 自动播放（循环）
   useEffect(() => {
-    bgmRef.current = new StoryBGM();
-    return () => {
-      if (bgmRef.current) bgmRef.current.stop();
-    };
-  }, []);
+    timerRef.current = setInterval(() => {
+      setCurrent((c) => (c + 1) % total);
+    }, AUTO_PLAY_INTERVAL);
+    return () => clearInterval(timerRef.current);
+  }, [total]);
 
-  // 用户首次交互后启动音乐
-  const ensureMusic = useCallback(() => {
-    if (!musicStarted && bgmRef.current) {
-      bgmRef.current.start();
-      setMusicStarted(true);
-    }
-  }, [musicStarted]);
-
-  // 切换幻灯片时重置文字动画
+  // 切换时重置文字动画
   useEffect(() => {
     setTextVisible(false);
     const timer = setTimeout(() => setTextVisible(true), 100);
     return () => clearTimeout(timer);
   }, [current]);
 
-  // 自动播放
-  useEffect(() => {
-    if (paused || isLast) {
-      clearInterval(timerRef.current);
-      return;
-    }
-    timerRef.current = setInterval(() => {
-      setCurrent((c) => Math.min(c + 1, total - 1));
-    }, AUTO_PLAY_INTERVAL);
-    return () => clearInterval(timerRef.current);
-  }, [paused, current, isLast, total]);
-
-  const goTo = useCallback((idx) => {
-    setCurrent(idx);
-    setPaused(true);
-  }, []);
-
-  const goNext = useCallback(() => {
-    if (current < total - 1) {
-      setCurrent((c) => c + 1);
-      setPaused(true);
-    }
-  }, [current, total]);
-
-  const goPrev = useCallback(() => {
-    if (current > 0) {
-      setCurrent((c) => c - 1);
-      setPaused(true);
-    }
-  }, [current]);
-
-  const handleFinish = useCallback(() => {
-    if (bgmRef.current) bgmRef.current.fadeOut();
-    onFinish();
-  }, [onFinish]);
-
   // 触摸滑动
-  const handleTouchStart = (e) => {
-    touchStartX.current = e.touches[0].clientX;
-    ensureMusic();
-  };
+  const handleTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
   const handleTouchEnd = (e) => {
     const dx = e.changedTouches[0].clientX - touchStartX.current;
-    if (Math.abs(dx) > 50) {
-      dx < 0 ? goNext() : goPrev();
+    if (Math.abs(dx) > 40) {
+      clearInterval(timerRef.current);
+      setCurrent((c) => dx < 0 ? (c + 1) % total : (c - 1 + total) % total);
+      // 手动滑动后恢复自动播放
+      timerRef.current = setInterval(() => {
+        setCurrent((c) => (c + 1) % total);
+      }, AUTO_PLAY_INTERVAL);
     }
-  };
-
-  // 点击左右区域翻页
-  const handleAreaClick = (e) => {
-    ensureMusic();
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    if (x < rect.width * 0.3) goPrev();
-    else if (x > rect.width * 0.7) goNext();
-    else setPaused((p) => !p);
   };
 
   const slide = STORY_SLIDES[current];
 
   return (
-    <div className="storybook">
-      {/* 图片区域 */}
-      <div
-        className="storybook-viewport"
-        onClick={handleAreaClick}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-      >
-        {STORY_SLIDES.map((s, i) => (
-          <div
-            key={i}
-            className={`storybook-slide ${i === current ? 'active' : ''} ${
-              i < current ? 'past' : i > current ? 'future' : ''
-            }`}
-            style={{ '--ken-burns-dir': i % 2 === 0 ? '1' : '-1' }}
-          >
-            <img src={s.src} alt={`Story ${i + 1}`} draggable={false} />
-          </div>
+    <div
+      className="inline-carousel"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* 图片层 */}
+      {STORY_SLIDES.map((s, i) => (
+        <div
+          key={i}
+          className={`inline-carousel-slide ${i === current ? 'active' : ''}`}
+        >
+          <img src={s.src} alt={`Story ${i + 1}`} draggable={false} />
+        </div>
+      ))}
+
+      {/* 文字叠加 */}
+      <div className={`inline-carousel-caption ${textVisible ? 'visible' : ''}`}>
+        <div className="inline-carousel-title">{t(slide.titleKey)}</div>
+        <div className="inline-carousel-desc">{t(slide.descKey)}</div>
+      </div>
+
+      {/* 进度点 */}
+      <div className="inline-carousel-dots">
+        {STORY_SLIDES.map((_, i) => (
+          <span key={i} className={`inline-carousel-dot ${i === current ? 'active' : ''}`} />
         ))}
-
-        {/* 文字叠加层 */}
-        <div className={`storybook-caption ${textVisible ? 'visible' : ''}`}>
-          <h2 className="storybook-caption-title">{t(slide.titleKey)}</h2>
-          <p className="storybook-caption-desc">{t(slide.descKey)}</p>
-        </div>
-
-        {/* 左右翻页提示 */}
-        {current > 0 && <div className="storybook-nav-hint left">‹</div>}
-        {current < total - 1 && <div className="storybook-nav-hint right">›</div>}
       </div>
 
-      {/* 底部控制区 */}
-      <div className="storybook-controls">
-        <div className="storybook-dots">
-          {STORY_SLIDES.map((_, i) => (
-            <button
-              key={i}
-              className={`storybook-dot ${i === current ? 'active' : ''} ${i < current ? 'done' : ''}`}
-              onClick={() => goTo(i)}
-            />
-          ))}
-        </div>
-
-        <div className="storybook-actions">
-          {!isLast ? (
-            <button className="storybook-skip" onClick={handleFinish}>
-              {t('tutorial.skip')} →
-            </button>
-          ) : (
-            <button className="storybook-start" onClick={handleFinish}>
-              ▶ {t('poster.play')}
-            </button>
-          )}
-        </div>
+      {/* 进度条 */}
+      <div className="inline-carousel-progress">
+        <div
+          className="inline-carousel-progress-bar"
+          key={current}
+          style={{ animationDuration: `${AUTO_PLAY_INTERVAL}ms` }}
+        />
       </div>
-
-      {/* 自动播放进度条 */}
-      {!paused && !isLast && (
-        <div className="storybook-progress">
-          <div
-            className="storybook-progress-bar"
-            key={current}
-            style={{ animationDuration: `${AUTO_PLAY_INTERVAL}ms` }}
-          />
-        </div>
-      )}
     </div>
   );
 }
@@ -386,16 +300,36 @@ function PosterLeaderboard({ onClose }) {
   );
 }
 
-// ===== 主组件：刷新后直接自动播放故事 =====
+// ===== 主组件：海报页 + 内嵌自动轮播 =====
 export function WelcomePoster() {
   const { hasSeenPoster } = useGameStore();
   const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [musicStarted, setMusicStarted] = useState(false);
+  const bgmRef = useRef(null);
   const { t } = useI18n();
+
+  // 初始化背景音乐
+  useEffect(() => {
+    if (hasSeenPoster) return;
+    bgmRef.current = new StoryBGM();
+    return () => {
+      if (bgmRef.current) bgmRef.current.stop();
+    };
+  }, [hasSeenPoster]);
 
   if (hasSeenPoster) return null;
 
+  // 用户首次交互时启动音乐
+  const ensureMusic = () => {
+    if (!musicStarted && bgmRef.current) {
+      bgmRef.current.start();
+      setMusicStarted(true);
+    }
+  };
+
   // 进入游戏
   const handleEnterGame = () => {
+    if (bgmRef.current) bgmRef.current.fadeOut();
     const state = useGameStore.getState();
     if (state.hasCompletedOnboarding) {
       useGameStore.setState({ hasSeenPoster: true, gameMode: GAME_MODES.BUILD_MODE });
@@ -411,10 +345,35 @@ export function WelcomePoster() {
     }
   };
 
-  // 直接显示故事书（自动播放）
   return (
-    <div className="welcome-poster">
-      <StoryBook onFinish={handleEnterGame} />
+    <div className="welcome-poster" onClick={ensureMusic} onTouchStart={ensureMusic}>
+      <div className="welcome-bg"><Stars /></div>
+
+      <div className="welcome-content">
+        <div className="welcome-avatar-wrapper">
+          <div className="welcome-avatar-glow" />
+          <img className="welcome-avatar" src="/captaindylan.png" alt="Captain Dylan" />
+        </div>
+
+        <h1 className="welcome-title">SKYTINKER</h1>
+        <p className="welcome-subtitle">{t('poster.subtitle')}</p>
+        <div className="welcome-divider" />
+
+        {/* 内嵌自动轮播故事 */}
+        <InlineStoryCarousel />
+
+        <div className="welcome-buttons">
+          <button className="welcome-play-btn" onClick={handleEnterGame}>
+            ▶ {t('poster.play')}
+          </button>
+          <button className="welcome-leaderboard-btn" onClick={() => setShowLeaderboard(true)}>
+            🏆 {t('leaderboard.title')}
+          </button>
+        </div>
+
+        <p className="welcome-hint">{t('poster.hint')}</p>
+      </div>
+
       {showLeaderboard && <PosterLeaderboard onClose={() => setShowLeaderboard(false)} />}
     </div>
   );

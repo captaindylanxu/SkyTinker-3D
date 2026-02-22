@@ -102,52 +102,116 @@
   margin: 4px 0 10px;
 }
 
-/* ===== 故事预览按钮 ===== */
-.story-preview-btn {
+/* ===== 内嵌故事轮播 ===== */
+.inline-carousel {
   position: relative;
   width: 100%; max-width: 400px;
   aspect-ratio: 3 / 4;
-  border: none; border-radius: 16px;
-  overflow: hidden; cursor: pointer;
+  border-radius: 16px;
+  overflow: hidden;
   margin-bottom: 20px;
   background: #000;
   box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
   animation: cardSlideIn 0.6s ease forwards;
   animation-delay: 0.3s;
   opacity: 0;
-  touch-action: manipulation;
+  touch-action: pan-y;
   -webkit-tap-highlight-color: transparent;
 }
-.story-preview-btn:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(251,191,36,0.3);
+
+.inline-carousel-slide {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  opacity: 0;
+  transition: opacity 0.8s ease;
 }
-.story-preview-btn:active { transform: scale(0.98); }
-.story-preview-img {
+.inline-carousel-slide.active {
+  opacity: 1;
+  z-index: 1;
+}
+.inline-carousel-slide.active img {
+  animation: inlineKenBurns 5s ease-in-out forwards;
+}
+.inline-carousel-slide img {
   width: 100%; height: 100%;
   object-fit: cover;
   object-position: center top;
-  filter: brightness(0.7);
-  transition: filter 0.3s ease;
 }
-.story-preview-btn:hover .story-preview-img { filter: brightness(0.5); }
-.story-preview-overlay {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 6px;
+
+@keyframes inlineKenBurns {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.06); }
 }
-.story-preview-play {
-  font-size: 36px; color: white;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.5);
-  transition: transform 0.3s ease;
+
+/* 文字叠加 */
+.inline-carousel-caption {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  z-index: 5;
+  padding: 40px 16px 14px;
+  background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events: none;
 }
-.story-preview-btn:hover .story-preview-play { transform: scale(1.2); }
-.story-preview-text {
-  font-size: 13px; color: rgba(255,255,255,0.85);
-  font-weight: 600; letter-spacing: 1px;
-  text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+.inline-carousel-caption.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.inline-carousel-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fbbf24;
+  margin-bottom: 4px;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+}
+.inline-carousel-desc {
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(255,255,255,0.88);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+/* 进度点 */
+.inline-carousel-dots {
+  position: absolute;
+  top: 10px; left: 0; right: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+.inline-carousel-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transition: all 0.3s ease;
+}
+.inline-carousel-dot.active {
+  background: #fbbf24;
+  width: 16px;
+  border-radius: 3px;
+  box-shadow: 0 0 6px rgba(251,191,36,0.5);
+}
+
+/* 进度条 */
+.inline-carousel-progress {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 2px;
+  z-index: 6;
+  background: rgba(255,255,255,0.1);
+}
+.inline-carousel-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  animation: progressFill linear forwards;
+  transform-origin: left;
+}
+@keyframes progressFill {
+  from { width: 0; }
+  to { width: 100%; }
 }
 
 @keyframes cardSlideIn {
@@ -207,167 +271,6 @@
   animation-delay: 0.7s; opacity: 0;
 }
 
-/* ===== 故事书轮播 ===== */
-.storybook {
-  position: relative;
-  width: 100vw; height: 100vh;
-  background: #000;
-  display: flex; flex-direction: column;
-  overflow: hidden;
-}
-
-.storybook-viewport {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-/* 单张幻灯片 */
-.storybook-slide {
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  opacity: 0;
-  transition: opacity 0.8s ease;
-  will-change: opacity, transform;
-}
-.storybook-slide.active {
-  opacity: 1;
-  z-index: 1;
-}
-.storybook-slide.active img {
-  animation: kenBurns 8s ease-in-out forwards;
-}
-.storybook-slide img {
-  width: 100%; height: 100%;
-  object-fit: contain;
-  background: #000;
-}
-
-/* Ken Burns 缩放动画 - 让静态图有电影感 */
-@keyframes kenBurns {
-  0% { transform: scale(1) translate(0, 0); }
-  100% { transform: scale(1.08) translate(calc(var(--ken-burns-dir, 1) * -1%), -1%); }
-}
-
-/* 翻页提示箭头 */
-.storybook-nav-hint {
-  position: absolute; top: 50%;
-  transform: translateY(-50%);
-  font-size: 40px; color: rgba(255,255,255,0.3);
-  z-index: 5;
-  pointer-events: none;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
-  transition: opacity 0.3s;
-}
-.storybook-nav-hint.left { left: 12px; }
-.storybook-nav-hint.right { right: 12px; }
-.storybook-viewport:hover .storybook-nav-hint { color: rgba(255,255,255,0.6); }
-
-/* ===== 故事文字叠加层 ===== */
-.storybook-caption {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  z-index: 5;
-  padding: 60px 24px 20px;
-  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-  pointer-events: none;
-}
-.storybook-caption.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-.storybook-caption-title {
-  margin: 0 0 6px;
-  font-size: 20px;
-  font-weight: 700;
-  color: #fbbf24;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.6);
-  letter-spacing: 0.5px;
-}
-.storybook-caption-desc {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.6;
-  color: rgba(255,255,255,0.9);
-  text-shadow: 0 1px 8px rgba(0,0,0,0.5);
-  max-width: 480px;
-}
-
-/* ===== 故事书底部控制 ===== */
-.storybook-controls {
-  position: relative; z-index: 10;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 20px;
-  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 100%);
-}
-
-.storybook-dots {
-  display: flex; gap: 8px; align-items: center;
-}
-.storybook-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%; border: none;
-  background: rgba(255,255,255,0.25);
-  cursor: pointer; padding: 0;
-  transition: all 0.3s ease;
-}
-.storybook-dot.done { background: rgba(251,191,36,0.4); }
-.storybook-dot.active {
-  background: #fbbf24;
-  width: 24px; border-radius: 4px;
-  box-shadow: 0 0 8px rgba(251,191,36,0.5);
-}
-
-.storybook-actions { display: flex; gap: 10px; }
-
-.storybook-skip {
-  padding: 8px 20px; font-size: 13px; font-weight: 600;
-  color: rgba(255,255,255,0.7);
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 20px; cursor: pointer;
-  transition: all 0.2s ease;
-  touch-action: manipulation;
-}
-.storybook-skip:hover { background: rgba(255,255,255,0.15); color: #fff; }
-
-.storybook-start {
-  padding: 10px 28px; font-size: 15px; font-weight: 700;
-  color: #1a1a2e;
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
-  border: none; border-radius: 24px; cursor: pointer;
-  letter-spacing: 1px;
-  box-shadow: 0 4px 20px rgba(251,191,36,0.4);
-  animation: btnPulse 2s ease-in-out infinite;
-  transition: transform 0.2s ease;
-  touch-action: manipulation;
-}
-.storybook-start:hover { transform: scale(1.05); }
-.storybook-start:active { transform: scale(0.97); }
-
-/* 自动播放进度条 */
-.storybook-progress {
-  position: absolute; bottom: 60px; left: 0;
-  width: 100%; height: 3px; z-index: 10;
-  background: rgba(255,255,255,0.1);
-}
-.storybook-progress-bar {
-  height: 100%;
-  background: linear-gradient(90deg, #fbbf24, #f59e0b);
-  animation: progressFill linear forwards;
-  transform-origin: left;
-}
-@keyframes progressFill {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
 /* ===== 排行榜弹窗 ===== */
 .poster-leaderboard-overlay {
   position: fixed; top: 0; left: 0;
@@ -421,17 +324,17 @@
   .welcome-avatar { width: 100px; height: 100px; }
   .welcome-title { font-size: 34px; letter-spacing: 2px; }
   .welcome-subtitle { font-size: 11px; letter-spacing: 3px; }
-  .story-preview-btn { max-width: 320px; }
+  .inline-carousel { max-width: 320px; }
   .welcome-play-btn { padding: 12px 44px; font-size: 16px; }
 }
 @media (max-width: 380px) {
   .welcome-avatar { width: 80px; height: 80px; }
   .welcome-title { font-size: 28px; }
-  .story-preview-btn { max-width: 260px; }
+  .inline-carousel { max-width: 260px; }
 }
 @media (max-height: 700px) {
   .welcome-avatar { width: 80px; height: 80px; }
   .welcome-title { font-size: 30px; }
   .welcome-subtitle { margin-bottom: 10px; }
-  .story-preview-btn { max-width: 220px; }
+  .inline-carousel { max-width: 220px; }
 }
