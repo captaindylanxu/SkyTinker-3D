@@ -10,6 +10,10 @@
   justify-content: center;
   z-index: 2000;
   animation: fadeIn 0.3s ease;
+  /* Safari 移动端：确保触摸事件和输入框正常工作 */
+  pointer-events: auto;
+  touch-action: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .account-modal {
@@ -22,6 +26,10 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   animation: slideUp 0.4s ease;
   position: relative;
+  /* Safari 移动端：确保弹窗内容可交互 */
+  pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-transform: translateZ(0);
 }
 
 .account-back {
@@ -138,12 +146,19 @@
 
 .account-input {
   padding: 12px 16px;
+  /* iOS Safari 需要 16px 以上字体才不会自动缩放 */
   font-size: 16px;
   background: rgba(255, 255, 255, 0.05);
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   color: #fff;
   transition: all 0.2s ease;
+  /* Safari 移动端输入框兼容 */
+  -webkit-appearance: none;
+  appearance: none;
+  touch-action: manipulation;
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 .account-input:focus {

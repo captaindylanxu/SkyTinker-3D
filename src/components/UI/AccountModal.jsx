@@ -1,16 +1,20 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import useGameStore from '../../store/useGameStore';
 import { useI18n } from '../../i18n/useI18n';
 import { createPlayer, recoverAccount, checkPlayerNameExists } from '../../services/leaderboard';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import './AccountModal.css';
 
+// 阻止触摸事件穿透到 Canvas（Safari 移动端兼容）
+const stopTouchPropagation = (e) => {
+  e.stopPropagation();
+};
+
 export function AccountModal() {
   const { 
     showAccountModal, 
     setPlayerInfo, 
     skipOnboarding, 
-    closeAccountModal,
     setTutorialStep,
   } = useGameStore();
   const { t } = useI18n();
@@ -22,6 +26,11 @@ export function AccountModal() {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const hasLeaderboard = isSupabaseConfigured();
+
+  // 手动聚焦输入框（Safari 移动端需要）
+  const handleInputClick = useCallback((e) => {
+    e.target.focus();
+  }, []);
 
   // 只在 showAccountModal 为 true 时显示
   if (!showAccountModal) return null;
@@ -42,10 +51,18 @@ export function AccountModal() {
     setTutorialStep(0); // 启动教程
   };
 
+  // overlay 的通用事件属性（阻止穿透到 Canvas）
+  const overlayProps = {
+    onTouchStart: stopTouchPropagation,
+    onTouchMove: stopTouchPropagation,
+    onTouchEnd: stopTouchPropagation,
+    onMouseDown: stopTouchPropagation,
+  };
+
   // 欢迎界面
   if (mode === 'welcome') {
     return (
-      <div className="account-overlay">
+      <div className="account-overlay" {...overlayProps}>
         <div className="account-modal">
           <h2 className="account-title">🎉 {t('account.firstGameComplete')}</h2>
           <p className="account-description">{t('account.createAccountPrompt')}</p>
@@ -129,7 +146,7 @@ export function AccountModal() {
     };
 
     return (
-      <div className="account-overlay">
+      <div className="account-overlay" {...overlayProps}>
         <div className="account-modal">
           <button className="account-back" onClick={() => setMode('welcome')}>
             ← {t('account.back')}
@@ -146,9 +163,14 @@ export function AccountModal() {
                 className="account-input"
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
+                onClick={handleInputClick}
+                onTouchEnd={handleInputClick}
                 placeholder={t('account.nicknamePlaceholder')}
                 maxLength={20}
                 autoFocus
+                autoComplete="off"
+                autoCapitalize="off"
+                autoCorrect="off"
               />
             </label>
 
@@ -159,10 +181,13 @@ export function AccountModal() {
                 className="account-input pin-input"
                 value={pin}
                 onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                onClick={handleInputClick}
+                onTouchEnd={handleInputClick}
                 placeholder="••••"
                 maxLength={4}
                 inputMode="numeric"
                 pattern="\d{4}"
+                autoComplete="off"
               />
               <span className="account-hint">{t('account.pinHint')}</span>
             </label>
@@ -217,7 +242,7 @@ export function AccountModal() {
     };
 
     return (
-      <div className="account-overlay">
+      <div className="account-overlay" {...overlayProps}>
         <div className="account-modal">
           <button className="account-back" onClick={() => setMode('welcome')}>
             ← {t('account.back')}
@@ -234,9 +259,14 @@ export function AccountModal() {
                 className="account-input"
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
+                onClick={handleInputClick}
+                onTouchEnd={handleInputClick}
                 placeholder={t('account.nicknamePlaceholder')}
                 maxLength={20}
                 autoFocus
+                autoComplete="off"
+                autoCapitalize="off"
+                autoCorrect="off"
               />
             </label>
 
@@ -247,10 +277,13 @@ export function AccountModal() {
                 className="account-input pin-input"
                 value={pin}
                 onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                onClick={handleInputClick}
+                onTouchEnd={handleInputClick}
                 placeholder="••••"
                 maxLength={4}
                 inputMode="numeric"
                 pattern="\d{4}"
+                autoComplete="off"
               />
             </label>
 
