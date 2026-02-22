@@ -8,8 +8,37 @@ class BGMEngine {
     this.ctx = null;
     this.masterGain = null;
     this.currentMode = null;
+    this.pendingMode = null; // 等待用户交互后播放的模式
     this.nodes = [];
     this.loopTimer = null;
+    this.userInteracted = false;
+    this._setupInteractionListener();
+  }
+
+  // 监听用户首次交互，解锁 AudioContext
+  _setupInteractionListener() {
+    const unlock = () => {
+      this.userInteracted = true;
+      if (this.ctx && this.ctx.state === 'suspended') {
+        this.ctx.resume().then(() => {
+          // 如果有待播放的模式，现在启动
+          if (this.pendingMode && !this.currentMode) {
+            this.currentMode = this.pendingMode;
+            this.pendingMode = null;
+            this._startMode(this.currentMode);
+            this._fadeIn(2);
+          }
+        }).catch(() => {});
+      }
+      window.removeEventListener('touchstart', unlock, true);
+      window.removeEventListener('touchend', unlock, true);
+      window.removeEventListener('click', unlock, true);
+      window.removeEventListener('keydown', unlock, true);
+    };
+    window.addEventListener('touchstart', unlock, true);
+    window.addEventListener('touchend', unlock, true);
+    window.addEventListener('click', unlock, true);
+    window.addEventListener('keydown', unlock, true);
   }
 
   _ensureContext() {
@@ -279,10 +308,20 @@ class BGMEngine {
     if (mode === this.currentMode) return;
     if (!this._ensureContext()) return;
 
+    // 如果 AudioContext 还是 suspended（移动端未交互），记住待播放模式
+    if (this.ctx.state === 'suspended') {
+      this.pendingMode = mode;
+      // 如果已有当前模式在播放，先停掉
+      if (this.currentMode) {
+        this._stopCurrent();
+        this.currentMode = null;
+      }
+      return;
+    }
+
     // 淡出当前
     if (this.currentMode) {
       this._fadeOut(1);
-      // 延迟启动新的
       setTimeout(() => {
         this._stopCurrent();
         this.currentMode = mode;
