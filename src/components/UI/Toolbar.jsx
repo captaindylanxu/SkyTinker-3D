@@ -15,10 +15,11 @@ export function Toolbar() {
     getPartCountByType,
     isDeleteMode,
     setDeleteMode,
+    hasSeenPoster,
   } = useGameStore();
   const { t } = useI18n();
 
-  if (gameMode !== GAME_MODES.BUILD_MODE) return null;
+  if (gameMode !== GAME_MODES.BUILD_MODE || !hasSeenPoster) return null;
 
   const partTypes = Object.values(PART_TYPES);
   const totalParts = vehicleParts.length;

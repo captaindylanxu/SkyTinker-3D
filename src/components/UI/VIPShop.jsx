@@ -4,10 +4,12 @@ import { useI18n } from '../../i18n/useI18n';
 import './VIPShop.css';
 
 export function VIPShop() {
-  const { isVIP, setVIP } = useGameStore();
+  const { isVIP, setVIP, hasSeenPoster } = useGameStore();
   const { t } = useI18n();
   const [showModal, setShowModal] = useState(false);
   const [purchasing, setPurchasing] = useState(false);
+
+  if (!hasSeenPoster) return null;
 
   const handlePurchase = () => {
     setPurchasing(true);

@@ -5,9 +5,11 @@ import { useI18n } from '../../i18n/useI18n';
 import './ModeToggle.css';
 
 export function ModeToggle() {
-  const { gameMode, toggleGameMode, vehicleParts, score } = useGameStore();
+  const { gameMode, toggleGameMode, vehicleParts, score, hasSeenPoster } = useGameStore();
   const { playModeSwitch } = useSound();
   const { t } = useI18n();
+
+  if (!hasSeenPoster) return null;
 
   const isBuildMode = gameMode === GAME_MODES.BUILD_MODE;
   const hasNoParts = vehicleParts.length === 0;

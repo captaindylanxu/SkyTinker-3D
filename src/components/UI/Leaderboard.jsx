@@ -10,13 +10,10 @@ export function Leaderboard() {
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [playerRank, setPlayerRank] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { playerId, gameMode } = useGameStore();
+  const { playerId, gameMode, hasSeenPoster } = useGameStore();
   const { t } = useI18n();
 
   const hasLeaderboard = isSupabaseConfigured();
-  
-  // 调试信息
-  console.log('Leaderboard render:', { hasLeaderboard, playerId, gameMode });
 
   useEffect(() => {
     if (isOpen && hasLeaderboard) {
@@ -43,7 +40,7 @@ export function Leaderboard() {
     setIsLoading(false);
   };
 
-  if (!hasLeaderboard) return null;
+  if (!hasLeaderboard || !hasSeenPoster) return null;
 
   return (
     <>
