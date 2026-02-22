@@ -87,3 +87,31 @@
   font-weight: 700;
   box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
 }
+
+@media (max-width: 768px) {
+  .mode-toggle {
+    top: 10px;
+    gap: 5px;
+  }
+  .toggle-button {
+    padding: 8px 20px;
+    font-size: 13px;
+    border-radius: 24px;
+  }
+  .mode-indicator {
+    padding: 4px 12px;
+    font-size: 10px;
+  }
+  .parts-count {
+    font-size: 10px;
+    padding: 3px 10px;
+  }
+  .score-display {
+    padding: 6px 14px;
+    font-size: 14px;
+  }
+  .controls-hint {
+    padding: 5px 12px;
+    font-size: 10px;
+  }
+}
