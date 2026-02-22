@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import useGameStore from '../../store/useGameStore';
 import { useI18n } from '../../i18n/useI18n';
 import { submitScore, getPlayerHighScore } from '../../services/leaderboard';
-import { generateShareUrl, getShareText, getAvailablePlatforms, SHARE_PLATFORMS } from '../../services/share';
+import { generateShareUrl, getShareText, getAvailablePlatforms, SHARE_PLATFORMS, PLATFORM_ICONS, PLATFORM_COLORS } from '../../services/share';
 import { useReferralLife } from '../../services/referral';
 import './GameOverModal.css';
 
@@ -20,7 +20,6 @@ export function GameOverModal() {
   const [reviveCountdown, setReviveCountdown] = useState(0);
   const [dbHighScore, setDbHighScore] = useState(null);
 
-  // 已登录用户的最高分：取数据库和本地的较大值
   const displayHighScore = playerId && dbHighScore !== null
     ? Math.max(dbHighScore, highScore)
     : highScore;
@@ -30,14 +29,12 @@ export function GameOverModal() {
   const canReferralRevive = !hasUsedReferralRevive && referralLives > 0;
   const canRevive = canShareRevive || canReferralRevive;
 
-  // 游戏结束时提交分数
   useEffect(() => {
     if (isGameOver && playerId && playerName && score > 0) {
       submitScore(playerId, playerName, score);
     }
   }, [isGameOver, playerId, playerName, score]);
 
-  // 已登录用户从数据库读取最高分
   useEffect(() => {
     if (isGameOver && playerId) {
       getPlayerHighScore(playerId).then(({ success, highScore: dbScore }) => {
@@ -50,7 +47,6 @@ export function GameOverModal() {
     }
   }, [isGameOver, playerId]);
 
-  // 重置面板状态
   useEffect(() => {
     if (isGameOver) {
       setShowSharePanel(false);
@@ -60,12 +56,10 @@ export function GameOverModal() {
     }
   }, [isGameOver]);
 
-  // 续命倒计时
   useEffect(() => {
     if (reviveCountdown > 0) {
       const timer = setTimeout(() => {
         if (reviveCountdown === 1) {
-          // 倒计时结束，执行续命
           shareRevive();
         }
         setReviveCountdown(reviveCountdown - 1);
@@ -88,7 +82,6 @@ export function GameOverModal() {
       setTimeout(() => setCopyHint(false), 3000);
     }
 
-    // 方案A：点击分享即视为已分享
     setShareSuccess(true);
     setReviveCountdown(3);
   }, [playerId, score, t]);
@@ -96,7 +89,6 @@ export function GameOverModal() {
   const handleReferralRevive = useCallback(async () => {
     if (!canReferralRevive) return;
     
-    // 消耗远程续命次数
     if (playerId) {
       const success = await useReferralLife(playerId);
       if (success) {
@@ -112,12 +104,23 @@ export function GameOverModal() {
     resetGame();
   };
 
+  // 通用的触摸/点击处理器，防止事件穿透到 Canvas
+  const handleButtonAction = (callback) => (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    callback();
+  };
+
   if (!isGameOver || showAccountModal) return null;
 
   const platforms = getAvailablePlatforms();
 
   return (
-    <div className="game-over-overlay" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="game-over-overlay"
+      onClick={(e) => e.stopPropagation()}
+      onTouchStart={(e) => e.stopPropagation()}
+    >
       <div className="game-over-modal">
         <h1 className="game-over-title">💥 {t('gameOver')}</h1>
         
@@ -140,35 +143,36 @@ export function GameOverModal() {
           <div className="revive-section">
             <div className="revive-title">💖 {t('share.reviveTitle')}</div>
             
-            {/* 分享续命 */}
             {canShareRevive && !showSharePanel && (
               <button
                 className="revive-button share-revive-btn"
-                onClick={() => setShowSharePanel(true)}
+                onClick={handleButtonAction(() => setShowSharePanel(true))}
+                onTouchEnd={handleButtonAction(() => setShowSharePanel(true))}
               >
                 📢 {t('share.shareToRevive')}
               </button>
             )}
 
-            {/* 分享平台选择 */}
             {showSharePanel && !shareSuccess && (
               <div className="share-panel">
                 <div className="share-panel-hint">{t('share.choosePlatform')}</div>
                 <div className="share-platforms">
-                  {platforms.map((pid) => {
-                    const p = SHARE_PLATFORMS[pid];
-                    return (
-                      <button
-                        key={pid}
-                        className="share-platform-btn"
-                        onClick={() => handleShare(pid)}
-                        title={t(`share.platform.${pid}`)}
-                      >
-                        <span className="platform-icon">{p.icon}</span>
-                        <span className="platform-name">{t(`share.platform.${pid}`)}</span>
-                      </button>
-                    );
-                  })}
+                  {platforms.map((pid) => (
+                    <button
+                      key={pid}
+                      className="share-platform-btn"
+                      onClick={handleButtonAction(() => handleShare(pid))}
+                      onTouchEnd={handleButtonAction(() => handleShare(pid))}
+                      title={t(`share.platform.${pid}`)}
+                    >
+                      <span
+                        className="platform-icon"
+                        style={{ color: PLATFORM_COLORS[pid] }}
+                        dangerouslySetInnerHTML={{ __html: PLATFORM_ICONS[pid] }}
+                      />
+                      <span className="platform-name">{t(`share.platform.${pid}`)}</span>
+                    </button>
+                  ))}
                 </div>
                 {copyHint && (
                   <div className="copy-hint">✅ {t('share.copied')}</div>
@@ -176,11 +180,11 @@ export function GameOverModal() {
               </div>
             )}
 
-            {/* 邀请续命 */}
             {canReferralRevive && (
               <button
                 className="revive-button referral-revive-btn"
-                onClick={handleReferralRevive}
+                onClick={handleButtonAction(handleReferralRevive)}
+                onTouchEnd={handleButtonAction(handleReferralRevive)}
               >
                 🎁 {t('share.referralRevive')} ({referralLives})
               </button>
@@ -188,7 +192,6 @@ export function GameOverModal() {
           </div>
         )}
 
-        {/* 分享成功，续命倒计时 */}
         {shareSuccess && reviveCountdown > 0 && (
           <div className="revive-countdown">
             <div className="revive-countdown-text">
