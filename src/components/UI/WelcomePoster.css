@@ -59,7 +59,7 @@
 
 /* ===== 头像 ===== */
 .welcome-avatar-wrapper {
-  position: relative; margin-bottom: 8px;
+  position: relative; margin-bottom: 2px;
   animation: floatAvatar 3s ease-in-out infinite;
 }
 @keyframes floatAvatar {
@@ -89,17 +89,17 @@
   color: transparent;
   background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 40%, #fcd34d 100%);
   background-clip: text; -webkit-background-clip: text;
-  margin: 0 0 4px 0; letter-spacing: 3px;
+  margin: 0 0 2px 0; letter-spacing: 3px;
   filter: drop-shadow(0 2px 10px rgba(251,191,36,0.3));
 }
 .welcome-subtitle {
   font-size: 13px; color: rgba(203,213,225,0.8);
-  margin: 0 0 16px 0; letter-spacing: 4px; text-transform: uppercase;
+  margin: 0 0 8px 0; letter-spacing: 4px; text-transform: uppercase;
 }
 .welcome-divider {
   width: 60px; height: 2px;
   background: linear-gradient(90deg, transparent, rgba(251,191,36,0.5), transparent);
-  margin: 8px 0 16px;
+  margin: 4px 0 10px;
 }
 
 /* ===== 故事预览按钮 ===== */
@@ -127,6 +127,7 @@
 .story-preview-img {
   width: 100%; height: 100%;
   object-fit: cover;
+  object-position: center top;
   filter: brightness(0.7);
   transition: filter 0.3s ease;
 }
