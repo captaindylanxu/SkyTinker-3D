@@ -1,7 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import useGameStore from '../../store/useGameStore';
 import { GAME_MODES } from '../../constants/gameConstants';
 import { useI18n } from '../../i18n/useI18n';
+import { getLeaderboard } from '../../services/leaderboard';
+import { isSupabaseConfigured } from '../../lib/supabase';
 import './WelcomePoster.css';
 
 // 生成随机星星
@@ -60,19 +62,78 @@ const FEATURES = [
   },
 ];
 
-export function WelcomePoster() {
-  const { hasPlayedFirstGame, hasSeenPoster } = useGameStore();
+// 海报内嵌排行榜
+function PosterLeaderboard({ onClose }) {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { t } = useI18n();
 
-  // 只有新用户且还没看过海报才显示
-  if (hasPlayedFirstGame || hasSeenPoster) return null;
+  useEffect(() => {
+    if (isSupabaseConfigured()) {
+      getLeaderboard(20).then((res) => {
+        if (res.success) setData(res.data);
+        setLoading(false);
+      });
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  return (
+    <div className="poster-leaderboard-overlay" onClick={onClose}>
+      <div className="poster-leaderboard-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="poster-lb-header">
+          <h2>🏆 {t('leaderboard.title')}</h2>
+          <button className="poster-lb-close" onClick={onClose}>✕</button>
+        </div>
+        <div className="poster-lb-content">
+          {loading ? (
+            <p className="poster-lb-loading">{t('leaderboard.loading')}</p>
+          ) : data.length === 0 ? (
+            <p className="poster-lb-empty">{t('leaderboard.empty')}</p>
+          ) : (
+            <div className="poster-lb-list">
+              {data.map((entry, i) => (
+                <div key={entry.player_id} className={`poster-lb-item ${i < 3 ? `rank-${i + 1}` : ''}`}>
+                  <span className="poster-lb-rank">
+                    {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`}
+                  </span>
+                  <span className="poster-lb-name">{entry.player_name}</span>
+                  <span className="poster-lb-score">{Math.floor(entry.high_score)} {t('meter')}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function WelcomePoster() {
+  const { hasSeenPoster, hasCompletedOnboarding } = useGameStore();
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const { t } = useI18n();
+
+  // 每次刷新都显示海报，点击 TAKE OFF 后隐藏（hasSeenPoster 不持久化）
+  if (hasSeenPoster) return null;
 
   const handlePlay = () => {
-    // 标记已看过海报，切换到飞行模式开始试玩
-    useGameStore.setState({ 
-      hasSeenPoster: true,
-      gameMode: GAME_MODES.FLIGHT_MODE,
-    });
+    const state = useGameStore.getState();
+    if (state.hasCompletedOnboarding) {
+      // 老用户 → 直接进入建造模式
+      useGameStore.setState({ 
+        hasSeenPoster: true,
+        gameMode: GAME_MODES.BUILD_MODE,
+      });
+    } else {
+      // 新用户 → 显示账号弹窗 → 教程
+      useGameStore.setState({ 
+        hasSeenPoster: true,
+        showAccountModal: true,
+        gameMode: GAME_MODES.BUILD_MODE,
+      });
+    }
   };
 
   return (
@@ -109,13 +170,23 @@ export function WelcomePoster() {
           ))}
         </div>
 
-        {/* 开始按钮 */}
-        <button className="welcome-play-btn" onClick={handlePlay}>
-          ▶ {t('poster.play')}
-        </button>
+        {/* 按钮区域 */}
+        <div className="welcome-buttons">
+          <button className="welcome-play-btn" onClick={handlePlay}>
+            ▶ {t('poster.play')}
+          </button>
+          <button className="welcome-leaderboard-btn" onClick={() => setShowLeaderboard(true)}>
+            🏆 {t('leaderboard.title')}
+          </button>
+        </div>
 
         <p className="welcome-hint">{t('poster.hint')}</p>
       </div>
+
+      {/* 排行榜弹窗 */}
+      {showLeaderboard && (
+        <PosterLeaderboard onClose={() => setShowLeaderboard(false)} />
+      )}
     </div>
   );
 }

@@ -21,36 +21,6 @@ const saveHighScore = (score) => {
   }
 };
 
-// 检查是否是新用户（没有存储过数据）
-const isNewUser = () => {
-  try {
-    const stored = localStorage.getItem('flappy-vehicle-storage');
-    return !stored;
-  } catch {
-    return true;
-  }
-};
-
-// 默认飞机配置（新用户体验用）
-// 布局：前面三个引擎，后面中间是机身，机身两边是机翼，机身上面是驾驶座
-// 注意：飞行时飞机会旋转 -90 度，所以这里的 Z 轴在飞行时变成前进方向
-const DEFAULT_VEHICLE_PARTS = [
-  // 前排：三个引擎 (z=-1 是飞行时的前方)
-  { id: 1, type: PART_TYPES.ENGINE, tier: PART_TIERS.NORMAL, position: [-1, 0.5, -1], rotation: [0, 0, 0] },
-  { id: 2, type: PART_TYPES.ENGINE, tier: PART_TIERS.NORMAL, position: [0, 0.5, -1], rotation: [0, 0, 0] },
-  { id: 3, type: PART_TYPES.ENGINE, tier: PART_TIERS.NORMAL, position: [1, 0.5, -1], rotation: [0, 0, 0] },
-  // 后排：机身在中间 (z=0 是飞行时的后方)
-  { id: 4, type: PART_TYPES.FUSELAGE, tier: PART_TIERS.NORMAL, position: [0, 0.5, 0], rotation: [0, 0, 0] },
-  // 后排：机翼在机身两边 (x 是飞行时的左右)
-  { id: 5, type: PART_TYPES.WING, tier: PART_TIERS.NORMAL, position: [-1, 0.5, 0], rotation: [0, 0, 0] },
-  { id: 6, type: PART_TYPES.WING, tier: PART_TIERS.NORMAL, position: [1, 0.5, 0], rotation: [0, 0, 0] },
-  // 机身上面：驾驶座
-  { id: 7, type: PART_TYPES.COCKPIT, tier: PART_TIERS.NORMAL, position: [0, 1.5, 0], rotation: [0, 0, 0] },
-];
-
-// 根据是否新用户决定初始状态
-const _isNewUser = isNewUser();
-
 const useGameStore = create(
   persist(
     (set, get) => ({
@@ -62,9 +32,9 @@ const useGameStore = create(
   playerId: null,
   playerName: null,
   hasCompletedOnboarding: false,
-  hasPlayedFirstGame: false, // 是否已经玩过第一局游戏
-  hasSeenPoster: false, // 是否已经看过欢迎海报
-  showAccountModal: false, // 是否显示账号弹窗
+  hasPlayedFirstGame: false, // 已废弃，保留兼容
+  hasSeenPoster: false, // 每次刷新重置，不持久化
+  showAccountModal: false,
   
   setPlayerInfo: (playerId, playerName) => set({ 
     playerId, 
@@ -117,7 +87,7 @@ const useGameStore = create(
     console.log('⏭️ State after set:', get().tutorialStep, get().gameMode);
   },
   
-  // 游戏模式 - 新用户先看海报再飞行，所以初始也是建造模式（海报点击后切换）
+  // 游戏模式 - 每次刷新先显示海报，点击后进入建造模式
   gameMode: GAME_MODES.BUILD_MODE,
   setGameMode: (mode) => set({ gameMode: mode }),
   toggleGameMode: () => set((state) => ({
@@ -136,17 +106,7 @@ const useGameStore = create(
   setGameOver: () => {
     const state = get();
     state.updateHighScore();
-    
-    // 如果是第一次游戏结束且还没完成 onboarding，触发账号流程
-    if (!state.hasPlayedFirstGame && !state.hasCompletedOnboarding) {
-      set({ 
-        isGameOver: true,
-        hasPlayedFirstGame: true,
-        showAccountModal: true,
-      });
-    } else {
-      set({ isGameOver: true });
-    }
+    set({ isGameOver: true });
   },
   setExploded: () => set({ isExploded: true }),
   
@@ -182,8 +142,8 @@ const useGameStore = create(
   isDeleteMode: false,
   setDeleteMode: (value) => set({ isDeleteMode: value }),
 
-  // 载具零件数组 - 新用户默认有一个飞机，老用户为空
-  vehicleParts: _isNewUser ? DEFAULT_VEHICLE_PARTS : [],
+  // 载具零件数组
+  vehicleParts: [],
   
   // 获取某类型零件数量
   getPartCountByType: (type) => {
@@ -248,7 +208,6 @@ const useGameStore = create(
         playerId: state.playerId,
         playerName: state.playerName,
         hasCompletedOnboarding: state.hasCompletedOnboarding,
-        hasPlayedFirstGame: state.hasPlayedFirstGame,
         tutorialStep: state.tutorialStep,
         isVIP: state.isVIP,
       }),
