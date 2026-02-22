@@ -179,6 +179,30 @@ export async function getPlayerRank(playerId) {
     return { success: false, rank: null };
   }
 }
+// 获取玩家最高分（从数据库）
+export async function getPlayerHighScore(playerId) {
+  if (!isSupabaseConfigured() || !playerId) {
+    return { success: false, highScore: null };
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('leaderboard')
+      .select('high_score')
+      .eq('player_id', playerId)
+      .single();
+
+    if (error || !data) {
+      return { success: false, highScore: null };
+    }
+
+    return { success: true, highScore: data.high_score };
+  } catch (error) {
+    console.error('Error fetching player high score:', error);
+    return { success: false, highScore: null };
+  }
+}
+
 
 // 检查昵称是否已存在
 export async function checkPlayerNameExists(playerName) {
@@ -205,5 +229,6 @@ export default {
   submitScore,
   getLeaderboard,
   getPlayerRank,
+  getPlayerHighScore,
   checkPlayerNameExists,
 };

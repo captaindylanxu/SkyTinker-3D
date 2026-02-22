@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import useGameStore from '../../store/useGameStore';
 import { useI18n } from '../../i18n/useI18n';
-import { submitScore } from '../../services/leaderboard';
+import { submitScore, getPlayerHighScore } from '../../services/leaderboard';
 import { generateShareUrl, getShareText, getAvailablePlatforms, SHARE_PLATFORMS } from '../../services/share';
 import { useReferralLife } from '../../services/referral';
 import './GameOverModal.css';
@@ -18,8 +18,14 @@ export function GameOverModal() {
   const [shareSuccess, setShareSuccess] = useState(false);
   const [copyHint, setCopyHint] = useState(false);
   const [reviveCountdown, setReviveCountdown] = useState(0);
+  const [dbHighScore, setDbHighScore] = useState(null);
 
-  const isNewRecord = score >= highScore && score > 0;
+  // 已登录用户的最高分：取数据库和本地的较大值
+  const displayHighScore = playerId && dbHighScore !== null
+    ? Math.max(dbHighScore, highScore)
+    : highScore;
+
+  const isNewRecord = score >= displayHighScore && score > 0;
   const canShareRevive = !hasUsedShareRevive;
   const canReferralRevive = !hasUsedReferralRevive && referralLives > 0;
   const canRevive = canShareRevive || canReferralRevive;
@@ -30,6 +36,19 @@ export function GameOverModal() {
       submitScore(playerId, playerName, score);
     }
   }, [isGameOver, playerId, playerName, score]);
+
+  // 已登录用户从数据库读取最高分
+  useEffect(() => {
+    if (isGameOver && playerId) {
+      getPlayerHighScore(playerId).then(({ success, highScore: dbScore }) => {
+        if (success && dbScore !== null) {
+          setDbHighScore(dbScore);
+        }
+      });
+    } else {
+      setDbHighScore(null);
+    }
+  }, [isGameOver, playerId]);
 
   // 重置面板状态
   useEffect(() => {
@@ -113,7 +132,7 @@ export function GameOverModal() {
         
         <div className="high-score">
           <span className="high-score-label">🏆 {t('highScore')}</span>
-          <span className="high-score-value">{Math.floor(highScore)} {t('meter')}</span>
+          <span className="high-score-value">{Math.floor(displayHighScore)} {t('meter')}</span>
         </div>
 
         {/* 续命区域 */}
