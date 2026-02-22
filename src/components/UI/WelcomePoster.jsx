@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import useGameStore from '../../store/useGameStore';
+import { GAME_MODES } from '../../constants/gameConstants';
 import { useI18n } from '../../i18n/useI18n';
 import './WelcomePoster.css';
 
@@ -67,8 +68,11 @@ export function WelcomePoster() {
   if (hasPlayedFirstGame || hasSeenPoster) return null;
 
   const handlePlay = () => {
-    // 标记已看过海报，进入试玩（飞行模式已经是默认状态）
-    useGameStore.setState({ hasSeenPoster: true });
+    // 标记已看过海报，切换到飞行模式开始试玩
+    useGameStore.setState({ 
+      hasSeenPoster: true,
+      gameMode: GAME_MODES.FLIGHT_MODE,
+    });
   };
 
   return (

@@ -117,8 +117,8 @@ const useGameStore = create(
     console.log('⏭️ State after set:', get().tutorialStep, get().gameMode);
   },
   
-  // 游戏模式 - 新用户默认飞行模式，老用户默认建造模式
-  gameMode: _isNewUser ? GAME_MODES.FLIGHT_MODE : GAME_MODES.BUILD_MODE,
+  // 游戏模式 - 新用户先看海报再飞行，所以初始也是建造模式（海报点击后切换）
+  gameMode: GAME_MODES.BUILD_MODE,
   setGameMode: (mode) => set({ gameMode: mode }),
   toggleGameMode: () => set((state) => ({
     gameMode: state.gameMode === GAME_MODES.BUILD_MODE 
