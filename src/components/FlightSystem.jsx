@@ -282,7 +282,6 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, 
     if (currentPos[0] - lastScoreX.current >= 1) {
       const points = Math.floor(currentPos[0] - lastScoreX.current);
       addScore(points);
-      if (points > 0) playScore();
       lastScoreX.current = currentPos[0];
     }
 
