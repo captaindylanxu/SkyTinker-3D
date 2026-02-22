@@ -323,12 +323,13 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, 
 }
 
 export function FlightSystem() {
-  const { vehicleParts, isExploded, isVIP, setExploded, setGameOver } = useGameStore();
+  const { vehicleParts, isExploded, isVIP, setExploded, setGameOver, isReviving, clearReviving, score } = useGameStore();
   const [vehiclePos, setVehiclePos] = useState({ x: 0, y: 10 });
   const [explodedParts, setExplodedParts] = useState([]);
   const [explosionPos, setExplosionPos] = useState(null);
   const [showExplosion, setShowExplosion] = useState(false);
   const [obstacles, setObstacles] = useState([]);
+  const [reviveKey, setReviveKey] = useState(0); // 用于强制重新挂载FlappyVehicle
   const hasTriggeredExplosion = useRef(false);
 
   const handlePositionUpdate = useCallback((x, y) => {
@@ -354,6 +355,19 @@ export function FlightSystem() {
     setObstacles(prev => prev.filter(o => o.id !== id));
   }, []);
 
+  // 处理续命：重新挂载飞行器
+  useEffect(() => {
+    if (isReviving) {
+      setExplodedParts([]);
+      setExplosionPos(null);
+      setShowExplosion(false);
+      setObstacles([]);
+      hasTriggeredExplosion.current = false;
+      setReviveKey(prev => prev + 1);
+      clearReviving();
+    }
+  }, [isReviving, clearReviving]);
+
   if (vehicleParts.length === 0) return null;
 
   return (
@@ -365,6 +379,7 @@ export function FlightSystem() {
       />
       
       <FlappyVehicle 
+        key={reviveKey}
         parts={vehicleParts} 
         onPositionUpdate={handlePositionUpdate}
         onExplode={handleExplode}

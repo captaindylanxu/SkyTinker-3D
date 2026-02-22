@@ -136,6 +136,25 @@ export const LOCALES = {
       hint: '按住空格键或点击屏幕控制飞行',
       storyBtn: "Captain Dylan 的故事",
     },
+    
+    // 分享续命
+    share: {
+      reviveTitle: '还有机会！',
+      shareToRevive: '分享给朋友，获得续命机会',
+      choosePlatform: '选择分享方式',
+      copied: '链接已复制，快去分享吧！',
+      shareSuccess: '分享成功！准备续命...',
+      reviveIn: '{seconds} 秒后续命',
+      referralRevive: '使用邀请续命',
+      text: '我在 SkyTinker 飞了 {score}m！来挑战我吧 ✈️',
+      platform: {
+        wechat: '微信',
+        whatsapp: 'WhatsApp',
+        twitter: 'X',
+        facebook: 'Facebook',
+        system: '更多',
+      },
+    },
   },
   'zh-TW': {
     startFlight: '🚀 開始飛行',
@@ -265,6 +284,24 @@ export const LOCALES = {
       play: '立即起飛',
       hint: '按住空白鍵或點擊螢幕控制飛行',
       storyBtn: "Captain Dylan 的故事",
+    },
+    
+    share: {
+      reviveTitle: '還有機會！',
+      shareToRevive: '分享給朋友，獲得續命機會',
+      choosePlatform: '選擇分享方式',
+      copied: '連結已複製，快去分享吧！',
+      shareSuccess: '分享成功！準備續命...',
+      reviveIn: '{seconds} 秒後續命',
+      referralRevive: '使用邀請續命',
+      text: '我在 SkyTinker 飛了 {score}m！來挑戰我吧 ✈️',
+      platform: {
+        wechat: '微信',
+        whatsapp: 'WhatsApp',
+        twitter: 'X',
+        facebook: 'Facebook',
+        system: '更多',
+      },
     },
   },
   
@@ -397,6 +434,24 @@ export const LOCALES = {
       hint: 'Hold SPACE or tap screen to fly',
       storyBtn: "Captain Dylan's Story",
     },
+    
+    share: {
+      reviveTitle: 'Second Chance!',
+      shareToRevive: 'Share with friends to revive',
+      choosePlatform: 'Choose a platform',
+      copied: 'Link copied! Go share it!',
+      shareSuccess: 'Shared! Reviving...',
+      reviveIn: 'Reviving in {seconds}s',
+      referralRevive: 'Use invite revive',
+      text: "I flew {score}m in SkyTinker! Can you beat me? ✈️",
+      platform: {
+        wechat: 'WeChat',
+        whatsapp: 'WhatsApp',
+        twitter: 'X',
+        facebook: 'Facebook',
+        system: 'More',
+      },
+    },
   },
   
   'ja': {
@@ -527,6 +582,24 @@ export const LOCALES = {
       play: 'テイクオフ',
       hint: 'スペースキーまたはタップで飛行',
       storyBtn: 'Captain Dylan の物語',
+    },
+    
+    share: {
+      reviveTitle: 'もう一度チャンス！',
+      shareToRevive: '友達にシェアして復活',
+      choosePlatform: 'シェア方法を選択',
+      copied: 'リンクをコピーしました！シェアしよう！',
+      shareSuccess: 'シェア成功！復活準備中...',
+      reviveIn: '{seconds}秒後に復活',
+      referralRevive: '招待復活を使用',
+      text: 'SkyTinkerで{score}m飛んだよ！挑戦してみて ✈️',
+      platform: {
+        wechat: 'WeChat',
+        whatsapp: 'WhatsApp',
+        twitter: 'X',
+        facebook: 'Facebook',
+        system: 'その他',
+      },
     },
   },
   
@@ -659,6 +732,24 @@ export const LOCALES = {
       hint: '스페이스 키 또는 화면을 탭하여 비행',
       storyBtn: 'Captain Dylan의 이야기',
     },
+    
+    share: {
+      reviveTitle: '한 번 더 기회!',
+      shareToRevive: '친구에게 공유하고 부활하기',
+      choosePlatform: '공유 방법 선택',
+      copied: '링크가 복사되었습니다! 공유하세요!',
+      shareSuccess: '공유 성공! 부활 준비 중...',
+      reviveIn: '{seconds}초 후 부활',
+      referralRevive: '초대 부활 사용',
+      text: 'SkyTinker에서 {score}m 날았어요! 도전해보세요 ✈️',
+      platform: {
+        wechat: 'WeChat',
+        whatsapp: 'WhatsApp',
+        twitter: 'X',
+        facebook: 'Facebook',
+        system: '더보기',
+      },
+    },
   },
   
   'de': {
@@ -789,6 +880,24 @@ export const LOCALES = {
       play: 'ABHEBEN',
       hint: 'Halte LEERTASTE oder tippe zum Fliegen',
       storyBtn: 'Captain Dylans Geschichte',
+    },
+    
+    share: {
+      reviveTitle: 'Noch eine Chance!',
+      shareToRevive: 'Mit Freunden teilen und weiterleben',
+      choosePlatform: 'Plattform wählen',
+      copied: 'Link kopiert! Jetzt teilen!',
+      shareSuccess: 'Geteilt! Wiederbelebung...',
+      reviveIn: 'Wiederbelebung in {seconds}s',
+      referralRevive: 'Einladungs-Wiederbelebung nutzen',
+      text: 'Ich bin {score}m in SkyTinker geflogen! Kannst du mich schlagen? ✈️',
+      platform: {
+        wechat: 'WeChat',
+        whatsapp: 'WhatsApp',
+        twitter: 'X',
+        facebook: 'Facebook',
+        system: 'Mehr',
+      },
     },
   },
   
@@ -921,6 +1030,24 @@ export const LOCALES = {
       hint: 'Удерживайте ПРОБЕЛ или нажимайте для полёта',
       storyBtn: 'История Captain Dylan',
     },
+    
+    share: {
+      reviveTitle: 'Ещё один шанс!',
+      shareToRevive: 'Поделись с друзьями и воскресни',
+      choosePlatform: 'Выберите платформу',
+      copied: 'Ссылка скопирована! Поделитесь!',
+      shareSuccess: 'Поделились! Воскрешение...',
+      reviveIn: 'Воскрешение через {seconds}с',
+      referralRevive: 'Использовать приглашение',
+      text: 'Я пролетел {score}м в SkyTinker! Сможешь побить? ✈️',
+      platform: {
+        wechat: 'WeChat',
+        whatsapp: 'WhatsApp',
+        twitter: 'X',
+        facebook: 'Facebook',
+        system: 'Ещё',
+      },
+    },
   },
   
   'fr': {
@@ -1051,6 +1178,24 @@ export const LOCALES = {
       play: 'DÉCOLLAGE',
       hint: 'Maintiens ESPACE ou touche pour voler',
       storyBtn: "L'histoire de Captain Dylan",
+    },
+    
+    share: {
+      reviveTitle: 'Encore une chance !',
+      shareToRevive: 'Partage avec tes amis pour revivre',
+      choosePlatform: 'Choisis une plateforme',
+      copied: 'Lien copié ! Partage-le !',
+      shareSuccess: 'Partagé ! Résurrection...',
+      reviveIn: 'Résurrection dans {seconds}s',
+      referralRevive: 'Utiliser résurrection invitation',
+      text: "J'ai volé {score}m dans SkyTinker ! Tu peux faire mieux ? ✈️",
+      platform: {
+        wechat: 'WeChat',
+        whatsapp: 'WhatsApp',
+        twitter: 'X',
+        facebook: 'Facebook',
+        system: 'Plus',
+      },
     },
   },
 };

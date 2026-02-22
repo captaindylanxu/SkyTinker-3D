@@ -3,6 +3,7 @@ import useGameStore from '../../store/useGameStore';
 import { useI18n } from '../../i18n/useI18n';
 import { createPlayer, recoverAccount, checkPlayerNameExists } from '../../services/leaderboard';
 import { isSupabaseConfigured } from '../../lib/supabase';
+import { consumeReferralCode, recordReferral } from '../../services/referral';
 import './AccountModal.css';
 
 // 阻止触摸事件穿透到 Canvas（Safari 移动端兼容）
@@ -38,8 +39,17 @@ export function AccountModal() {
   if (!showAccountModal) return null;
 
   // 完成账号创建/找回后
-  const handleAccountComplete = (playerId, playerName) => {
+  const handleAccountComplete = async (playerId, playerName, isNewAccount = false) => {
     setPlayerInfo(playerId, playerName);
+    
+    // 新账号注册时，处理邀请关系
+    if (isNewAccount) {
+      const referrerCode = consumeReferralCode();
+      if (referrerCode) {
+        await recordReferral(referrerCode, playerId);
+      }
+    }
+    
     const state = useGameStore.getState();
     // 只有新用户（还没完成过 onboarding）才启动教程
     if (!state.hasCompletedOnboarding) {
@@ -159,7 +169,7 @@ export function AccountModal() {
       setIsProcessing(false);
 
       if (result.success) {
-        handleAccountComplete(result.data.playerId, result.data.playerName);
+        handleAccountComplete(result.data.playerId, result.data.playerName, true);
       } else {
         setError(result.error === 'Name already exists' 
           ? t('account.nameExists') 

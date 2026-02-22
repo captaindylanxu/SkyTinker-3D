@@ -108,11 +108,24 @@ const useGameStore = create(
     score: state.gameMode === GAME_MODES.BUILD_MODE ? 0 : state.score,
     isGameOver: false,
     isExploded: false,
+    hasUsedShareRevive: false,
+    hasUsedReferralRevive: false,
+    reviveScore: 0,
+    isReviving: false,
   })),
 
   // 游戏结束状态
   isGameOver: false,
   isExploded: false,
+  
+  // 续命系统
+  hasUsedShareRevive: false,   // 本次冒险是否已用过分享续命
+  hasUsedReferralRevive: false, // 本次冒险是否已用过邀请续命
+  referralLives: 0,            // 当前可用的邀请续命次数
+  reviveScore: 0,              // 续命时保留的分数
+  isReviving: false,           // 是否正在续命中
+  
+  setReferralLives: (count) => set({ referralLives: count }),
   
   setGameOver: () => {
     const state = get();
@@ -126,11 +139,49 @@ const useGameStore = create(
   },
   setExploded: () => set({ isExploded: true }),
   
+  // 分享续命
+  shareRevive: () => {
+    const state = get();
+    if (state.hasUsedShareRevive) return false;
+    set({
+      hasUsedShareRevive: true,
+      reviveScore: state.score,
+      isGameOver: false,
+      isExploded: false,
+      isReviving: true,
+      gameMode: GAME_MODES.FLIGHT_MODE,
+    });
+    return true;
+  },
+  
+  // 邀请续命
+  referralRevive: () => {
+    const state = get();
+    if (state.hasUsedReferralRevive || state.referralLives <= 0) return false;
+    set({
+      hasUsedReferralRevive: true,
+      referralLives: state.referralLives - 1,
+      reviveScore: state.score,
+      isGameOver: false,
+      isExploded: false,
+      isReviving: true,
+      gameMode: GAME_MODES.FLIGHT_MODE,
+    });
+    return true;
+  },
+  
+  // 续命完成，清除续命标记
+  clearReviving: () => set({ isReviving: false }),
+  
   resetGame: () => set({
     gameMode: GAME_MODES.BUILD_MODE,
     score: 0,
     isGameOver: false,
     isExploded: false,
+    hasUsedShareRevive: false,
+    hasUsedReferralRevive: false,
+    reviveScore: 0,
+    isReviving: false,
   }),
 
   // 分数
