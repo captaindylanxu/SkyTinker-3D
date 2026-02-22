@@ -1,15 +1,16 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import useGameStore from '../../store/useGameStore';
 import { useI18n } from '../../i18n/useI18n';
 import { submitScore, getPlayerHighScore } from '../../services/leaderboard';
 import { generateShareUrl, getShareText, doShare } from '../../services/share';
 import { useReferralLife } from '../../services/referral';
+import { generateGameTips } from '../../services/gameTips';
 import './GameOverModal.css';
 
 export function GameOverModal() {
   const {
     isGameOver, score, highScore, playerId, playerName,
-    resetGame, showAccountModal,
+    resetGame, showAccountModal, vehicleParts,
     hasUsedShareRevive, hasUsedReferralRevive, referralLives,
     shareRevive, referralRevive, setReferralLives,
   } = useGameStore();
@@ -28,6 +29,11 @@ export function GameOverModal() {
   const canShareRevive = !hasUsedShareRevive && !shared;
   const canReferralRevive = !hasUsedReferralRevive && referralLives > 0;
   const canRevive = canShareRevive || canReferralRevive || shared;
+
+  const gameTips = useMemo(() => {
+    if (!isGameOver) return [];
+    return generateGameTips(vehicleParts, score, displayHighScore, t);
+  }, [isGameOver, vehicleParts, score, displayHighScore, t]);
 
   useEffect(() => {
     if (isGameOver && playerId && playerName && score > 0) {
@@ -129,6 +135,18 @@ export function GameOverModal() {
           <span className="high-score-label">🏆 {t('highScore')}</span>
           <span className="high-score-value">{Math.floor(displayHighScore)} {t('meter')}</span>
         </div>
+
+        {/* 智能建议/鼓励 */}
+        {gameTips.length > 0 && (
+          <div className="game-tips">
+            {gameTips.map((tip, i) => (
+              <div key={i} className={`game-tip tip-${tip.type}`}>
+                <span className="tip-icon">{tip.icon}</span>
+                <span className="tip-text">{tip.text}</span>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* 续命区域 */}
         {canRevive && (

@@ -327,3 +327,82 @@
     font-size: 16px;
   }
 }
+
+/* 智能建议/鼓励 */
+.game-tips {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.game-tip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  animation: tipSlideIn 0.5s ease;
+}
+
+@keyframes tipSlideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.tip-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.tip-text {
+  color: #e2e8f0;
+}
+
+.tip-record {
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.tip-record .tip-text {
+  color: #86efac;
+}
+
+.tip-encourage {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.tip-encourage .tip-text {
+  color: #93c5fd;
+}
+
+.tip-config {
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.25);
+}
+
+.tip-config .tip-text {
+  color: #fde68a;
+}
+
+.tip-skill {
+  background: rgba(168, 85, 247, 0.12);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+}
+
+.tip-skill .tip-text {
+  color: #d8b4fe;
+}
+
+@media (max-width: 768px) {
+  .game-tip {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  .tip-icon {
+    font-size: 16px;
+  }
+}

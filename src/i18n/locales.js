@@ -12,6 +12,7 @@ export const LOCALES = {
     parts: '零件',
     engine: '引擎',
     placePartFirst: '请先放置至少一个零件',
+    needEngine: '请安装至少一个引擎才能起飞',
     deleteMode: '删除模式',
     
     // 工具栏
@@ -151,6 +152,23 @@ export const LOCALES = {
       copyGuide: '📋 分享内容已复制到剪贴板，粘贴发送给好友即可',
       reviveNow: '续命！继续飞行',
     },
+    
+    // 游戏建议/鼓励
+    tips: {
+      epicRecord: '太强了！你已经是飞行大师了！',
+      greatRecord: '新纪录！你的飞行技术越来越好了！',
+      newRecord: '破纪录了！继续保持！',
+      almostRecord: '差一点就破纪录了，再来一次！',
+      niceDistance: '飞得不错！继续挑战更远的距离！',
+      noEngine: '安装引擎才能获得推力，试试加几个引擎吧',
+      moreEngines: '飞机太重了，多装几个引擎增加推力',
+      tooHeavy: '推重比太低，减少零件或增加引擎',
+      noWings: '加装机翼可以让飞行更稳定',
+      moreParts: '多装一些零件，让飞机更完整',
+      controlTip: '按住屏幕上升，松开下降，注意节奏感',
+      keepGoing: '继续加油，你会飞得更远！',
+      dodgeTip: '提前预判障碍物位置，保持在缝隙中间',
+    },
   },
   'zh-TW': {
     startFlight: '🚀 開始飛行',
@@ -164,6 +182,7 @@ export const LOCALES = {
     parts: '零件',
     engine: '引擎',
     placePartFirst: '請先放置至少一個零件',
+    needEngine: '請安裝至少一個引擎才能起飛',
     deleteMode: '刪除模式',
     
     partTypes: {
@@ -295,6 +314,22 @@ export const LOCALES = {
       copyGuide: '📋 分享內容已複製到剪貼簿，貼上傳送給好友即可',
       reviveNow: '續命！繼續飛行',
     },
+    
+    tips: {
+      epicRecord: '太強了！你已經是飛行大師了！',
+      greatRecord: '新紀錄！你的飛行技術越來越好了！',
+      newRecord: '破紀錄了！繼續保持！',
+      almostRecord: '差一點就破紀錄了，再來一次！',
+      niceDistance: '飛得不錯！繼續挑戰更遠的距離！',
+      noEngine: '安裝引擎才能獲得推力，試試加幾個引擎吧',
+      moreEngines: '飛機太重了，多裝幾個引擎增加推力',
+      tooHeavy: '推重比太低，減少零件或增加引擎',
+      noWings: '加裝機翼可以讓飛行更穩定',
+      moreParts: '多裝一些零件，讓飛機更完整',
+      controlTip: '按住螢幕上升，鬆開下降，注意節奏感',
+      keepGoing: '繼續加油，你會飛得更遠！',
+      dodgeTip: '提前預判障礙物位置，保持在縫隙中間',
+    },
   },
   
   'en': {
@@ -309,6 +344,7 @@ export const LOCALES = {
     parts: 'Parts',
     engine: 'Engine',
     placePartFirst: 'Place at least one part first',
+    needEngine: 'Install at least one engine to fly',
     deleteMode: 'Delete',
     
     partTypes: {
@@ -440,6 +476,22 @@ export const LOCALES = {
       copyGuide: '📋 Share content copied to clipboard. Paste and send to your friends!',
       reviveNow: 'Revive! Continue flying',
     },
+    
+    tips: {
+      epicRecord: 'Incredible! You are a true flight master!',
+      greatRecord: 'New record! Your flying skills keep improving!',
+      newRecord: 'Record broken! Keep it up!',
+      almostRecord: 'So close to your record, try again!',
+      niceDistance: 'Nice flight! Push for an even longer distance!',
+      noEngine: 'Install engines for thrust — try adding a few',
+      moreEngines: 'Your aircraft is heavy, add more engines for power',
+      tooHeavy: 'Low power-to-weight ratio — remove parts or add engines',
+      noWings: 'Adding wings helps stabilize your flight',
+      moreParts: 'Add more parts to complete your aircraft',
+      controlTip: 'Hold to rise, release to fall — find the rhythm',
+      keepGoing: 'Keep going, you can fly further!',
+      dodgeTip: 'Anticipate obstacles and stay centered in the gap',
+    },
   },
   
   'ja': {
@@ -454,6 +506,7 @@ export const LOCALES = {
     parts: 'パーツ',
     engine: 'エンジン',
     placePartFirst: '最低1つのパーツを配置してください',
+    needEngine: 'エンジンを1つ以上搭載してください',
     deleteMode: '削除',
     
     partTypes: {
@@ -585,6 +638,22 @@ export const LOCALES = {
       copyGuide: '📋 シェア内容をクリップボードにコピーしました。貼り付けて友達に送信！',
       reviveNow: '復活！飛行を続ける',
     },
+    
+    tips: {
+      epicRecord: 'すごい！あなたは飛行マスターです！',
+      greatRecord: '新記録！飛行スキルが上達しています！',
+      newRecord: '記録更新！この調子で！',
+      almostRecord: 'あと少しで記録更新！もう一度！',
+      niceDistance: 'いい飛行！もっと遠くを目指そう！',
+      noEngine: 'エンジンを搭載して推力を得ましょう',
+      moreEngines: '機体が重いです、エンジンを追加しましょう',
+      tooHeavy: '推力重量比が低いです、パーツを減らすかエンジンを追加',
+      noWings: '翼を追加すると飛行が安定します',
+      moreParts: 'もっとパーツを追加して機体を完成させましょう',
+      controlTip: '押して上昇、離して下降、リズムを掴もう',
+      keepGoing: '頑張って、もっと遠くへ飛べます！',
+      dodgeTip: '障害物を予測して隙間の中央を維持しよう',
+    },
   },
   
   'ko': {
@@ -599,6 +668,7 @@ export const LOCALES = {
     parts: '부품',
     engine: '엔진',
     placePartFirst: '최소 하나의 부품을 배치하세요',
+    needEngine: '비행하려면 엔진을 하나 이상 설치하세요',
     deleteMode: '삭제',
     
     partTypes: {
@@ -730,6 +800,22 @@ export const LOCALES = {
       copyGuide: '📋 공유 내용이 클립보드에 복사되었습니다. 붙여넣기하여 친구에게 보내세요!',
       reviveNow: '부활! 비행 계속하기',
     },
+    
+    tips: {
+      epicRecord: '대단해요! 당신은 비행 마스터입니다!',
+      greatRecord: '신기록! 비행 실력이 계속 향상되고 있어요!',
+      newRecord: '기록 갱신! 계속 이 조자로!',
+      almostRecord: '기록에 거의 다가갔어요, 다시 도전!',
+      niceDistance: '좋은 비행! 더 먼 거리에 도전하세요!',
+      noEngine: '엔진을 설치해서 추력을 얻으세요',
+      moreEngines: '항공기가 무거워요, 엔진을 더 추가하세요',
+      tooHeavy: '추력 대비 무게가 높아요, 부품을 줄이거나 엔진을 추가하세요',
+      noWings: '날개를 추가하면 비행이 안정됩니다',
+      moreParts: '부품을 더 추가해서 항공기를 완성하세요',
+      controlTip: '누르면 상승, 놓으면 하강, 리듬을 찾으세요',
+      keepGoing: '계속 힘내세요, 더 멀리 날 수 있어요!',
+      dodgeTip: '장애물을 예측하고 간격 중앙을 유지하세요',
+    },
   },
   
   'de': {
@@ -744,6 +830,7 @@ export const LOCALES = {
     parts: 'Teile',
     engine: 'Motor',
     placePartFirst: 'Bitte zuerst mindestens ein Teil platzieren',
+    needEngine: 'Installieren Sie mindestens einen Motor zum Fliegen',
     deleteMode: 'Löschen',
     
     partTypes: {
@@ -875,6 +962,22 @@ export const LOCALES = {
       copyGuide: '📋 Inhalt in die Zwischenablage kopiert. Einfügen und an Freunde senden!',
       reviveNow: 'Wiederbelebung! Weiter fliegen',
     },
+    
+    tips: {
+      epicRecord: 'Unglaublich! Du bist ein wahrer Flugmeister!',
+      greatRecord: 'Neuer Rekord! Deine Flugfähigkeiten verbessern sich!',
+      newRecord: 'Rekord gebrochen! Weiter so!',
+      almostRecord: 'Fast am Rekord dran, versuch es nochmal!',
+      niceDistance: 'Guter Flug! Strebe eine noch größere Distanz an!',
+      noEngine: 'Installiere Motoren für Schub — probiere ein paar',
+      moreEngines: 'Dein Flugzeug ist schwer, füge mehr Motoren hinzu',
+      tooHeavy: 'Niedriges Schub-Gewicht-Verhältnis — entferne Teile oder füge Motoren hinzu',
+      noWings: 'Flügel hinzufügen stabilisiert den Flug',
+      moreParts: 'Füge mehr Teile hinzu, um dein Flugzeug zu vervollständigen',
+      controlTip: 'Halten zum Steigen, loslassen zum Sinken — finde den Rhythmus',
+      keepGoing: 'Weiter so, du kannst weiter fliegen!',
+      dodgeTip: 'Hindernisse voraussehen und in der Mitte der Lücke bleiben',
+    },
   },
   
   'ru': {
@@ -889,6 +992,7 @@ export const LOCALES = {
     parts: 'Детали',
     engine: 'Двигатель',
     placePartFirst: 'Сначала разместите хотя бы одну деталь',
+    needEngine: 'Установите хотя бы один двигатель для полёта',
     deleteMode: 'Удалить',
     
     partTypes: {
@@ -1020,6 +1124,22 @@ export const LOCALES = {
       copyGuide: '📋 Содержимое скопировано в буфер обмена. Вставьте и отправьте друзьям!',
       reviveNow: 'Воскрешение! Продолжить полёт',
     },
+    
+    tips: {
+      epicRecord: 'Невероятно! Вы настоящий мастер полёта!',
+      greatRecord: 'Новый рекорд! Ваши навыки полёта растут!',
+      newRecord: 'Рекорд побит! Так держать!',
+      almostRecord: 'Почти рекорд, попробуйте ещё раз!',
+      niceDistance: 'Хороший полёт! Стремитесь к большему!',
+      noEngine: 'Установите двигатели для тяги — попробуйте добавить несколько',
+      moreEngines: 'Самолёт тяжёлый, добавьте больше двигателей',
+      tooHeavy: 'Низкое соотношение тяги к весу — уберите детали или добавьте двигатели',
+      noWings: 'Добавление крыльев стабилизирует полёт',
+      moreParts: 'Добавьте больше деталей для завершения самолёта',
+      controlTip: 'Удерживайте для подъёма, отпускайте для снижения — найдите ритм',
+      keepGoing: 'Продолжайте, вы можете лететь дальше!',
+      dodgeTip: 'Предугадывайте препятствия и держитесь в центре прохода',
+    },
   },
   
   'fr': {
@@ -1034,6 +1154,7 @@ export const LOCALES = {
     parts: 'Pièces',
     engine: 'Moteur',
     placePartFirst: 'Placez au moins une pièce d\'abord',
+    needEngine: 'Installez au moins un moteur pour voler',
     deleteMode: 'Supprimer',
     
     partTypes: {
@@ -1164,6 +1285,22 @@ export const LOCALES = {
       tapToDismiss: 'Appuyez n\'importe où pour fermer',
       copyGuide: '📋 Contenu copié dans le presse-papiers. Collez et envoyez à vos amis !',
       reviveNow: 'Résurrection ! Continuer à voler',
+    },
+    
+    tips: {
+      epicRecord: 'Incroyable ! Vous êtes un vrai maître du vol !',
+      greatRecord: 'Nouveau record ! Vos compétences de vol s\'améliorent !',
+      newRecord: 'Record battu ! Continuez comme ça !',
+      almostRecord: 'Presque le record, réessayez !',
+      niceDistance: 'Beau vol ! Visez encore plus loin !',
+      noEngine: 'Installez des moteurs pour la poussée — essayez d\'en ajouter',
+      moreEngines: 'Votre avion est lourd, ajoutez plus de moteurs',
+      tooHeavy: 'Rapport poussée/poids faible — retirez des pièces ou ajoutez des moteurs',
+      noWings: 'Ajouter des ailes stabilise le vol',
+      moreParts: 'Ajoutez plus de pièces pour compléter votre avion',
+      controlTip: 'Maintenez pour monter, relâchez pour descendre — trouvez le rythme',
+      keepGoing: 'Continuez, vous pouvez voler plus loin !',
+      dodgeTip: 'Anticipez les obstacles et restez au centre du passage',
     },
   },
 };

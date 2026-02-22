@@ -16,6 +16,7 @@ export function ModeToggle() {
   const hasEngine = vehicleParts.some(p => p.type === PART_TYPES.ENGINE);
 
   const handleClick = () => {
+    if (isBuildMode && !hasEngine) return;
     playModeSwitch();
     toggleGameMode();
     document.activeElement?.blur();
@@ -26,8 +27,8 @@ export function ModeToggle() {
       <button
         className={`toggle-button ${!isBuildMode ? 'flight-mode' : ''}`}
         onClick={handleClick}
-        disabled={isBuildMode && hasNoParts}
-        title={hasNoParts && isBuildMode ? t('placePartFirst') : ''}
+        disabled={isBuildMode && (hasNoParts || !hasEngine)}
+        title={hasNoParts && isBuildMode ? t('placePartFirst') : (!hasEngine && isBuildMode ? t('needEngine') : '')}
       >
         {isBuildMode ? t('startFlight') : t('stopSimulation')}
       </button>
@@ -48,9 +49,16 @@ export function ModeToggle() {
       )}
       
       {isBuildMode && (
-        <div className="parts-count">
-          {t('parts')}: {vehicleParts.length} | {t('engine')}: {vehicleParts.filter(p => p.type === PART_TYPES.ENGINE).length}
-        </div>
+        <>
+          <div className="parts-count">
+            {t('parts')}: {vehicleParts.length} | {t('engine')}: {vehicleParts.filter(p => p.type === PART_TYPES.ENGINE).length}
+          </div>
+          {!hasNoParts && !hasEngine && (
+            <div className="no-engine-warning">
+              ⚠️ {t('needEngine')}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
