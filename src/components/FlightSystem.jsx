@@ -125,27 +125,55 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, 
     return [sumX / parts.length, sumY / parts.length, sumZ / parts.length];
   }, [parts]);
 
-  // 计算总推力（基于引擎数量和等级）
-  const totalPower = useMemo(() => {
-    return parts
-      .filter(p => p.type === PART_TYPES.ENGINE)
-      .reduce((sum, p) => {
-        const stats = getPartStats(p.type, p.tier);
-        return sum + stats.power;
-      }, 0);
+  // 计算各零件属性汇总
+  const vehicleStats = useMemo(() => {
+    let power = 0;
+    let lift = 0;
+    let stability = 0;
+    let control = 0;
+    let mass = 0;
+
+    parts.forEach(p => {
+      const stats = getPartStats(p.type, p.tier);
+      mass += stats.weight;
+      if (stats.power) power += stats.power;
+      if (stats.lift) lift += stats.lift;
+      if (stats.stability) stability += stats.stability;
+      if (stats.control) control += stats.control;
+    });
+
+    // 机翼升力加成：每点 lift 增加 25% 升力，递减（用 sqrt 曲线）
+    // 0 机翼 = 1.0x，1 机翼(1.0 lift) = 1.25x，2 机翼(2.0 lift) = ~1.35x
+    const liftMultiplier = 1 + 0.25 * Math.sqrt(lift);
+
+    // 机身稳定性：影响角阻尼，让飞机更稳
+    // 基础 0.9，每点 stability 加 0.15，上限 0.98
+    const angularDamping = Math.min(0.98, ANGULAR_DAMPING + 0.15 * Math.sqrt(stability));
+
+    // 驾驶座操控：下落时减缓重力效果
+    // 0 驾驶座 = 1.0x 重力，1 驾驶座(1.0 control) = 0.85x，2 驾驶座 = ~0.78x
+    const gravityMultiplier = 1 / (1 + 0.15 * Math.sqrt(control));
+
+    // 质量惩罚：零件越多越重，下坠越快（基准质量 8）
+    const massPenalty = 1 + Math.max(0, (mass - 8) * 0.03);
+
+    return {
+      power,
+      lift,
+      stability,
+      control,
+      mass,
+      liftMultiplier,
+      angularDamping,
+      gravityMultiplier,
+      massPenalty,
+    };
   }, [parts]);
+
+  const { power: totalPower, mass: totalMass } = vehicleStats;
 
   // 检查是否有引擎
   const hasEngine = totalPower > 0;
-
-  // 计算总质量（基于零件等级）
-  const totalMass = useMemo(() => 
-    parts.reduce((sum, p) => {
-      const stats = getPartStats(p.type, p.tier);
-      return sum + stats.weight;
-    }, 0),
-    [parts]
-  );
 
   // 构建复合形状
   const shapes = useMemo(() => {
@@ -223,15 +251,15 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, 
     return false;
   }, [obstacles, isVIP]);
 
-  // 创建复合刚体
+  // 创建复合刚体（角阻尼受机身稳定性影响）
   const [, api] = useCompoundBody(() => ({
     mass: totalMass,
     position: [0, 10, 0],
     shapes,
     linearDamping: 0.1,
-    angularDamping: ANGULAR_DAMPING,
+    angularDamping: vehicleStats.angularDamping,
     onCollide: handleCollide,
-  }), groupRef, [shapes, totalMass]);
+  }), groupRef, [shapes, totalMass, vehicleStats.angularDamping]);
 
   // 保存 api 引用供续命使用
   useEffect(() => {
@@ -318,12 +346,16 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, 
       lastScoreX.current = currentPos[0];
     }
 
-    // 推力基于引擎总功率，但在高度上限时不施加向上的力
+    // 推力基于引擎总功率 × 机翼升力加成，高度上限时不施加向上的力
     if (isFlapping.current && hasEngine && currentPos[1] < MAX_HEIGHT) {
-      const flapPower = FLAP_FORCE * totalPower;
+      const flapPower = FLAP_FORCE * totalPower * vehicleStats.liftMultiplier;
       api.applyForce([0, flapPower, 0], [0, 0, 0]);
       api.applyTorque([0, 0, FLAP_TORQUE]);
     } else {
+      // 不点击时施加额外重力（受驾驶座操控和质量影响）
+      // 驾驶座让下落更平缓，质量让下落更快
+      const extraGravity = -2.0 * vehicleStats.massPenalty * vehicleStats.gravityMultiplier;
+      api.applyForce([0, extraGravity, 0], [0, 0, 0]);
       api.applyTorque([0, 0, -FLAP_TORQUE * 0.3]);
     }
   });

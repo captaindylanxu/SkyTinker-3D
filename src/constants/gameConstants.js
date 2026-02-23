@@ -19,10 +19,13 @@ export const PART_TYPES = {
 };
 
 // 零件属性配置
+// lift: 升力加成（机翼专属，让升空更容易）
+// stability: 稳定性加成（机身专属，减少飞行晃动）
+// control: 操控加成（驾驶座专属，下落更平缓、响应更灵敏）
 export const PART_STATS = {
   [PART_TYPES.FUSELAGE]: {
-    [PART_TIERS.NORMAL]: { weight: 2.0, power: 0, color: '#6b7280', name: '机身' },
-    [PART_TIERS.VIP]: { weight: 1.0, power: 0, color: '#ffd700', name: '黄金机身' },
+    [PART_TIERS.NORMAL]: { weight: 2.0, power: 0, stability: 1.0, color: '#6b7280', name: '机身' },
+    [PART_TIERS.VIP]: { weight: 1.0, power: 0, stability: 1.8, color: '#ffd700', name: '黄金机身' },
   },
   [PART_TYPES.WING]: {
     [PART_TIERS.NORMAL]: { weight: 0.5, power: 0, lift: 1.0, color: '#3b82f6', name: '机翼' },
@@ -33,8 +36,8 @@ export const PART_STATS = {
     [PART_TIERS.VIP]: { weight: 1.0, power: 2.5, color: '#ffd700', name: '黄金引擎' },
   },
   [PART_TYPES.COCKPIT]: {
-    [PART_TIERS.NORMAL]: { weight: 1.5, power: 0, color: '#22c55e', name: '驾驶座' },
-    [PART_TIERS.VIP]: { weight: 0.5, power: 0, color: '#ffd700', name: '黄金驾驶座' },
+    [PART_TIERS.NORMAL]: { weight: 1.5, power: 0, control: 1.0, color: '#22c55e', name: '驾驶座' },
+    [PART_TIERS.VIP]: { weight: 0.5, power: 0, control: 1.8, color: '#ffd700', name: '黄金驾驶座' },
   },
 };
 
