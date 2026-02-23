@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import Scene from './components/Scene';
 import ModeToggle from './components/UI/ModeToggle';
 import Toolbar from './components/UI/Toolbar';
@@ -42,6 +43,7 @@ function App() {
       <AccountModal />
       <TutorialOverlay />
       <WelcomePoster />
+      <Analytics />
     </div>
   );
 }

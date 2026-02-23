@@ -14,6 +14,7 @@
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.0.0-rc.3",
     "@supabase/supabase-js": "^2.90.1",
+    "@vercel/analytics": "^1.6.1",
     "cannon-es": "^0.20.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
