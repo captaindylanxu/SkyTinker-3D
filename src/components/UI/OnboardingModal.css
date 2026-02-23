@@ -167,3 +167,39 @@
     font-size: 13px;
   }
 }
+
+/* ===== 横屏模式适配 ===== */
+@media (max-height: 500px) and (orientation: landscape) {
+  .onboarding-modal {
+    padding: 20px 24px;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+
+  .onboarding-title {
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+
+  .onboarding-description {
+    font-size: 12px;
+    margin-bottom: 14px;
+  }
+
+  .onboarding-form {
+    gap: 10px;
+  }
+
+  .onboarding-input {
+    padding: 8px 12px;
+  }
+
+  .onboarding-button {
+    padding: 10px 18px;
+    font-size: 14px;
+  }
+
+  .onboarding-buttons {
+    flex-direction: row;
+  }
+}

@@ -17,3 +17,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: #1a202c;
 }
+
+/* ===== 横屏模式全局适配 ===== */
+@media (max-height: 500px) and (orientation: landscape) {
+  html, body, #root {
+    /* 确保横屏时不出现滚动条 */
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+}

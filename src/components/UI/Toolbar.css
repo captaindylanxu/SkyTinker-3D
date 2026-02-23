@@ -235,3 +235,86 @@
     font-size: 11px;
   }
 }
+
+/* ===== 横屏模式适配 ===== */
+@media (max-height: 500px) and (orientation: landscape) {
+  .toolbar {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: none;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 6px 12px;
+    border-radius: 12px 12px 0 0;
+    max-height: 45vh;
+    gap: 6px;
+    align-items: flex-start;
+  }
+
+  .toolbar-title {
+    font-size: 10px;
+    white-space: nowrap;
+    margin-right: 8px;
+  }
+
+  .delete-mode-btn {
+    width: auto;
+    padding: 4px 10px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .toolbar-section {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .section-label {
+    font-size: 9px;
+    white-space: nowrap;
+    min-width: fit-content;
+  }
+
+  .toolbar-items {
+    gap: 4px;
+    flex-wrap: nowrap;
+  }
+
+  .toolbar-item {
+    flex-direction: row;
+    padding: 4px 6px;
+    min-width: auto;
+    gap: 3px;
+  }
+
+  .part-preview {
+    width: 18px;
+    height: 18px;
+  }
+
+  .part-name {
+    font-size: 9px;
+  }
+
+  .part-count {
+    font-size: 8px;
+    padding: 1px 3px;
+  }
+
+  .lock-label {
+    font-size: 7px;
+  }
+
+  .stat-badge {
+    font-size: 7px;
+    padding: 1px 4px;
+  }
+
+  .toolbar-hint {
+    font-size: 9px;
+    padding-top: 2px;
+    width: auto;
+  }
+}

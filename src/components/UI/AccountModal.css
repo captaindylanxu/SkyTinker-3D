@@ -233,3 +233,43 @@
     font-size: 15px;
   }
 }
+
+/* ===== 横屏模式适配 ===== */
+@media (max-height: 500px) and (orientation: landscape) {
+  .account-modal {
+    padding: 20px 24px;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+
+  .account-title {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  .account-description {
+    font-size: 12px;
+    margin-bottom: 14px;
+  }
+
+  .account-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .account-button {
+    padding: 10px 16px;
+    font-size: 14px;
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .account-form {
+    gap: 10px;
+  }
+
+  .account-input {
+    padding: 8px 12px;
+  }
+}

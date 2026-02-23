@@ -68,3 +68,17 @@
     opacity: 1;
   }
 }
+
+/* ===== 横屏模式适配 ===== */
+@media (max-height: 500px) and (orientation: landscape) {
+  .stage-indicator-text {
+    font-size: 2rem;
+  }
+
+  .stage-hud-badge {
+    top: 6px;
+    left: 6px;
+    font-size: 0.75rem;
+    padding: 3px 8px;
+  }
+}

@@ -333,3 +333,44 @@
     font-size: 12px;
   }
 }
+
+/* ===== 横屏模式适配 ===== */
+@media (max-height: 500px) and (orientation: landscape) {
+  .tutorial-card {
+    max-width: 320px;
+    padding: 14px;
+    /* 横屏时固定在右侧中间 */
+    left: auto !important;
+    right: 12px !important;
+    top: 50% !important;
+    bottom: auto !important;
+    transform: translateY(-50%) !important;
+  }
+
+  .tutorial-title {
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+
+  .tutorial-desc {
+    font-size: 12px;
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+
+  .tutorial-encouragement {
+    padding: 6px 10px;
+    font-size: 11px;
+    margin-bottom: 10px;
+  }
+
+  .tutorial-btn {
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+
+  .tutorial-encouragement-popup {
+    font-size: 22px;
+    padding: 16px 30px;
+  }
+}

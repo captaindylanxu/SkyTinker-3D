@@ -453,3 +453,95 @@
     font-size: 16px;
   }
 }
+
+/* ===== 横屏模式适配 ===== */
+@media (max-height: 500px) and (orientation: landscape) {
+  .game-over-modal {
+    padding: 16px 24px;
+    max-height: 92vh;
+    max-width: 600px;
+  }
+
+  .game-over-title {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  .score-value {
+    font-size: 32px;
+  }
+
+  .score-label {
+    font-size: 11px;
+  }
+
+  .final-score {
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+
+  .high-score {
+    padding: 6px 12px;
+    margin-bottom: 8px;
+  }
+
+  .high-score-value {
+    font-size: 22px;
+  }
+
+  .stage-info {
+    margin-bottom: 8px;
+  }
+
+  .stage-info-row {
+    padding: 6px 8px;
+  }
+
+  .stage-info-value {
+    font-size: 18px;
+  }
+
+  .stage-info-label {
+    font-size: 10px;
+  }
+
+  .revive-section {
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  .revive-title {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .revive-button {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .game-tips {
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+
+  .game-tip {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .tip-icon {
+    font-size: 14px;
+  }
+
+  .restart-button {
+    padding: 10px 32px;
+    font-size: 14px;
+  }
+
+  .new-record-badge {
+    font-size: 16px;
+    padding: 4px 12px;
+    margin-bottom: 8px;
+  }
+}

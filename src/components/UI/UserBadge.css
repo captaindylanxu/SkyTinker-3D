@@ -58,3 +58,22 @@
   .user-badge-icon { font-size: 12px; }
   .user-badge-name { max-width: 80px; }
 }
+
+/* ===== 横屏模式适配 ===== */
+@media (max-height: 500px) and (orientation: landscape) {
+  .user-badge {
+    top: 6px;
+    left: 6px;
+    padding: 4px 8px;
+    font-size: 10px;
+    gap: 3px;
+  }
+
+  .user-badge-icon {
+    font-size: 11px;
+  }
+
+  .user-badge-name {
+    max-width: 60px;
+  }
+}
