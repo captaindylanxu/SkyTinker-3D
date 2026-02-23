@@ -106,15 +106,15 @@ export const FLAPPY_CONFIG = {
 
 // 关卡系统配置
 export const LEVEL_CONFIG = {
-  STAGE_THRESHOLD: 500, // 每 1000 米一个关卡
+  STAGE_THRESHOLD: 500, // 每 500 米一个关卡
 
   // 关卡 1-5 难度预设
   DIFFICULTY_PROFILES: {
-    1: { gapSize: { normal: 15, vip: 21 }, spacing: 18, gapYRange: [12, 25] },
-    2: { gapSize: { normal: 14, vip: 20 }, spacing: 17, gapYRange: [11, 26] },
-    3: { gapSize: { normal: 13, vip: 19 }, spacing: 16, gapYRange: [10, 27] },
-    4: { gapSize: { normal: 12, vip: 18 }, spacing: 15, gapYRange: [11, 28] },
-    5: { gapSize: { normal: 11, vip: 17 }, spacing: 14, gapYRange: [12, 29] },
+    1: { gapSize: { normal: 14, vip: 20 }, spacing: 17, gapYRange: [14, 26] },
+    2: { gapSize: { normal: 13, vip: 19 }, spacing: 16, gapYRange: [13, 27] },
+    3: { gapSize: { normal: 12, vip: 18 }, spacing: 15, gapYRange: [12, 28] },
+    4: { gapSize: { normal: 11, vip: 17 }, spacing: 14, gapYRange: [11, 29] },
+    5: { gapSize: { normal: 10, vip: 16 }, spacing: 13, gapYRange: [10, 30] },
   },
 
   // 难度下限
@@ -126,16 +126,18 @@ export const LEVEL_CONFIG = {
   GAP_REDUCTION_RATE: 0.05, // 每关缝隙缩小比例
   SPACING_REDUCTION: 0.5, // 每关间距减少值
 
-  // 关卡 1-5 障碍物颜色方案
+  // 关卡 1-7 障碍物颜色方案（红橙黄绿青蓝紫）
   OBSTACLE_COLOR_THEMES: {
-    1: { top: '#16a34a', bottom: '#15803d' }, // 翠绿
-    2: { top: '#ea580c', bottom: '#c2410c' }, // 橙红
-    3: { top: '#7c3aed', bottom: '#6d28d9' }, // 紫色
-    4: { top: '#0891b2', bottom: '#0e7490' }, // 青色
-    5: { top: '#dc2626', bottom: '#b91c1c' }, // 深红
+    1: { top: '#ef4444', bottom: '#dc2626' }, // 红
+    2: { top: '#f97316', bottom: '#ea580c' }, // 橙
+    3: { top: '#eab308', bottom: '#ca8a04' }, // 黄
+    4: { top: '#22c55e', bottom: '#16a34a' }, // 绿
+    5: { top: '#06b6d4', bottom: '#0891b2' }, // 青
+    6: { top: '#3b82f6', bottom: '#2563eb' }, // 蓝
+    7: { top: '#8b5cf6', bottom: '#7c3aed' }, // 紫
   },
 
-  // 关卡 1-5 背景主题
+  // 关卡 1-7 背景主题
   BACKGROUND_THEMES: {
     1: {
       // 晴天白昼
@@ -172,9 +174,23 @@ export const LEVEL_CONFIG = {
       directionalIntensity: 1.5,
       stars: { count: 0, fade: false, speed: 0 },
     },
+    6: {
+      // 深海幽蓝
+      sky: { sunPosition: [100, -5, 100], inclination: 0.47, azimuth: 0.1 },
+      ambientIntensity: 0.2,
+      directionalIntensity: 0.4,
+      stars: { count: 800, fade: true, speed: 0.8 },
+    },
+    7: {
+      // 梦幻紫霞
+      sky: { sunPosition: [100, 10, 100], inclination: 0.51, azimuth: 0.3 },
+      ambientIntensity: 0.35,
+      directionalIntensity: 0.8,
+      stars: { count: 2000, fade: true, speed: 1.2 },
+    },
   },
 
-  // 关卡 1-5 BGM 配置
+  // 关卡 1-7 BGM 配置
   STAGE_BGM_PROFILES: {
     1: {
       // 晴天白昼 — 明亮轻快
@@ -249,6 +265,34 @@ export const LEVEL_CONFIG = {
       oscType: 'sawtooth',
       melodyOscType: 'square',
     },
+    6: {
+      // 深海幽蓝 — 低沉深邃
+      chords: [
+        [196.0, 246.9, 311.1],
+        [174.6, 220.0, 277.2],
+        [164.8, 207.7, 261.6],
+        [185.0, 233.1, 293.7],
+      ],
+      bassNotes: [98.0, 87.3, 82.4, 92.5],
+      melody: [392.0, 0, 370.0, 329.6, 0, 293.7, 329.6, 0, 370.0, 392.0, 440.0, 0, 392.0, 370.0, 0, 329.6],
+      chordDur: 3.8,
+      oscType: 'sine',
+      melodyOscType: 'sine',
+    },
+    7: {
+      // 梦幻紫霞 — 飘渺奇幻
+      chords: [
+        [277.2, 349.2, 440.0],
+        [311.1, 392.0, 493.9],
+        [261.6, 329.6, 415.3],
+        [293.7, 370.0, 466.2],
+      ],
+      bassNotes: [138.6, 155.6, 130.8, 146.8],
+      melody: [554.4, 659.3, 0, 784.0, 880.0, 0, 784.0, 659.3, 554.4, 0, 659.3, 784.0, 880.0, 0, 987.8, 0],
+      chordDur: 3.0,
+      oscType: 'triangle',
+      melodyOscType: 'triangle',
+    },
   },
 
   // 装备解锁表
@@ -313,12 +357,12 @@ export const computeDifficultyProfile = (stage, isVIP) => {
 };
 
 /**
- * 根据关卡阶段从主题映射中获取对应主题（循环复用 1-5）
+ * 根据关卡阶段从主题映射中获取对应主题（循环复用 1-7）
  * @param {number} stage - 关卡阶段
- * @param {object} themeMap - 主题映射对象（键为 1-5）
+ * @param {object} themeMap - 主题映射对象（键为 1-7）
  * @returns {*} 对应的主题值
  */
 export const getThemeByStage = (stage, themeMap) => {
-  const mappedStage = ((stage - 1) % 5) + 1;
+  const mappedStage = ((stage - 1) % 7) + 1;
   return themeMap[mappedStage];
 };
