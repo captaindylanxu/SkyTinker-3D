@@ -106,15 +106,15 @@ export const FLAPPY_CONFIG = {
 
 // 关卡系统配置
 export const LEVEL_CONFIG = {
-  STAGE_THRESHOLD: 1000, // 每 1000 米一个关卡
+  STAGE_THRESHOLD: 500, // 每 1000 米一个关卡
 
   // 关卡 1-5 难度预设
   DIFFICULTY_PROFILES: {
-    1: { gapSize: { normal: 10, vip: 18 }, spacing: 15, gapYRange: [8, 25] },
-    2: { gapSize: { normal: 9, vip: 16 }, spacing: 13, gapYRange: [7, 25] },
-    3: { gapSize: { normal: 8, vip: 14 }, spacing: 11, gapYRange: [6, 26] },
-    4: { gapSize: { normal: 7, vip: 12 }, spacing: 9, gapYRange: [5, 27] },
-    5: { gapSize: { normal: 6, vip: 11 }, spacing: 8, gapYRange: [5, 28] },
+    1: { gapSize: { normal: 15, vip: 21 }, spacing: 18, gapYRange: [12, 25] },
+    2: { gapSize: { normal: 14, vip: 20 }, spacing: 17, gapYRange: [11, 26] },
+    3: { gapSize: { normal: 13, vip: 19 }, spacing: 16, gapYRange: [10, 27] },
+    4: { gapSize: { normal: 12, vip: 18 }, spacing: 15, gapYRange: [11, 28] },
+    5: { gapSize: { normal: 11, vip: 17 }, spacing: 14, gapYRange: [12, 29] },
   },
 
   // 难度下限
