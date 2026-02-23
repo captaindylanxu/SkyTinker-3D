@@ -72,6 +72,7 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, 
   const lastScoreX = useRef(0);
   const hasExploded = useRef(false);
   const apiRef = useRef(null);
+  const reviveGraceFrames = useRef(0); // 续命后的保护帧数
 
   // VIP 玩家更耐撞
   const collisionThreshold = isVIP ? COLLISION_THRESHOLD_VIP : COLLISION_THRESHOLD_NORMAL;
@@ -245,6 +246,8 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, 
       position.current = [0, 10, 0];
       velocity.current = [0, 0, 0];
       lastScoreX.current = 0;
+      // 给几帧保护时间，等物理引擎处理完位置重置
+      reviveGraceFrames.current = 10;
       apiRef.current.position.set(0, 10, 0);
       apiRef.current.velocity.set(0, 0, 0);
       apiRef.current.angularVelocity.set(0, 0, 0);
@@ -269,6 +272,15 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, 
 
   useFrame(() => {
     if (hasExploded.current || isExploded) return;
+
+    // 续命保护期：等物理引擎完成位置重置，同时强制修正位置
+    if (reviveGraceFrames.current > 0) {
+      reviveGraceFrames.current -= 1;
+      api.position.set(0, 10, 0);
+      api.velocity.set(FORWARD_SPEED, 0, 0);
+      api.angularVelocity.set(0, 0, 0);
+      return;
+    }
 
     const currentVel = velocity.current;
     const currentPos = position.current;
