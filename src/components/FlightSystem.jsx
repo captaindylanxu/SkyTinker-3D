@@ -331,6 +331,7 @@ export function FlightSystem() {
   const [showExplosion, setShowExplosion] = useState(false);
   const [obstacles, setObstacles] = useState([]);
   const [reviveKey, setReviveKey] = useState(0); // 用于强制重新挂载FlappyVehicle
+  const [obstacleKey, setObstacleKey] = useState(0); // 用于强制重新挂载ObstacleManager
   const hasTriggeredExplosion = useRef(false);
 
   const handlePositionUpdate = useCallback((x, y) => {
@@ -356,7 +357,7 @@ export function FlightSystem() {
     setObstacles(prev => prev.filter(o => o.id !== id));
   }, []);
 
-  // 处理续命：重新挂载飞行器
+  // 处理续命：重新挂载飞行器和障碍物管理器
   useEffect(() => {
     if (isReviving) {
       setExplodedParts([]);
@@ -364,7 +365,11 @@ export function FlightSystem() {
       setShowExplosion(false);
       setObstacles([]);
       hasTriggeredExplosion.current = false;
+      // 重置飞行器位置状态，避免 ObstacleManager 在新 key 挂载前读到旧的 vehiclePos
+      setVehiclePos({ x: 0, y: 10 });
       setReviveKey(prev => prev + 1);
+      // 同时重新挂载 ObstacleManager，重置 lastSpawnX 和 obstacleIdRef
+      setObstacleKey(prev => prev + 1);
       clearReviving();
     }
   }, [isReviving, clearReviving]);
@@ -404,6 +409,7 @@ export function FlightSystem() {
       )}
       
       <ObstacleManager 
+        key={obstacleKey}
         vehicleX={vehiclePos.x}
         onRegisterObstacle={registerObstacle}
         onUnregisterObstacle={unregisterObstacle}
