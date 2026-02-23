@@ -8,6 +8,7 @@ import Environment from './Environment';
 import BuildingSystem from './BuildingSystem';
 import FlightSystem from './FlightSystem';
 import { Ground, GridHelper, InfiniteGround } from './Ground';
+import StageIndicator from './UI/StageIndicator';
 
 function SceneContent() {
   const { gameMode } = useGameStore();
@@ -60,14 +61,17 @@ function SceneContent() {
 
 export function Scene() {
   return (
-    <Canvas
-      shadows
-      camera={{ position: [10, 10, 25], fov: 60 }}
-      style={{ width: '100vw', height: '100vh' }}
-      onContextMenu={(e) => e.preventDefault()}
-    >
-      <SceneContent />
-    </Canvas>
+    <>
+      <Canvas
+        shadows
+        camera={{ position: [10, 10, 25], fov: 60 }}
+        style={{ width: '100vw', height: '100vh' }}
+        onContextMenu={(e) => e.preventDefault()}
+      >
+        <SceneContent />
+      </Canvas>
+      <StageIndicator />
+    </>
   );
 }
 

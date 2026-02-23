@@ -1,6 +1,14 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { GAME_MODES, PART_TYPES, PART_TIERS, PART_LIMITS } from '../constants/gameConstants';
+import { GAME_MODES, PART_TYPES, PART_TIERS, PART_LIMITS, LEVEL_CONFIG, computeStage, computeDifficultyProfile, getThemeByStage } from '../constants/gameConstants';
+
+// 默认解锁所有 NORMAL 零件
+const DEFAULT_UNLOCKED_EQUIPMENT = [
+  { type: 'Wing', tier: 'normal' },
+  { type: 'Engine', tier: 'normal' },
+  { type: 'Fuselage', tier: 'normal' },
+  { type: 'Cockpit', tier: 'normal' },
+];
 
 // 从 localStorage 读取最高分
 const getStoredHighScore = () => {
@@ -46,6 +54,12 @@ const useGameStore = create(
   hasPlayedFirstGame: false, // 已废弃，保留兼容
   hasSeenPoster: false, // 每次刷新重置，不持久化
   showAccountModal: false,
+  
+  // 关卡系统状态
+  currentStage: 1,
+  highestStage: 1,
+  unlockedEquipment: [...DEFAULT_UNLOCKED_EQUIPMENT],
+  stageJustChanged: false,
   
   setPlayerInfo: (playerId, playerName) => set({ 
     playerId, 
@@ -112,6 +126,8 @@ const useGameStore = create(
     hasUsedReferralRevive: false,
     reviveScore: 0,
     isReviving: false,
+    currentStage: 1,
+    stageJustChanged: false,
   })),
 
   // 游戏结束状态
@@ -173,6 +189,72 @@ const useGameStore = create(
   // 续命完成，清除续命标记
   clearReviving: () => set({ isReviving: false }),
   
+  // ---- 关卡系统方法 ----
+  
+  // 根据 score 计算并更新 currentStage
+  updateStage: () => {
+    const state = get();
+    const newStage = computeStage(state.score);
+    if (newStage !== state.currentStage) {
+      const updates = {
+        currentStage: newStage,
+        stageJustChanged: true,
+      };
+      // 检查装备解锁
+      const unlocks = LEVEL_CONFIG.EQUIPMENT_UNLOCKS[newStage];
+      if (unlocks) {
+        const currentUnlocked = [...state.unlockedEquipment];
+        let changed = false;
+        for (const item of unlocks) {
+          const alreadyUnlocked = currentUnlocked.some(
+            (u) => u.type === item.type && u.tier === item.tier
+          );
+          if (!alreadyUnlocked) {
+            currentUnlocked.push({ type: item.type, tier: item.tier });
+            changed = true;
+          }
+        }
+        if (changed) {
+          updates.unlockedEquipment = currentUnlocked;
+        }
+      }
+      // 更新 highestStage
+      if (newStage > state.highestStage) {
+        updates.highestStage = newStage;
+      }
+      set(updates);
+    }
+  },
+  
+  // 获取当前难度配置
+  getCurrentDifficultyProfile: () => {
+    const state = get();
+    return computeDifficultyProfile(state.currentStage, state.isVIP);
+  },
+  
+  // 获取当前背景主题
+  getCurrentBackgroundTheme: () => {
+    const state = get();
+    return getThemeByStage(state.currentStage, LEVEL_CONFIG.BACKGROUND_THEMES);
+  },
+  
+  // 获取当前 BGM 配置
+  getCurrentBGMProfile: () => {
+    const state = get();
+    return getThemeByStage(state.currentStage, LEVEL_CONFIG.STAGE_BGM_PROFILES);
+  },
+  
+  // 检查装备是否已解锁
+  isEquipmentUnlocked: (type, tier) => {
+    const state = get();
+    return state.unlockedEquipment.some(
+      (u) => u.type === type && u.tier === tier
+    );
+  },
+  
+  // 清除关卡变化标记
+  clearStageChanged: () => set({ stageJustChanged: false }),
+  
   resetGame: () => set({
     gameMode: GAME_MODES.BUILD_MODE,
     score: 0,
@@ -182,12 +264,17 @@ const useGameStore = create(
     hasUsedReferralRevive: false,
     reviveScore: 0,
     isReviving: false,
+    currentStage: 1,
+    stageJustChanged: false,
   }),
 
   // 分数
   score: 0,
   highScore: getStoredHighScore(),
-  addScore: (points = 1) => set((state) => ({ score: state.score + points })),
+  addScore: (points = 1) => {
+    set((state) => ({ score: state.score + points }));
+    get().updateStage();
+  },
   resetScore: () => set({ score: 0 }),
   
   // 更新最高分
@@ -230,6 +317,9 @@ const useGameStore = create(
   // 添加零件（包含等级）
   addPart: (part) => {
     const state = get();
+    // 解锁检查：未解锁的零件不允许添加
+    const tier = part.tier || state.selectedPartTier;
+    if (!state.isEquipmentUnlocked(part.type, tier)) return false;
     if (!state.canAddPart(part.type)) return false;
     
     set((state) => ({
@@ -277,7 +367,26 @@ const useGameStore = create(
         hasCompletedOnboarding: state.hasCompletedOnboarding,
         tutorialStep: state.tutorialStep,
         isVIP: state.isVIP,
+        highestStage: state.highestStage,
+        unlockedEquipment: state.unlockedEquipment,
       }),
+      merge: (persistedState, currentState) => {
+        const merged = { ...currentState, ...persistedState };
+        // 验证 unlockedEquipment 数据格式，无效则回退默认值
+        if (
+          !Array.isArray(merged.unlockedEquipment) ||
+          !merged.unlockedEquipment.every(
+            (item) =>
+              item &&
+              typeof item === 'object' &&
+              typeof item.type === 'string' &&
+              typeof item.tier === 'string'
+          )
+        ) {
+          merged.unlockedEquipment = [...DEFAULT_UNLOCKED_EQUIPMENT];
+        }
+        return merged;
+      },
     }
   )
 );

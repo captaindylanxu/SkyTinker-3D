@@ -36,6 +36,12 @@ export const LOCALES = {
     newRecord: '🎉 新纪录！',
     backToBuild: '返回建造',
     
+    // 关卡系统
+    stageLabel: '第 {n} 关',
+    stageReached: '到达关卡',
+    highestStage: '最高关卡',
+    unlockAtStage: '第 {n} 关解锁',
+    
     // VIP商店
     vipShop: 'VIP 商店',
     vipMember: 'VIP 会员',
@@ -222,6 +228,12 @@ export const LOCALES = {
     newRecord: '🎉 新紀錄！',
     backToBuild: '返回建造',
     
+    // 關卡系統
+    stageLabel: '第 {n} 關',
+    stageReached: '到達關卡',
+    highestStage: '最高關卡',
+    unlockAtStage: '第 {n} 關解鎖',
+    
     vipShop: 'VIP 商店',
     vipMember: 'VIP 會員',
     notVip: '非 VIP',
@@ -400,6 +412,12 @@ export const LOCALES = {
     highScore: 'Best Record',
     newRecord: '🎉 New Record!',
     backToBuild: 'Back to Build',
+    
+    // Level system
+    stageLabel: 'Stage {n}',
+    stageReached: 'Stage Reached',
+    highestStage: 'Highest Stage',
+    unlockAtStage: 'Unlocks at Stage {n}',
     
     vipShop: 'VIP Shop',
     vipMember: 'VIP Member',
@@ -580,6 +598,12 @@ export const LOCALES = {
     newRecord: '🎉 新記録！',
     backToBuild: '建造に戻る',
     
+    // レベルシステム
+    stageLabel: 'ステージ {n}',
+    stageReached: '到達ステージ',
+    highestStage: '最高ステージ',
+    unlockAtStage: 'ステージ {n} で解放',
+    
     vipShop: 'VIPショップ',
     vipMember: 'VIP会員',
     notVip: '非VIP',
@@ -758,6 +782,12 @@ export const LOCALES = {
     highScore: '최고 기록',
     newRecord: '🎉 신기록!',
     backToBuild: '건설로 돌아가기',
+    
+    // 레벨 시스템
+    stageLabel: '스테이지 {n}',
+    stageReached: '도달 스테이지',
+    highestStage: '최고 스테이지',
+    unlockAtStage: '스테이지 {n} 에서 해금',
     
     vipShop: 'VIP 상점',
     vipMember: 'VIP 회원',
@@ -938,6 +968,12 @@ export const LOCALES = {
     newRecord: '🎉 Neuer Rekord!',
     backToBuild: 'Zurück zum Bauen',
     
+    // Level-System
+    stageLabel: 'Stufe {n}',
+    stageReached: 'Erreichte Stufe',
+    highestStage: 'Höchste Stufe',
+    unlockAtStage: 'Freischaltung bei Stufe {n}',
+    
     vipShop: 'VIP-Shop',
     vipMember: 'VIP-Mitglied',
     notVip: 'Kein VIP',
@@ -1117,6 +1153,12 @@ export const LOCALES = {
     newRecord: '🎉 Новый рекорд!',
     backToBuild: 'Вернуться к строительству',
     
+    // Система уровней
+    stageLabel: 'Этап {n}',
+    stageReached: 'Достигнутый этап',
+    highestStage: 'Наивысший этап',
+    unlockAtStage: 'Открывается на этапе {n}',
+    
     vipShop: 'VIP-магазин',
     vipMember: 'VIP-участник',
     notVip: 'Не VIP',
@@ -1295,6 +1337,12 @@ export const LOCALES = {
     highScore: 'Meilleur score',
     newRecord: '🎉 Nouveau record!',
     backToBuild: 'Retour à la construction',
+    
+    // Système de niveaux
+    stageLabel: 'Étape {n}',
+    stageReached: 'Étape atteinte',
+    highestStage: 'Étape la plus haute',
+    unlockAtStage: 'Débloqué à l\'étape {n}',
     
     vipShop: 'Boutique VIP',
     vipMember: 'Membre VIP',

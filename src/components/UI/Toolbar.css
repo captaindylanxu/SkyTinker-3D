@@ -150,6 +150,18 @@
   opacity: 0.5;
 }
 
+.toolbar-item.locked-item {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lock-label {
+  font-size: 8px;
+  color: #a0aec0;
+  text-align: center;
+  line-height: 1.2;
+}
+
 .part-preview {
   width: 28px;
   height: 28px;

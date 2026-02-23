@@ -2,24 +2,24 @@ import { useRef, useState, useEffect, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useBox } from '@react-three/cannon';
 import useGameStore from '../store/useGameStore';
-import { FLAPPY_CONFIG } from '../constants/gameConstants';
+import { FLAPPY_CONFIG, LEVEL_CONFIG, getThemeByStage } from '../constants/gameConstants';
 
 const {
   OBSTACLE_SPAWN_DISTANCE,
-  OBSTACLE_SPACING,
   OBSTACLE_WIDTH,
   OBSTACLE_HEIGHT,
-  GAP_SIZE_NORMAL,
-  GAP_SIZE_VIP,
-  GAP_MIN_Y,
-  GAP_MAX_Y,
   CLEANUP_DISTANCE,
 } = FLAPPY_CONFIG;
 
 // 单个障碍物管子 - 使用稳定的 key 和位置
-function ObstaclePipe({ x, y, height, isTop }) {
+function ObstaclePipe({ x, y, height, isTop, colorTheme }) {
   const actualY = isTop ? y + height / 2 : y - height / 2;
   
+  // 使用 colorTheme 决定管子颜色，回退到默认绿色
+  const color = colorTheme
+    ? (isTop ? colorTheme.top : colorTheme.bottom)
+    : (isTop ? '#16a34a' : '#15803d');
+
   const [ref] = useBox(() => ({
     type: 'Static',
     position: [x, actualY, 0],
@@ -37,13 +37,13 @@ function ObstaclePipe({ x, y, height, isTop }) {
       receiveShadow
     >
       <boxGeometry args={[OBSTACLE_WIDTH, height, OBSTACLE_WIDTH]} />
-      <meshStandardMaterial color={isTop ? '#16a34a' : '#15803d'} />
+      <meshStandardMaterial color={color} />
     </mesh>
   );
 }
 
 // 一对障碍物（上下管子）- 使用 memo 避免不必要的重渲染
-function ObstaclePair({ id, x, gapY, gapSize }) {
+function ObstaclePair({ id, x, gapY, gapSize, colorTheme }) {
   const topPipeBottom = gapY + gapSize / 2;
   const topPipeHeight = OBSTACLE_HEIGHT;
   
@@ -58,6 +58,7 @@ function ObstaclePair({ id, x, gapY, gapSize }) {
         y={topPipeBottom}
         height={topPipeHeight}
         isTop={true}
+        colorTheme={colorTheme}
       />
       {/* 下方管子 */}
       {bottomPipeHeight > 0.5 && (
@@ -66,6 +67,7 @@ function ObstaclePair({ id, x, gapY, gapSize }) {
           y={bottomPipeTop}
           height={bottomPipeHeight}
           isTop={false}
+          colorTheme={colorTheme}
         />
       )}
       {/* 缝隙指示器（可选，调试用） */}
@@ -81,18 +83,24 @@ export function ObstacleManager({ vehicleX, onRegisterObstacle, onUnregisterObst
   const [obstacles, setObstacles] = useState([]);
   const lastSpawnX = useRef(OBSTACLE_SPAWN_DISTANCE);
   const obstacleIdRef = useRef(0);
-  const { isVIP } = useGameStore();
-
-  // VIP 玩家获得更大的缝隙
-  const gapSize = isVIP ? GAP_SIZE_VIP : GAP_SIZE_NORMAL;
+  const { isVIP, currentStage, getCurrentDifficultyProfile } = useGameStore();
 
   // 生成新障碍物
   useFrame(() => {
     const spawnThreshold = vehicleX + OBSTACLE_SPAWN_DISTANCE;
     
     if (spawnThreshold > lastSpawnX.current) {
-      const newX = lastSpawnX.current + OBSTACLE_SPACING;
-      const gapY = GAP_MIN_Y + Math.random() * (GAP_MAX_Y - GAP_MIN_Y);
+      // 获取当前关卡的难度配置
+      const difficultyProfile = getCurrentDifficultyProfile();
+      const gapSize = isVIP ? difficultyProfile.gapSize.vip : difficultyProfile.gapSize.normal;
+      const spacing = difficultyProfile.spacing;
+      const [gapMinY, gapMaxY] = difficultyProfile.gapYRange;
+
+      // 获取当前关卡的颜色主题
+      const colorTheme = getThemeByStage(currentStage, LEVEL_CONFIG.OBSTACLE_COLOR_THEMES);
+
+      const newX = lastSpawnX.current + spacing;
+      const gapY = gapMinY + Math.random() * (gapMaxY - gapMinY);
       
       obstacleIdRef.current += 1;
       
@@ -101,6 +109,7 @@ export function ObstacleManager({ vehicleX, onRegisterObstacle, onUnregisterObst
         x: newX,
         gapY,
         gapSize,
+        colorTheme,
       };
       
       setObstacles(prev => [...prev, newObstacle]);
@@ -145,6 +154,7 @@ export function ObstacleManager({ vehicleX, onRegisterObstacle, onUnregisterObst
           x={obs.x}
           gapY={obs.gapY}
           gapSize={obs.gapSize}
+          colorTheme={obs.colorTheme}
         />
       ))}
     </group>

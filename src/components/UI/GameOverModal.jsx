@@ -13,6 +13,7 @@ export function GameOverModal() {
     resetGame, showAccountModal, vehicleParts,
     hasUsedShareRevive, hasUsedReferralRevive, referralLives,
     shareRevive, referralRevive, setReferralLives,
+    currentStage, highestStage,
   } = useGameStore();
   const { t } = useI18n();
   // shared: 用户已完成分享动作，等待手动续命
@@ -134,6 +135,17 @@ export function GameOverModal() {
         <div className="high-score">
           <span className="high-score-label">🏆 {t('highScore')}</span>
           <span className="high-score-value">{Math.floor(displayHighScore)} {t('meter')}</span>
+        </div>
+
+        <div className="stage-info">
+          <div className="stage-info-row">
+            <span className="stage-info-label">🚀 {t('stageReached')}</span>
+            <span className="stage-info-value">{currentStage}</span>
+          </div>
+          <div className="stage-info-row">
+            <span className="stage-info-label">👑 {t('highestStage')}</span>
+            <span className="stage-info-value">{highestStage}</span>
+          </div>
         </div>
 
         {/* 智能建议/鼓励 */}

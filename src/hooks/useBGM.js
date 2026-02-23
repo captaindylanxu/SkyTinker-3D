@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import useGameStore from '../store/useGameStore';
-import { GAME_MODES } from '../constants/gameConstants';
+import { GAME_MODES, LEVEL_CONFIG, getThemeByStage } from '../constants/gameConstants';
 
 // ===== 背景音乐生成器 =====
 class BGMEngine {
@@ -198,16 +198,17 @@ class BGMEngine {
   }
 
   // ===== 飞行模式 BGM =====
-  _playFlight() {
-    const bassNotes = [164.8, 130.8, 98.0, 146.8];
-    const chords = [
-      [329.6, 392.0, 493.9],
-      [261.6, 329.6, 392.0],
-      [196.0, 246.9, 293.7],
-      [293.7, 370.0, 440.0],
-    ];
-    const chordDur = 2.8;
-    const totalDur = chords.length * chordDur;
+  _playFlight(profile) {
+    const {
+      chords: chordsList = [[329.6, 392.0, 493.9], [261.6, 329.6, 392.0], [196.0, 246.9, 293.7], [293.7, 370.0, 440.0]],
+      bassNotes = [164.8, 130.8, 98.0, 146.8],
+      melody = [659.3, 0, 784.0, 659.3, 587.3, 0, 523.3, 587.3, 659.3, 0, 784.0, 880.0, 784.0, 0, 659.3, 0],
+      chordDur = 2.8,
+      oscType = 'triangle',
+      melodyOscType = 'sine',
+    } = profile || {};
+
+    const totalDur = chordsList.length * chordDur;
 
     const scheduleLoop = () => {
       if (!this.ctx || this.currentMode !== 'flight') return;
@@ -227,11 +228,11 @@ class BGMEngine {
           this.nodes.push(osc);
         }
       });
-      chords.forEach((chord, ci) => {
+      chordsList.forEach((chord, ci) => {
         chord.forEach((freq) => {
           const osc = this.ctx.createOscillator();
           const g = this.ctx.createGain();
-          osc.type = 'triangle'; osc.frequency.value = freq;
+          osc.type = oscType; osc.frequency.value = freq;
           const t = now + ci * chordDur;
           g.gain.setValueAtTime(0, t);
           g.gain.linearRampToValueAtTime(0.025, t + 0.3);
@@ -242,16 +243,12 @@ class BGMEngine {
           this.nodes.push(osc);
         });
       });
-      const melody = [
-        659.3, 0, 784.0, 659.3, 587.3, 0, 523.3, 587.3,
-        659.3, 0, 784.0, 880.0, 784.0, 0, 659.3, 0,
-      ];
       const noteDur = totalDur / melody.length;
       melody.forEach((freq, i) => {
         if (freq === 0) return;
         const osc = this.ctx.createOscillator();
         const g = this.ctx.createGain();
-        osc.type = 'sine'; osc.frequency.value = freq;
+        osc.type = melodyOscType; osc.frequency.value = freq;
         const t = now + i * noteDur;
         g.gain.setValueAtTime(0, t);
         g.gain.linearRampToValueAtTime(0.03, t + 0.03);
@@ -263,6 +260,27 @@ class BGMEngine {
     };
     scheduleLoop();
     this.loopTimer = setInterval(scheduleLoop, totalDur * 1000);
+  }
+
+  // ===== 关卡音乐切换 =====
+  switchStage(stage) {
+    if (!this.ctx || this.ctx.state === 'closed') return;
+    if (this.currentMode !== 'flight') return;
+
+    const profile = getThemeByStage(stage, LEVEL_CONFIG.STAGE_BGM_PROFILES);
+    if (!profile) return;
+
+    const fadeOutDur = LEVEL_CONFIG.BGM_FADEOUT_DURATION;
+    const fadeInDur = LEVEL_CONFIG.BGM_FADEIN_DURATION;
+
+    // Fade out current music, then restart with new profile
+    this._fadeOut(fadeOutDur);
+    setTimeout(() => {
+      this._stopCurrent();
+      this.currentMode = 'flight';
+      this._playFlight(profile);
+      this._fadeIn(fadeInDur);
+    }, fadeOutDur * 1000 + 100);
   }
 
   // ===== 切换 =====
@@ -332,6 +350,7 @@ export function useBGM() {
   const gameMode = useGameStore((s) => s.gameMode);
   const hasSeenPoster = useGameStore((s) => s.hasSeenPoster);
   const isGameOver = useGameStore((s) => s.isGameOver);
+  const currentStage = useGameStore((s) => s.currentStage);
   const startedRef = useRef(false);
 
   useEffect(() => {
@@ -348,6 +367,13 @@ export function useBGM() {
     }
     startedRef.current = true;
   }, [hasSeenPoster, gameMode, isGameOver]);
+
+  // 关卡音乐切换：仅在飞行模式且未游戏结束时响应 currentStage 变化
+  useEffect(() => {
+    if (gameMode === GAME_MODES.FLIGHT_MODE && !isGameOver) {
+      bgmEngine.switchStage(currentStage);
+    }
+  }, [currentStage, gameMode, isGameOver]);
 
   useEffect(() => {
     return () => {

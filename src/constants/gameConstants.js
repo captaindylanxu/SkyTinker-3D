@@ -103,3 +103,222 @@ export const FLAPPY_CONFIG = {
   CAMERA_OFFSET_X: -5,
   CAMERA_HEIGHT: 10,
 };
+
+// 关卡系统配置
+export const LEVEL_CONFIG = {
+  STAGE_THRESHOLD: 1000, // 每 1000 米一个关卡
+
+  // 关卡 1-5 难度预设
+  DIFFICULTY_PROFILES: {
+    1: { gapSize: { normal: 10, vip: 18 }, spacing: 15, gapYRange: [8, 25] },
+    2: { gapSize: { normal: 9, vip: 16 }, spacing: 13, gapYRange: [7, 25] },
+    3: { gapSize: { normal: 8, vip: 14 }, spacing: 11, gapYRange: [6, 26] },
+    4: { gapSize: { normal: 7, vip: 12 }, spacing: 9, gapYRange: [5, 27] },
+    5: { gapSize: { normal: 6, vip: 11 }, spacing: 8, gapYRange: [5, 28] },
+  },
+
+  // 难度下限
+  MIN_GAP_SIZE_NORMAL: 5,
+  MIN_GAP_SIZE_VIP: 10,
+  MIN_SPACING: 8,
+
+  // 关卡 6+ 难度公式参数
+  GAP_REDUCTION_RATE: 0.05, // 每关缝隙缩小比例
+  SPACING_REDUCTION: 0.5, // 每关间距减少值
+
+  // 关卡 1-5 障碍物颜色方案
+  OBSTACLE_COLOR_THEMES: {
+    1: { top: '#16a34a', bottom: '#15803d' }, // 翠绿
+    2: { top: '#ea580c', bottom: '#c2410c' }, // 橙红
+    3: { top: '#7c3aed', bottom: '#6d28d9' }, // 紫色
+    4: { top: '#0891b2', bottom: '#0e7490' }, // 青色
+    5: { top: '#dc2626', bottom: '#b91c1c' }, // 深红
+  },
+
+  // 关卡 1-5 背景主题
+  BACKGROUND_THEMES: {
+    1: {
+      // 晴天白昼
+      sky: { sunPosition: [100, 20, 100], inclination: 0.5, azimuth: 0.25 },
+      ambientIntensity: 0.4,
+      directionalIntensity: 1.0,
+      stars: { count: 0, fade: false, speed: 0 },
+    },
+    2: {
+      // 黄昏暮色
+      sky: { sunPosition: [100, 5, 100], inclination: 0.49, azimuth: 0.15 },
+      ambientIntensity: 0.3,
+      directionalIntensity: 0.7,
+      stars: { count: 500, fade: true, speed: 0.5 },
+    },
+    3: {
+      // 星空夜晚
+      sky: { sunPosition: [100, -10, 100], inclination: 0.48, azimuth: 0.05 },
+      ambientIntensity: 0.15,
+      directionalIntensity: 0.3,
+      stars: { count: 3000, fade: true, speed: 1.5 },
+    },
+    4: {
+      // 极光黎明
+      sky: { sunPosition: [100, 2, 100], inclination: 0.52, azimuth: 0.35 },
+      ambientIntensity: 0.35,
+      directionalIntensity: 0.6,
+      stars: { count: 1500, fade: true, speed: 2.0 },
+    },
+    5: {
+      // 烈日荒漠
+      sky: { sunPosition: [100, 40, 100], inclination: 0.55, azimuth: 0.25 },
+      ambientIntensity: 0.6,
+      directionalIntensity: 1.5,
+      stars: { count: 0, fade: false, speed: 0 },
+    },
+  },
+
+  // 关卡 1-5 BGM 配置
+  STAGE_BGM_PROFILES: {
+    1: {
+      // 晴天白昼 — 明亮轻快
+      chords: [
+        [329.6, 392.0, 493.9],
+        [261.6, 329.6, 392.0],
+        [196.0, 246.9, 293.7],
+        [293.7, 370.0, 440.0],
+      ],
+      bassNotes: [164.8, 130.8, 98.0, 146.8],
+      melody: [659.3, 0, 784.0, 659.3, 587.3, 0, 523.3, 587.3, 659.3, 0, 784.0, 880.0, 784.0, 0, 659.3, 0],
+      chordDur: 2.8,
+      oscType: 'triangle',
+      melodyOscType: 'sine',
+    },
+    2: {
+      // 黄昏暮色 — 温暖舒缓
+      chords: [
+        [261.6, 329.6, 392.0],
+        [220.0, 277.2, 329.6],
+        [196.0, 246.9, 293.7],
+        [246.9, 311.1, 370.0],
+      ],
+      bassNotes: [130.8, 110.0, 98.0, 123.5],
+      melody: [523.3, 0, 493.9, 440.0, 392.0, 0, 440.0, 493.9, 523.3, 0, 587.3, 523.3, 493.9, 0, 440.0, 0],
+      chordDur: 3.5,
+      oscType: 'sine',
+      melodyOscType: 'sine',
+    },
+    3: {
+      // 星空夜晚 — 空灵悠远
+      chords: [
+        [293.7, 370.0, 440.0],
+        [261.6, 329.6, 415.3],
+        [220.0, 293.7, 370.0],
+        [246.9, 329.6, 392.0],
+      ],
+      bassNotes: [146.8, 130.8, 110.0, 123.5],
+      melody: [880.0, 0, 784.0, 0, 659.3, 0, 587.3, 0, 659.3, 0, 784.0, 0, 880.0, 0, 0, 0],
+      chordDur: 4.0,
+      oscType: 'sine',
+      melodyOscType: 'triangle',
+    },
+    4: {
+      // 极光黎明 — 神秘渐亮
+      chords: [
+        [246.9, 311.1, 392.0],
+        [277.2, 349.2, 440.0],
+        [293.7, 370.0, 466.2],
+        [329.6, 415.3, 523.3],
+      ],
+      bassNotes: [123.5, 138.6, 146.8, 164.8],
+      melody: [493.9, 523.3, 587.3, 659.3, 0, 784.0, 880.0, 0, 987.8, 880.0, 784.0, 0, 659.3, 587.3, 523.3, 0],
+      chordDur: 3.2,
+      oscType: 'triangle',
+      melodyOscType: 'sine',
+    },
+    5: {
+      // 烈日荒漠 — 紧张急促
+      chords: [
+        [329.6, 415.3, 493.9],
+        [349.2, 440.0, 523.3],
+        [293.7, 370.0, 440.0],
+        [311.1, 392.0, 466.2],
+      ],
+      bassNotes: [164.8, 174.6, 146.8, 155.6],
+      melody: [
+        659.3, 784.0, 659.3, 784.0, 880.0, 784.0, 659.3, 784.0, 880.0, 987.8, 880.0, 784.0, 659.3, 784.0, 659.3,
+        0,
+      ],
+      chordDur: 2.0,
+      oscType: 'sawtooth',
+      melodyOscType: 'square',
+    },
+  },
+
+  // 装备解锁表
+  EQUIPMENT_UNLOCKS: {
+    1: [
+      { type: 'Wing', tier: 'normal' },
+      { type: 'Engine', tier: 'normal' },
+      { type: 'Fuselage', tier: 'normal' },
+      { type: 'Cockpit', tier: 'normal' },
+    ],
+    3: [{ type: 'Wing', tier: 'vip' }],
+    5: [{ type: 'Engine', tier: 'vip' }],
+    7: [{ type: 'Fuselage', tier: 'vip' }],
+    10: [{ type: 'Cockpit', tier: 'vip' }],
+  },
+
+  // 过渡动画时长
+  COLOR_TRANSITION_DURATION: 0.5, // 障碍物颜色过渡（秒）
+  BG_TRANSITION_DURATION: 1.0, // 背景主题过渡（秒）
+  BGM_FADEOUT_DURATION: 1.5, // BGM 淡出（秒）
+  BGM_FADEIN_DURATION: 2.0, // BGM 淡入（秒）
+  STAGE_INDICATOR_DURATION: 2000, // 关卡提示显示时长（毫秒）
+};
+
+
+// ---- 关卡系统纯函数 ----
+
+/**
+ * 根据飞行距离（score）计算当前关卡阶段
+ * @param {number} score - 飞行距离/分数
+ * @returns {number} 关卡阶段（最小为 1）
+ */
+export const computeStage = (score) => {
+  if (score < 0) return 1;
+  return Math.floor(score / LEVEL_CONFIG.STAGE_THRESHOLD) + 1;
+};
+
+/**
+ * 根据关卡阶段和 VIP 状态计算难度配置
+ * 关卡 1-5 返回预设值，关卡 6+ 使用公式计算，确保不低于下限
+ * @param {number} stage - 关卡阶段
+ * @param {boolean} isVIP - 是否为 VIP 玩家
+ * @returns {object} 难度配置 { gapSize: { normal, vip }, spacing, gapYRange }
+ */
+export const computeDifficultyProfile = (stage, isVIP) => {
+  if (stage <= 5) return LEVEL_CONFIG.DIFFICULTY_PROFILES[stage];
+  const base = LEVEL_CONFIG.DIFFICULTY_PROFILES[5];
+  const extraStages = stage - 5;
+  const gapNormal = Math.max(
+    LEVEL_CONFIG.MIN_GAP_SIZE_NORMAL,
+    base.gapSize.normal * (1 - LEVEL_CONFIG.GAP_REDUCTION_RATE * extraStages)
+  );
+  const gapVip = Math.max(
+    LEVEL_CONFIG.MIN_GAP_SIZE_VIP,
+    base.gapSize.vip * (1 - LEVEL_CONFIG.GAP_REDUCTION_RATE * extraStages)
+  );
+  const spacing = Math.max(
+    LEVEL_CONFIG.MIN_SPACING,
+    base.spacing - LEVEL_CONFIG.SPACING_REDUCTION * extraStages
+  );
+  return { gapSize: { normal: gapNormal, vip: gapVip }, spacing, gapYRange: base.gapYRange };
+};
+
+/**
+ * 根据关卡阶段从主题映射中获取对应主题（循环复用 1-5）
+ * @param {number} stage - 关卡阶段
+ * @param {object} themeMap - 主题映射对象（键为 1-5）
+ * @returns {*} 对应的主题值
+ */
+export const getThemeByStage = (stage, themeMap) => {
+  const mappedStage = ((stage - 1) % 5) + 1;
+  return themeMap[mappedStage];
+};
