@@ -30,7 +30,7 @@ class SoundGenerator {
     osc.frequency.setValueAtTime(800, this.audioContext.currentTime);
     osc.frequency.exponentialRampToValueAtTime(400, this.audioContext.currentTime + 0.1);
     
-    gain.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+    gain.gain.setValueAtTime(0.15, this.audioContext.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
     
     osc.start(this.audioContext.currentTime);
@@ -50,7 +50,7 @@ class SoundGenerator {
     osc.frequency.setValueAtTime(300, this.audioContext.currentTime);
     osc.frequency.exponentialRampToValueAtTime(100, this.audioContext.currentTime + 0.15);
     
-    gain.gain.setValueAtTime(0.25, this.audioContext.currentTime);
+    gain.gain.setValueAtTime(0.12, this.audioContext.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.15);
     
     osc.start(this.audioContext.currentTime);
@@ -71,7 +71,7 @@ class SoundGenerator {
     osc.frequency.setValueAtTime(600, this.audioContext.currentTime);
     osc.frequency.exponentialRampToValueAtTime(200, this.audioContext.currentTime + 0.08);
     
-    gain.gain.setValueAtTime(0.2, this.audioContext.currentTime);
+    gain.gain.setValueAtTime(0.1, this.audioContext.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.08);
     
     osc.start(this.audioContext.currentTime);
@@ -93,7 +93,7 @@ class SoundGenerator {
     osc1.frequency.setValueAtTime(880, this.audioContext.currentTime);
     osc2.frequency.setValueAtTime(1320, this.audioContext.currentTime);
     
-    gain.gain.setValueAtTime(0.15, this.audioContext.currentTime);
+    gain.gain.setValueAtTime(0.08, this.audioContext.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.2);
     
     osc1.start(this.audioContext.currentTime);
@@ -128,7 +128,7 @@ class SoundGenerator {
     filter.connect(gain);
     gain.connect(this.audioContext.destination);
     
-    gain.gain.setValueAtTime(0.4, this.audioContext.currentTime);
+    gain.gain.setValueAtTime(0.2, this.audioContext.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
     
     noise.start(this.audioContext.currentTime);
@@ -149,8 +149,8 @@ class SoundGenerator {
     osc.frequency.setValueAtTime(600, this.audioContext.currentTime + 0.1);
     osc.frequency.setValueAtTime(800, this.audioContext.currentTime + 0.2);
     
-    gain.gain.setValueAtTime(0.2, this.audioContext.currentTime);
-    gain.gain.setValueAtTime(0.2, this.audioContext.currentTime + 0.2);
+    gain.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+    gain.gain.setValueAtTime(0.1, this.audioContext.currentTime + 0.2);
     gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
     
     osc.start(this.audioContext.currentTime);

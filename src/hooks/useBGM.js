@@ -80,7 +80,7 @@ class BGMEngine {
     const now = this.ctx.currentTime;
     this.masterGain.gain.cancelScheduledValues(now);
     this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, now);
-    this.masterGain.gain.linearRampToValueAtTime(0.15, now + dur);
+    this.masterGain.gain.linearRampToValueAtTime(0.45, now + dur);
   }
 
   _fadeOut(dur = 1.5) {
