@@ -60,7 +60,7 @@ const getPartStats = (type, tier = PART_TIERS.NORMAL) => {
 };
 
 // Flappy Bird 风格载具
-function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, obstacles = [] }) {
+function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, obstacles = [], reviveSignal }) {
   const { addScore, setExploded, setGameOver } = useGameStore();
   const { playFlap, playCrash, playScore } = useSound();
   const groupRef = useRef();
@@ -71,6 +71,7 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, 
   const velocity = useRef([0, 0, 0]);
   const lastScoreX = useRef(0);
   const hasExploded = useRef(false);
+  const apiRef = useRef(null);
 
   // VIP 玩家更耐撞
   const collisionThreshold = isVIP ? COLLISION_THRESHOLD_VIP : COLLISION_THRESHOLD_NORMAL;
@@ -231,6 +232,26 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, 
     onCollide: handleCollide,
   }), groupRef, [shapes, totalMass]);
 
+  // 保存 api 引用供续命使用
+  useEffect(() => {
+    apiRef.current = api;
+  }, [api]);
+
+  // 续命时重置物理刚体位置和状态
+  useEffect(() => {
+    if (reviveSignal > 0 && apiRef.current) {
+      hasExploded.current = false;
+      isFlapping.current = false;
+      position.current = [0, 10, 0];
+      velocity.current = [0, 0, 0];
+      lastScoreX.current = 0;
+      apiRef.current.position.set(0, 10, 0);
+      apiRef.current.velocity.set(0, 0, 0);
+      apiRef.current.angularVelocity.set(0, 0, 0);
+      apiRef.current.rotation.set(0, 0, 0);
+    }
+  }, [reviveSignal]);
+
   useEffect(() => {
     const unsubPos = api.position.subscribe((p) => {
       position.current = p;
@@ -295,10 +316,8 @@ function FlappyVehicle({ parts, onPositionUpdate, onExplode, isExploded, isVIP, 
     }
   });
 
-  if (isExploded) return null;
-
   return (
-    <group ref={groupRef}>
+    <group ref={groupRef} visible={!isExploded}>
       {/* 旋转整个载具，让机头朝向前进方向（X轴正方向） */}
       <group rotation={[0, -Math.PI / 2, 0]}>
         {parts.map((part, index) => {
@@ -330,7 +349,7 @@ export function FlightSystem() {
   const [explosionPos, setExplosionPos] = useState(null);
   const [showExplosion, setShowExplosion] = useState(false);
   const [obstacles, setObstacles] = useState([]);
-  const [reviveKey, setReviveKey] = useState(0); // 用于强制重新挂载FlappyVehicle
+  const [reviveSignal, setReviveSignal] = useState(0); // 递增信号，通知 FlappyVehicle 重置
   const [obstacleKey, setObstacleKey] = useState(0); // 用于强制重新挂载ObstacleManager
   const hasTriggeredExplosion = useRef(false);
 
@@ -357,7 +376,7 @@ export function FlightSystem() {
     setObstacles(prev => prev.filter(o => o.id !== id));
   }, []);
 
-  // 处理续命：重新挂载飞行器和障碍物管理器
+  // 处理续命：通过信号重置飞行器，重新挂载障碍物管理器
   useEffect(() => {
     if (isReviving) {
       setExplodedParts([]);
@@ -365,10 +384,10 @@ export function FlightSystem() {
       setShowExplosion(false);
       setObstacles([]);
       hasTriggeredExplosion.current = false;
-      // 重置飞行器位置状态，避免 ObstacleManager 在新 key 挂载前读到旧的 vehiclePos
       setVehiclePos({ x: 0, y: 10 });
-      setReviveKey(prev => prev + 1);
-      // 同时重新挂载 ObstacleManager，重置 lastSpawnX 和 obstacleIdRef
+      // 通知 FlappyVehicle 通过 api 重置位置（不重新挂载，避免残留刚体）
+      setReviveSignal(prev => prev + 1);
+      // 重新挂载 ObstacleManager，重置 lastSpawnX 和 obstacleIdRef
       setObstacleKey(prev => prev + 1);
       clearReviving();
     }
@@ -385,13 +404,13 @@ export function FlightSystem() {
       />
       
       <FlappyVehicle 
-        key={reviveKey}
         parts={vehicleParts} 
         onPositionUpdate={handlePositionUpdate}
         onExplode={handleExplode}
         isExploded={isExploded}
         isVIP={isVIP}
         obstacles={obstacles}
+        reviveSignal={reviveSignal}
       />
       
       {isExploded && explodedParts.length > 0 && explosionPos && (
